@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class UIController : MonoBehaviour
 {
@@ -15,6 +17,9 @@ public class UIController : MonoBehaviour
     }
     public GameObject SplashScreen, LoginScreen, LoadingScreen , Mainscreen;
     public GameObject LoginPanel, SignUpPanel;
+    public TMP_InputField signUpEmail, signUpUserName, sighUpPWD;
+    public TMP_InputField logInUserName, logInPWD;
+
     // Start is called before the first frame update
     public void Awake()
     {
@@ -23,14 +28,29 @@ public class UIController : MonoBehaviour
     {
         
     }
-    public void SetupScreen(int _screenIndex)
+    public void SetupScreen(Screens _screenIndex)
     {
-
+        switch (_screenIndex)
+        {
+            case Screens.SplashScreen:
+                break;
+            case Screens.SignUpScreen:
+                break;
+            case Screens.LoginScreen:
+                break;
+            case Screens.LoadingScreen:
+                break;
+            default:
+                break;
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Login()
     {
-        
+        WebServicesManager.Instance.LoginUser(logInUserName.text, logInPWD.text);
+    }
+    public void SignUp()
+    {
+        WebServicesManager.Instance.ResgisterUser(signUpUserName.text, signUpEmail.text, sighUpPWD.text);
     }
 }
