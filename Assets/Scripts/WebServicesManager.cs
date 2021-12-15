@@ -59,23 +59,15 @@ public class WebServicesManager : MonoBehaviour {
 	IEnumerator _ResgisterUser(string _email,string _userName,string _password)
     {
 		string url = baseURL+ "signup";
+        Debug.LogError(_userName + " email ----" + _email);
 
-		WWWForm data = new WWWForm();
-		data.AddField ("first_name", _userName);
-        data.AddField("last_name", "zia");
+        WWWForm data = new WWWForm();
+		data.AddField ("name", _userName);
+        //data.AddField("last_name", "zia");
         data.AddField("email",_email);
 		data.AddField("password",_password);
 		data.AddField("platform",platform);
 		data.AddField("deviceId",deviceID);
-
-		//string JSONStr = easy.JSON.JsonEncode(data);
-		//Debug.Log ("RegisterGuest JSON QUERY PARAMETERS = " + JSONStr);
-		//byte[] pData = Encoding.ASCII.GetBytes(JSONStr);
-
-		//Dictionary<string,string> headers = new Dictionary<string, string>();
-		//headers.Add("Content-Type", contentType);
-		////headers.Add("Authorization", authorization);
-		//headers.Add("Accept", contentType);
 
 		WWW www = new WWW (url, data);
 		yield return www;
@@ -126,7 +118,6 @@ public class WebServicesManager : MonoBehaviour {
 			data.AddField ("override",_override.ToString());
 		}
 
-        //string JSONStr = easy.JSON.JsonEncode(data);
         //Debug.Log ("Login JSON QUERY PARAMETERS = " + JSONStr);
         //byte[] pData = Encoding.ASCII.GetBytes(JSONStr);
        // Hashtable _headers = new Hashtable();
@@ -137,21 +128,34 @@ public class WebServicesManager : MonoBehaviour {
 
 		WWW www = new WWW (url, data);
 		yield return www;
+        Debug.Log(www.text);
+        Hashtable responceData = (Hashtable)easy.JSON.JsonDecode(www.text);
+        Debug.Log(responceData.Values.ToString());
+        Debug.Log((responceData["error"] as string));
 
-		if (!string.IsNullOrEmpty(www.error)){
-			Debug.LogError("Login Error" + www.error);
-			if(loginUserFailed != null){
-				loginUserFailed (www.error);
-			}
-		}
-		else{
-			Debug.Log ("Login RESPONCE = " + www.text);
-			if(loginUserComplete != null){
-				loginUserComplete (www.text);
-			}
-		}
+        if (bool.TryParse((responceData["error"] as string), out bool _status))
+        {
+            Debug.Log(_status);
+        }
 
-		yield return null;
+        if (!string.IsNullOrEmpty(www.error))
+        {
+            Debug.LogError("Login Error" + www.error);
+            if (loginUserFailed != null)
+            {
+                loginUserFailed(www.error);
+            }
+        }
+        else
+        {
+            Debug.Log("Login RESPONCE = " + www.text);
+            if (loginUserComplete != null)
+            {
+                loginUserComplete(www.text);
+            }
+        }
+
+        yield return null;
 	}
 	#endregion
 }

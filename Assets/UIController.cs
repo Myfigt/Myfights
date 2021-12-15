@@ -51,6 +51,6 @@ public class UIController : MonoBehaviour
     }
     public void SignUp()
     {
-        WebServicesManager.Instance.ResgisterUser(signUpUserName.text, signUpEmail.text, sighUpPWD.text);
+        WebServicesManager.Instance.ResgisterUser(signUpEmail.text ,signUpUserName.text,  sighUpPWD.text);
     }
 }
