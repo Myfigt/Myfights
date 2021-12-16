@@ -71,23 +71,51 @@ public class WebServicesManager : MonoBehaviour {
 
 		WWW www = new WWW (url, data);
 		yield return www;
+        Debug.Log("ResgisterUser RESPONCE = " + www.text);
+        Hashtable responceData = (Hashtable)easy.JSON.JsonDecode(www.text);
+        foreach (DictionaryEntry item in responceData)
+        {
+            if (item.Key.ToString() == "error")
+            {
+                if (bool.TryParse(item.Value.ToString(), out bool _error))
+                {
+                    if (_error)
+                    {
+                        foreach (DictionaryEntry result in responceData)
+                        {
+                            if (result.Key.ToString() == "message")
+                            {
 
-		if (!string.IsNullOrEmpty(www.error))
-        {
-			Debug.LogError("ResgisterUser Error" + www.error);
-			if(registerUserFailed != null)
-            {
-				registerUserFailed (www.error);
-			}
-		}
-		else
-        {
-			Debug.Log ("ResgisterUser RESPONCE = " + www.text);
-			if(registerUserComplete != null)
-            {
-				registerUserComplete (www.text);
-			}
-		}
+                                if (registerUserComplete != null)
+                                {
+                                    registerUserComplete(result.Value.ToString());
+                                }
+                                break;
+                            }
+
+                        }
+                    }
+                    else
+                    {
+                        Debug.Log("ResgisterUser success = ");
+                        foreach (DictionaryEntry result in responceData)
+                        {
+                            if (result.Key.ToString() == "message")
+                            {
+
+                                if (registerUserComplete != null)
+                                {
+                                    registerUserComplete(result.Value.ToString());
+                                }
+                                break;
+                            }
+
+                        }
+                        
+                    }
+                }
+            }
+        }
 
 		yield return null;
 	}
@@ -118,43 +146,55 @@ public class WebServicesManager : MonoBehaviour {
 			data.AddField ("override",_override.ToString());
 		}
 
-        //Debug.Log ("Login JSON QUERY PARAMETERS = " + JSONStr);
-        //byte[] pData = Encoding.ASCII.GetBytes(JSONStr);
-       // Hashtable _headers = new Hashtable();
-  		//Dictionary<string,string> headers = new Dictionary<string, string>();
-	//	_headers.Add("Content-Type", contentType);
-		//headers.Add("Authorization", authorization);
-	//	_headers.Add("Accept", contentType);
 
 		WWW www = new WWW (url, data);
 		yield return www;
-        Debug.Log(www.text);
         Hashtable responceData = (Hashtable)easy.JSON.JsonDecode(www.text);
-        Debug.Log(responceData.Values.ToString());
-        Debug.Log((responceData["error"] as string));
-
-        if (bool.TryParse((responceData["error"] as string), out bool _status))
+        foreach (DictionaryEntry item in responceData)
         {
-            Debug.Log(_status);
-        }
-
-        if (!string.IsNullOrEmpty(www.error))
-        {
-            Debug.LogError("Login Error" + www.error);
-            if (loginUserFailed != null)
+            if (item.Key.ToString() == "error")
             {
-                loginUserFailed(www.error);
+                if (bool.TryParse(item.Value.ToString() , out bool _error))
+                {
+                    if (!_error)
+                    {
+                        foreach (DictionaryEntry result in responceData)
+                        {
+                            if (result.Key.ToString() == "data")
+                            {
+                                Hashtable da = (Hashtable)result.Value;
+                                foreach (DictionaryEntry entry in da)
+                                {
+                                    Debug.Log(entry.Key);
+                                }
+                                Debug.Log(result.Value.ToString());
+                                if (loginUserComplete != null)
+                                    loginUserComplete(easy.JSON.JsonEncode(result.Value));
+                                break;
+                            }
+                        }
+                       
+                    }
+                    else
+                    {
+                        foreach (DictionaryEntry result in responceData)
+                        {
+                            if (result.Key.ToString() == "message")
+                            {
+ 
+                                if (loginUserFailed != null)
+                                    loginUserFailed(result.Value.ToString());
+                                break;
+                            }
+                          
+                        }
+                       
+                    }
+                    
+                }
+                
             }
         }
-        else
-        {
-            Debug.Log("Login RESPONCE = " + www.text);
-            if (loginUserComplete != null)
-            {
-                loginUserComplete(www.text);
-            }
-        }
-
         yield return null;
 	}
 	#endregion
