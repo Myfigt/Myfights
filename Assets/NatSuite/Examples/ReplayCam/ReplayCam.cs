@@ -30,15 +30,29 @@ namespace NatSuite.Examples {
             microphoneSource.loop = true;
             microphoneSource.bypassEffects =
             microphoneSource.bypassListenerEffects = false;
-            microphoneSource.clip = Microphone.Start(null, true, 10, AudioSettings.outputSampleRate);
+#if UNITY_ANDROID
+                 microphoneSource.clip = Microphone.Start(null, true, 10, AudioSettings.outputSampleRate);
             yield return new WaitUntil(() => Microphone.GetPosition(null) > 0);
+#elif UNITY_IOS
+                  microphoneSource.clip = Microphone.Start(null, true, 10, AudioSettings.outputSampleRate);
+            yield return new WaitUntil(() => Microphone.GetPosition(null) > 0);
+#elif UNITY_STANDALONE_OSX
+                microphoneSource.clip = Microphone.Start(null, true, 10, AudioSettings.outputSampleRate);
+            yield return new WaitUntil(() => Microphone.GetPosition(null) > 0);
+#elif UNITY_STANDALONE_WIN
+                 microphoneSource.clip = Microphone.Start(null, true, 10, AudioSettings.outputSampleRate);
+            yield return new WaitUntil(() => Microphone.GetPosition(null) > 0);
+#else
+            yield return null;
+#endif
+
             microphoneSource.Play();
         }
 
         private void OnDestroy () {
             // Stop microphone
             microphoneSource.Stop();
-            Microphone.End(null);
+            //Microphone.End(null);
         }
 
         public void StartRecording () {
@@ -64,7 +78,16 @@ namespace NatSuite.Examples {
             var path = await recorder.FinishWriting();
             // Playback recording
             Debug.Log($"Saved recording to: {path}");
-            Handheld.PlayFullScreenMovie($"file://{path}");
+#if UNITY_ANDROID
+              Handheld.PlayFullScreenMovie($"file://{path}");
+#elif UNITY_IOS
+                Handheld.PlayFullScreenMovie($"file://{path}");
+#elif UNITY_STANDALONE_OSX
+                 Handheld.PlayFullScreenMovie($"file://{path}");
+#elif UNITY_STANDALONE_WIN
+                 Handheld.PlayFullScreenMovie($"file://{path}");
+#endif
+
         }
     }
 }

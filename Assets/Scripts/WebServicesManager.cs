@@ -7,8 +7,8 @@ using UnityEngine.Networking;
 
 public class WebServicesManager : MonoBehaviour {
 	#region Constants
-	public const string baseURL = "http://44.198.255.36/demo/api/";
-	public const string authorization = "Basic cm9vdDpyb290MTIzIw==";
+	public const string baseURL = "http://44.198.255.36:8000/api/";
+	public string authorization = "Token b106701ab5fb114ced11845e6ee25469739d12a765cff141cc1a53a1ff7256d0";
 	public const string contentType = "application/json";
 	public string deviceID;
 	public string platform;
@@ -135,7 +135,7 @@ public class WebServicesManager : MonoBehaviour {
 		string url = baseURL+"login";
 
         WWWForm data = new WWWForm();
-        data.AddField("email", _email);
+        data.AddField("username", _email);
         data.AddField("password", _password);
         data.AddField("platform", platform);
         data.AddField("deviceId", deviceID);
@@ -172,6 +172,10 @@ public class WebServicesManager : MonoBehaviour {
                                     loginUserComplete(easy.JSON.JsonEncode(result.Value));
                                 break;
                             }
+                            if (result.Key.ToString()== "access_token")
+                            {
+                                authorization = "Token " + result.Value.ToString();
+                            }
                         }
                        
                     }
@@ -197,5 +201,96 @@ public class WebServicesManager : MonoBehaviour {
         }
         yield return null;
 	}
-	#endregion
+    #endregion
+
+
+    #region GetFighters
+    public delegate void OnFetchFightersComplete(string responce);
+    public delegate void OnFetchFightersFailed(string error);
+    public static event OnFetchFightersComplete FetchFightersComplete;
+    public static event OnFetchFightersFailed FetchFightersFailed;
+
+    public void FetchFighter()
+    {
+        StartCoroutine(_FetchFighters());
+    }
+
+    IEnumerator _FetchFighters()
+    {
+        string url = baseURL + "get_fighters";
+
+        //Dictionary<string, string> headers = new Dictionary<string, string>();
+        //headers.Add("Content-Type", contentType);
+        //headers.Add("Authorization", authorization);
+        //headers.Add("Accept", contentType);
+        //Hashtable data = new Hashtable();
+        //data.Add("email", "test@majid.com");
+        //string JSONStr = easy.JSON.JsonEncode(data);
+        //byte[] pData = Encoding.ASCII.GetBytes(JSONStr);
+       
+        WWW www = new WWW(url);
+
+        yield return www;
+        Hashtable responceData = (Hashtable)easy.JSON.JsonDecode(www.text);
+        bool isScuccess = false;
+        foreach (DictionaryEntry item in responceData)
+        {
+            if (item.Key.ToString() == "results")
+            {
+                FetchFightersComplete(easy.JSON.JsonEncode(item.Value));
+                isScuccess = true;
+            }
+        }
+        if (!isScuccess)
+        {
+            FetchFightersFailed("Faild to find fighters");
+        }
+        yield return null;
+    }
+    #endregion
+
+    #region GetVideos
+    public delegate void OnFetchVideosComplete(string responce);
+    public delegate void OnFetchVideosFailed(string error);
+    public static event OnFetchFightersComplete FetchVideosComplete;
+    public static event OnFetchFightersFailed FetchVideosFailed;
+
+    public void FetchVideos(int _fighterID , int _page)
+    {
+        StartCoroutine(_FetchVideos(_fighterID,_page));
+    }
+
+    IEnumerator _FetchVideos(int _fighterID, int _page)
+    {
+
+        string url = baseURL + "fighter_videos/"+_fighterID+"?Page="+_page;
+        //Dictionary<string, string> headers = new Dictionary<string, string>();
+        //headers.Add("Content-Type", contentType);
+        //headers.Add("Authorization", authorization);
+        //headers.Add("Accept", contentType);
+        //Hashtable data = new Hashtable();
+        //data.Add("email", "test@majid.com");
+        //string JSONStr = easy.JSON.JsonEncode(data);
+        //byte[] pData = Encoding.ASCII.GetBytes(JSONStr);
+
+        WWW www = new WWW(url);
+
+        yield return www;
+        Hashtable responceData = (Hashtable)easy.JSON.JsonDecode(www.text);
+        bool isScuccess = false;
+        foreach (DictionaryEntry item in responceData)
+        {
+            if (item.Key.ToString() == "results")
+            {
+                FetchVideosComplete(easy.JSON.JsonEncode(item.Value));
+                isScuccess = true;
+            }
+        }
+        if (!isScuccess)
+        {
+            FetchVideosFailed("Faild to find fighters");
+        }
+        yield return null;
+    }
+    #endregion
 }
