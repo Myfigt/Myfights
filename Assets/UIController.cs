@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 using Assets.Scripts;
 using System;
+using UnityEngine.Video;
 
 public class UIController : MonoBehaviour
 {
@@ -20,6 +21,8 @@ public class UIController : MonoBehaviour
         FighterSelection = 6,
         Figher_VideoSelection = 7,
         VideoPlayerScreen = 8,
+        ActionCardRecording = 9,
+        ActionCardReview = 10,
     }
     public Screens _CurrentScreen = Screens.HomeScreen;
     public GameObject[] MyScreens;
@@ -35,10 +38,39 @@ public class UIController : MonoBehaviour
     VideosListManager _VideoSelection;
     [SerializeField]
     VideoPlayerManager _VideoPlayer;
+    [SerializeField]
+    BlazePoseSample _BPS;
+    [SerializeField]
+    VideoPlayer _actionCardPreview;
+    [SerializeField]
+    VideoPlayer _masterCardPreview;
     // Start is called before the first frame update
+    #region Initializers
+    private static UIController instance = null;
+    public static UIController Instance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                GameObject Manager = new GameObject();
+                DontDestroyOnLoad(Manager);
+                instance = Manager.AddComponent<UIController>();
+                return instance;
+            }
+            else
+            {
+                return instance;
+            }
+        }
+    }
+
+    
+    #endregion
     private void Start()
     {
         //SetupScreen(Screens.HomeScreen);
+        instance = this;
         SetupScreen(Screens.SplashScreen);
     }
     void OnEnable()
@@ -51,12 +83,14 @@ public class UIController : MonoBehaviour
         WebServicesManager.FetchFightersFailed += OnFetchAllFighterFailed;
         WebServicesManager.FetchVideosComplete += OnFetchVideosComplete;
         WebServicesManager.FetchVideosFailed += OnFetchVideosFailed;
+        WebServicesManager.UploadVideosComplete += OnVideoUploadComplete;
+        WebServicesManager.UploadVideosFailed += OnVideoUplaodFailed;
     }
 
     internal void PlayVideo(string path)
     {
-        _VideoPlayer.Initialize(path);
         SetupScreen(Screens.VideoPlayerScreen);
+        _VideoPlayer.Initialize(path);
     }
 
     void OnDisable()
@@ -69,9 +103,12 @@ public class UIController : MonoBehaviour
         WebServicesManager.FetchFightersFailed -= OnFetchAllFighterFailed;
         WebServicesManager.FetchVideosComplete -= OnFetchVideosComplete;
         WebServicesManager.FetchVideosFailed -= OnFetchVideosFailed;
+        WebServicesManager.UploadVideosComplete -= OnVideoUploadComplete;
+        WebServicesManager.UploadVideosFailed -= OnVideoUplaodFailed;
     }
     public void SetupScreen(Screens _screenIndex = Screens.CurrentScreen)
     {
+        Debug.Log("Setting Up Screen " + _screenIndex.ToString());
         
         if (_screenIndex == Screens.CurrentScreen)
         {
@@ -104,6 +141,18 @@ public class UIController : MonoBehaviour
             SignUpPanel.SetActive(true);
             LoginPanel.SetActive(false);
         }
+        if (_CurrentScreen == Screens.ActionCardRecording)
+        {
+            //_BPS.gameObject.SetActive(true);
+            _masterCardPreview.url = _VideoPlayer._player.url;
+            _masterCardPreview.Play();
+            _masterCardPreview.transform.parent.gameObject.SetActive(true);
+        }
+        else
+        {
+            _BPS.gameObject.SetActive(false);
+            _masterCardPreview.transform.parent.gameObject.SetActive(false);
+        }
     }
     public void Update()
     {
@@ -131,7 +180,6 @@ public class UIController : MonoBehaviour
         Debug.Log("UIController --" + data);
 
         StartCoroutine(ShowStatus(loginStatusText, "logged in successfully", Screens.ColorSelectionScreen));
-
     }
     void OnLoginFailed(string data)
     {
@@ -156,19 +204,21 @@ public class UIController : MonoBehaviour
     }
     void OnFetchAllFighterComplete(string data)
     {
+        Debug.Log("Recieved data " + data);
         List<Fighter> fighters = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Fighter>>(data);
+        Debug.Log("Deserializing done");
         _fighterSelection.Initialize(fighters);
         SetupScreen(Screens.FighterSelection);
     }
     void OnFetchAllFighterFailed(string data)
     {
-
+        Debug.Log(data);
     }
 
     void OnFetchVideosComplete(string data)
     {
         List<Fighter_Videos> fighters = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Fighter_Videos>>(data);
-        _VideoSelection.Initialize(fighters);
+        _VideoSelection.Initialize(fighters,_fighterSelection.SelectefFighter);
         SetupScreen(Screens.Figher_VideoSelection);
     }
     void OnFetchVideosFailed(string data)
@@ -195,5 +245,27 @@ public class UIController : MonoBehaviour
     {
         SetupScreen(Screens.HomeScreen);
     }
+    public void RecordActionCard()
+    {
+        SetupScreen(Screens.ActionCardRecording);
+    }
 
+    public void GoToActionCardReview(string videoPath)
+    {
+        SetupScreen(Screens.ActionCardReview);
+        _actionCardPreview.url = videoPath;
+        _actionCardPreview.Play();
+    }
+    public void OnUploadVideoButtonClick()
+    {
+        WebServicesManager.Instance.UploadVideos(_VideoSelection.SelectedVideo.sub_type, _actionCardPreview.url, _fighterSelection.SelectefFighter.id, 1);
+    }
+    public void OnVideoUploadComplete(string data)
+    {
+        Debug.LogError("Video Uploaded successfully");
+    }
+    public void OnVideoUplaodFailed(string data)
+    {
+        Debug.LogError(data);
+    }
 }

@@ -11,6 +11,7 @@ public class FighterListManager : MonoBehaviour
     Transform _content;
     List<Fighter> MyFighters = null;
 
+    public Fighter SelectefFighter;
     // Start is called before the first frame update
     void Start()
     {
@@ -47,7 +48,10 @@ public class FighterListManager : MonoBehaviour
         {
             if (item.Name == index.text)
             {
+                
+                SelectefFighter = item;
                 WebServicesManager.Instance.FetchVideos(item.id, 1);
+                break;
             }
         }
     }

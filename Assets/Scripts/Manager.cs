@@ -7,8 +7,7 @@ using System;
 using UnityEngine.Video;
 using System.IO;
 using UnityEngine.SceneManagement;
-using AWSSDK;
-using Amazon;
+
 public class Manager : MonoBehaviour
 
 {
@@ -22,21 +21,15 @@ public class Manager : MonoBehaviour
     // Start is called before the first frame update
     private void Awake()
     {
-        UnityInitializer.AttachToGameObject(this.gameObject);
         instance = this;
     }
     void Start()
-    {/*
-      video.url= Path.Combine(Application.streamingAssetsPath, "L Cross Front.mp4");
-        video2.url = Path.Combine(Application.streamingAssetsPath, "L Cross Front.mp4");
-        video.Play();
-        video2.Play();
-        */
+    {
+      
         VideoClip clip = Resources.Load<VideoClip>("pexels-alena-darmel-7320034") as VideoClip;
         video.clip = clip;
-        //video2.clip = clip;
         video.Play();
-        //video2.Play();
+       
     }
     public void enablePose(bool check)
     {

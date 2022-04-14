@@ -70,9 +70,10 @@ namespace NatSuite.Examples {
         }
 
         public async void StopRecording () {
-            // Mute microphone
+            //Mute microphone
             microphoneSource.mute = true;
             // Stop recording
+
             audioInput?.Dispose();
             cameraInput.Dispose();
             var path = await recorder.FinishWriting();
@@ -87,7 +88,7 @@ namespace NatSuite.Examples {
 #elif UNITY_STANDALONE_WIN
                  Handheld.PlayFullScreenMovie($"file://{path}");
 #endif
-
+            UIController.Instance.GoToActionCardReview(path);
         }
     }
 }

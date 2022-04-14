@@ -55,13 +55,14 @@ public sealed class BlazePoseSample : MonoBehaviour
         // Init model
         poseDetect = new PoseDetect(poseDetectionModelFile);
         poseLandmark = new PoseLandmarkDetect(poseLandmarkModelFile);
-
+        Debug.Log("About to initialize WebCamUtil ");
         // Init camera 
         string cameraName = WebCamUtil.FindName(new WebCamUtil.PreferSpec()
         {
             isFrontFacing = false,
             kind = WebCamKind.WideAngle,
         });
+        Debug.Log("Camera Recieved ");
         webcamTexture = new WebCamTexture(cameraName, 1280, 720, 30);
         cameraView.texture = webcamTexture;
         webcamTexture.Play();
@@ -381,7 +382,7 @@ public sealed class BlazePoseSample : MonoBehaviour
         {
             Vector3 p = mtx.MultiplyPoint3x4((Vector3)joints[i]);
             p = Vector3.Scale(p, scale) + offset;
-            p = camera.ViewportToWorldPoint(p);
+            p = Camera.main.ViewportToWorldPoint(p);
 
             // w is visibility
             worldJoints[i] = new Vector4(p.x, p.y, p.z, joints[i].w);

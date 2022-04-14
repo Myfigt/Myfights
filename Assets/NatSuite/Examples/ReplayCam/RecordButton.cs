@@ -34,12 +34,14 @@ namespace NatSuite.Examples.Components {
 		void IPointerDownHandler.OnPointerDown (PointerEventData eventData) {
 			// Start counting
 			StartCoroutine(Countdown());
+            //WebCam.instance.StartRecording();
 		}
 
 		void IPointerUpHandler.OnPointerUp (PointerEventData eventData) {
 			// Reset pressed
 			pressed = false;
-		}
+           // WebCam.instance.StopRecording() ;
+        }
 
 		private IEnumerator Countdown () {
 			pressed = true;

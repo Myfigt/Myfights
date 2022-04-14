@@ -4,10 +4,11 @@ using System;
 using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
+using System.IO;
 
 public class WebServicesManager : MonoBehaviour {
 	#region Constants
-	public const string baseURL = "http://44.198.255.36:8000/api/";
+	public const string baseURL = "http://54.66.142.35:8000/api/";
 	public string authorization = "Token b106701ab5fb114ced11845e6ee25469739d12a765cff141cc1a53a1ff7256d0";
 	public const string contentType = "application/json";
 	public string deviceID;
@@ -289,6 +290,54 @@ public class WebServicesManager : MonoBehaviour {
         if (!isScuccess)
         {
             FetchVideosFailed("Faild to find fighters");
+        }
+        yield return null;
+    }
+    #endregion
+
+    #region UploadVideo
+    public delegate void OnUploadVideoComplete(string responce);
+    public delegate void OnUploadVideoFailed(string error);
+    public static event OnUploadVideoComplete UploadVideosComplete;
+    public static event OnUploadVideoFailed UploadVideosFailed;
+
+    public void UploadVideos(string _title, string _path, int _figherVideoID, int _fighterID)
+    {
+        StartCoroutine(_UploadVideos(_title, _path,_figherVideoID,_fighterID));
+    }
+
+    IEnumerator _UploadVideos( string _title, string _path,  int _figherVideoID, int _fighterID)
+    {
+
+        string url = baseURL + "upload_video";
+        WWWForm data = new WWWForm();
+        data.AddField("title", _title);
+        data.AddBinaryData("file_name", File.ReadAllBytes(_path));
+        data.AddField("figher_video_id", _figherVideoID);
+        data.AddField("player_id", _fighterID);
+
+        WWW www = new WWW(url,data);
+
+        yield return www;
+        Hashtable responceData = (Hashtable)easy.JSON.JsonDecode(www.text);
+       
+        bool isScuccess = false;
+        foreach (DictionaryEntry item in responceData)
+        {
+            if (item.Key.ToString() == "results")
+            {
+                UploadVideosComplete(easy.JSON.JsonEncode(item.Value));
+                isScuccess = true;
+            }
+        }
+        if (www.responseHeaders["STATUS"].Contains("201"))
+        {
+             isScuccess = true;
+            UploadVideosComplete("Video Uploaded");
+        }
+        if (!isScuccess)
+        {
+            UploadVideosFailed("Failed to upload video");
         }
         yield return null;
     }

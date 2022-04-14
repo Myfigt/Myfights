@@ -35,6 +35,7 @@ namespace NatSuite.Examples {
         string myCamera = "BACK";
         WebCamTexture frontCameraTexture;
         WebCamTexture backCameraTexture;
+        [SerializeField]
         WebCamTexture activeCameraTexture;
         private MP4Recorder recorder;
         private IClock clock;
@@ -54,9 +55,10 @@ namespace NatSuite.Examples {
         }
         public void StartRecording () {
             // Start recording
+            Debug.LogError(instance.gameObject.name);
             clock = new RealtimeClock();
-            recorder = new MP4Recorder(activeCameraTexture.width, activeCameraTexture.height, 30);
-            pixelBuffer = activeCameraTexture.GetPixels32();
+            recorder = new MP4Recorder(600, 960, 30);
+            //pixelBuffer = activeCameraTexture.GetPixels32();
             recording = true;
             deactivescroll();
         }
@@ -90,8 +92,8 @@ namespace NatSuite.Examples {
             Debug.Log($"Saved recording to: {path}");
             clippath = path;
             recordbutton.SetActive(false);
-            Manager.instance.recordedplayer.gameObject.SetActive(true);
-            Manager.instance.playvideo(path);
+           // Manager.instance.recordedplayer.gameObject.SetActive(true);
+            //Manager.instance.playvideo(path);
 
          
           //  Handheld.PlayFullScreenMovie($"file://{path}",Color.black,FullScreenMovieControlMode.Full);
