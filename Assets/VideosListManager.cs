@@ -10,16 +10,16 @@ public class VideosListManager : MonoBehaviour
     GameObject FighterTemplateObject;
     [SerializeField]
     Transform _content;
-    List<Fighter_Videos> MyVideos = null;
+    List<ActionCard> MyVideos = null;
     [SerializeField]
     TMPro.TMP_Text FighterNameFeild;
     // Start is called before the first frame update
-    public Fighter_Videos SelectedVideo = null;
+    public ActionCard SelectedVideo = null;
     void Start()
     {
 
     }
-    public void Initialize(List<Fighter_Videos> _allFighters , Fighter _selectedFighter = null)
+    public void Initialize(List<ActionCard> _allFighters , Fighter _selectedFighter = null)
     {
         for (int i = 0; i < _content.childCount; i++)
         {

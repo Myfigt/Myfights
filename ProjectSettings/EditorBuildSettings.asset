@@ -5,13 +5,13 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
-    path: Assets/NatSuite/Examples/WebCam/WebCam.unity
+  - enabled: 0
+    path: Assets/NatSuite/Examples/WebCam/Main.unity
     guid: 6744fb9fab033e9409f8c5007ebc187a
   - enabled: 0
     path: Assets/Samples/BlazePose/BlazePose.unity
     guid: 8f257a05fe9d5784cbd4722bdb076591
-  - enabled: 0
+  - enabled: 1
     path: Assets/NatSuite/Examples/ReplayCam/ReplayCam.unity
     guid: d3534cd9262b64c779e2d78c6ee5a5b1
   m_configObjects: {}

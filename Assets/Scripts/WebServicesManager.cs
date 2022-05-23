@@ -33,6 +33,10 @@ public class WebServicesManager : MonoBehaviour {
 		DontDestroyOnLoad (WebServices);
 		instance = WebServices.AddComponent <WebServicesManager>();
 		instance.deviceID = SystemInfo.deviceUniqueIdentifier;
+        if (PlayerPrefs.HasKey("access_token"))
+        {
+            instance.authorization = PlayerPrefs.GetString("access_token");
+        }
 		if(Application.platform == RuntimePlatform.IPhonePlayer){
 			instance.platform = "iOS";
 		}
@@ -140,8 +144,9 @@ public class WebServicesManager : MonoBehaviour {
         data.AddField("password", _password);
         data.AddField("platform", platform);
         data.AddField("deviceId", deviceID);
-        //override flag for multi device login
-        _override = true;
+        data.AddField("firebase_token", "234987039485"); 
+         //override flag for multi device login
+         _override = true;
 
 		if(_override){
 			data.AddField ("override",_override.ToString());
@@ -170,7 +175,10 @@ public class WebServicesManager : MonoBehaviour {
                                 }
                                 Debug.Log(result.Value.ToString());
                                 if (loginUserComplete != null)
+                                {
+                                    PlayerPrefs.SetString("access_token", "Token "+ responceData["access_token"].ToString());
                                     loginUserComplete(easy.JSON.JsonEncode(result.Value));
+                                }
                                 break;
                             }
                             if (result.Key.ToString()== "access_token")
@@ -203,7 +211,6 @@ public class WebServicesManager : MonoBehaviour {
         yield return null;
 	}
     #endregion
-
 
     #region GetFighters
     public delegate void OnFetchFightersComplete(string responce);
@@ -295,7 +302,7 @@ public class WebServicesManager : MonoBehaviour {
     }
     #endregion
 
-    #region UploadVideo
+    #region CreateActionCard
     public delegate void OnUploadVideoComplete(string responce);
     public delegate void OnUploadVideoFailed(string error);
     public static event OnUploadVideoComplete UploadVideosComplete;
@@ -342,4 +349,95 @@ public class WebServicesManager : MonoBehaviour {
         yield return null;
     }
     #endregion
+
+    #region GetFightStrategy
+    public delegate void OnFetchStrategyComplete(string responce);
+    public delegate void OnFetchStrategyFailed(string error);
+    public static event OnFetchStrategyComplete FetchStrategyComplete;
+    public static event OnFetchStrategyFailed FetchStrategyFailed;
+
+    public void FetchStrategies(int _fighterID, int _page)
+    {
+        StartCoroutine(_FetchStrategies(_fighterID, _page));
+    }
+
+    IEnumerator _FetchStrategies(int _fighterID, int _page)
+    {
+
+        string url = baseURL + "list_fight_strategy/" + _fighterID ;
+        //Dictionary<string, string> headers = new Dictionary<string, string>();
+        //headers.Add("Content-Type", contentType);
+        //headers.Add("Authorization", authorization);
+        //headers.Add("Accept", contentType);
+        //Hashtable data = new Hashtable();
+        //data.Add("email", "test@majid.com");
+        //string JSONStr = easy.JSON.JsonEncode(data);
+        //byte[] pData = Encoding.ASCII.GetBytes(JSONStr);
+
+        WWW www = new WWW(url);
+
+        yield return www;
+        Hashtable responceData = (Hashtable)easy.JSON.JsonDecode(www.text);
+        bool isScuccess = false;
+        foreach (DictionaryEntry item in responceData)
+        {
+            if (item.Key.ToString() == "results")
+            {
+                FetchVideosComplete(easy.JSON.JsonEncode(item.Value));
+                isScuccess = true;
+            }
+        }
+        if (!isScuccess)
+        {
+            FetchVideosFailed("Faild to find fighters");
+        }
+        yield return null;
+    }
+    #endregion
+
+    #region GetUserProfile
+    public delegate void OnFetchUserComplete(string responce);
+    public delegate void OnFetchUserFailed(string error);
+    public static event OnFetchUserComplete FetchUserComplete;
+    public static event OnFetchUserFailed FetchUserFailed;
+
+    public void FetchUser()
+    {
+        StartCoroutine(_FetchUser());
+    }
+
+    IEnumerator _FetchUser()
+    {
+
+        string url = baseURL + "user_profile";
+        Dictionary<string, string> headers = new Dictionary<string, string>();
+        headers.Add("Content-Type", contentType);
+        headers.Add("Authorization", "Token "+authorization);
+        headers.Add("Accept", contentType);
+        //Hashtable data = new Hashtable();
+        //data.Add("email", "test@majid.com");
+        string JSONStr = easy.JSON.JsonEncode(string.Empty);
+        byte[] pData = Encoding.ASCII.GetBytes(JSONStr);
+
+        WWW www = new WWW(url,null,headers);
+
+        yield return www;
+        Hashtable responceData = (Hashtable)easy.JSON.JsonDecode(www.text);
+        bool isScuccess = false;
+        foreach (DictionaryEntry item in responceData)
+        {
+            if (item.Key.ToString() == "results")
+            {
+                FetchVideosComplete(easy.JSON.JsonEncode(item.Value));
+                isScuccess = true;
+            }
+        }
+        if (!isScuccess)
+        {
+            FetchVideosFailed("Faild to find fighters");
+        }
+        yield return null;
+    }
+    #endregion
+
 }

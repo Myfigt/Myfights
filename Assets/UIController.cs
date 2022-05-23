@@ -6,9 +6,21 @@ using TMPro;
 using Assets.Scripts;
 using System;
 using UnityEngine.Video;
+using Facebook.Unity;
 
 public class UIController : MonoBehaviour
 {
+    enum Scope
+    {
+        PublicProfile = 0b_0000_0001,
+        UserFriends = 0b_0000_0010,
+        UserBirthday = 0b_0000_0100,
+        UserAgeRange = 0b_0000_1000,
+        PublishActions = 0b_0001_0000,
+        UserLocation = 0b_0010_0000,
+        UserHometown = 0b_0100_0000,
+        UserGender = 0b_1000_0000,
+    };
     public enum Screens
     {
         CurrentScreen = -1,
@@ -23,6 +35,7 @@ public class UIController : MonoBehaviour
         VideoPlayerScreen = 8,
         ActionCardRecording = 9,
         ActionCardReview = 10,
+        CreateFightStrategy = 11,
     }
     public Screens _CurrentScreen = Screens.HomeScreen;
     public GameObject[] MyScreens;
@@ -72,6 +85,7 @@ public class UIController : MonoBehaviour
         //SetupScreen(Screens.HomeScreen);
         instance = this;
         SetupScreen(Screens.SplashScreen);
+        FB.Init(this.OnInitComplete, this.OnHideUnity);
     }
     void OnEnable()
     {
@@ -141,6 +155,10 @@ public class UIController : MonoBehaviour
             SignUpPanel.SetActive(true);
             LoginPanel.SetActive(false);
         }
+        if (_CurrentScreen == Screens.HomeScreen)
+        {
+            WebServicesManager.Instance.FetchUser();
+        }
         if (_CurrentScreen == Screens.ActionCardRecording)
         {
             //_BPS.gameObject.SetActive(true);
@@ -160,6 +178,11 @@ public class UIController : MonoBehaviour
         {
             if (timer <= 0)
             {
+                if (PlayerPrefs.HasKey("access_token"))
+                {
+                    SetupScreen(Screens.HomeScreen);
+                }
+                else
                 SetupScreen(Screens.LoginScreen);
                 
             }
@@ -170,7 +193,151 @@ public class UIController : MonoBehaviour
         }
     }
 
+    private void OnInitComplete()
+    {
+        
+    }
 
+    private void OnHideUnity(bool isGameShown)
+    {
+        
+    }
+    public void LoginWithFB()
+    {
+        this.CallFBLogin(LoginTracking.LIMITED, Scope.PublicProfile | Scope.UserFriends);
+    }
+    private void CallFBLogin(LoginTracking mode, Scope scopemask)
+    {
+        List<string> scopes = new List<string>();
+
+        if ((scopemask & Scope.PublicProfile) > 0)
+        {
+            scopes.Add("public_profile");
+        }
+        if ((scopemask & Scope.UserFriends) > 0)
+        {
+            scopes.Add("user_friends");
+        }
+        if ((scopemask & Scope.UserBirthday) > 0)
+        {
+            scopes.Add("user_birthday");
+        }
+        if ((scopemask & Scope.UserAgeRange) > 0)
+        {
+            scopes.Add("user_age_range");
+        }
+
+        if ((scopemask & Scope.UserLocation) > 0)
+        {
+            scopes.Add("user_location");
+        }
+
+        if ((scopemask & Scope.UserHometown) > 0)
+        {
+            scopes.Add("user_hometown");
+        }
+
+        if ((scopemask & Scope.UserGender) > 0)
+        {
+            scopes.Add("user_gender");
+        }
+
+
+        if (mode == LoginTracking.ENABLED)
+        {
+            FB.Mobile.LoginWithTrackingPreference(LoginTracking.ENABLED, scopes, "classic_nonce123", this.HandleResult);
+        }
+        else // mode == loginTracking.LIMITED
+        {
+            FB.Mobile.LoginWithTrackingPreference(LoginTracking.LIMITED, scopes, "limited_nonce123", this.HandleLimitedLoginResult);
+        }
+
+    }
+    protected void HandleResult(IResult result)
+    {
+        if (result == null)
+        {
+           // this.LastResponse = "Null Response\n";
+            //LogView.AddLog(this.LastResponse);
+            return;
+        }
+
+       // this.LastResponseTexture = null;
+
+        // Some platforms return the empty string instead of null.
+        if (!string.IsNullOrEmpty(result.Error))
+        {
+           // this.Status = "Error - Check log for details";
+           // this.LastResponse = "Error Response:\n" + result.Error;
+        }
+        else if (result.Cancelled)
+        {
+            //this.Status = "Cancelled - Check log for details";
+            //this.LastResponse = "Cancelled Response:\n" + result.RawResult;
+        }
+        else if (!string.IsNullOrEmpty(result.RawResult))
+        {
+           // this.Status = "Success - Check log for details";
+           // this.LastResponse = "Success Response:\n" + result.RawResult;
+        }
+        else
+        {
+            //this.LastResponse = "Empty Response\n";
+        }
+
+       // LogView.AddLog(result.ToString());
+    }
+
+    protected void HandleLimitedLoginResult(IResult result)
+    {
+        if (result == null)
+        {
+          //  this.LastResponse = "Null Response\n";
+          //  LogView.AddLog(this.LastResponse);
+            return;
+        }
+
+        //this.LastResponseTexture = null;
+
+        // Some platforms return the empty string instead of null.
+        if (!string.IsNullOrEmpty(result.Error))
+        {
+           // this.Status = "Error - Check log for details";
+           // this.LastResponse = "Error Response:\n" + result.Error;
+        }
+        else if (result.Cancelled)
+        {
+          //  this.Status = "Cancelled - Check log for details";
+          //  this.LastResponse = "Cancelled Response:\n" + result.RawResult;
+        }
+        else if (!string.IsNullOrEmpty(result.RawResult))
+        {
+          //  this.Status = "Success - Check log for details";
+          //  this.LastResponse = "Success Response:\n" + result.RawResult;
+        }
+        else
+        {
+            //this.LastResponse = "Empty Response\n";
+        }
+
+        String resultSummary = "Limited login results\n\n";
+        var profile = FB.Mobile.CurrentProfile();
+        resultSummary += "name: " + profile.Name + "\n";
+        resultSummary += "id: " + profile.UserID + "\n";
+        resultSummary += "email: " + profile.Email + "\n";
+        resultSummary += "pic URL: " + profile.ImageURL + "\n";
+        resultSummary += "birthday: " + profile.Birthday + "\n";
+        resultSummary += "age range: " + profile.AgeRange + "\n";
+        resultSummary += "first name: " + profile.FirstName + "\n";
+        resultSummary += "middle name: " + profile.MiddleName + "\n";
+        resultSummary += "last name: " + profile.LastName + "\n";
+        resultSummary += "friends: " + String.Join(",", profile.FriendIDs) + "\n";
+        resultSummary += "hometown: " + profile.Hometown?.Name + "\n";
+        resultSummary += "location: " + profile.Location?.Name + "\n";
+        resultSummary += "gender: " + profile.Gender + "\n";
+
+      
+    }
     public void Login()
     {
         WebServicesManager.Instance.LoginUser(logInUserName.text, logInPWD.text);
@@ -217,7 +384,7 @@ public class UIController : MonoBehaviour
 
     void OnFetchVideosComplete(string data)
     {
-        List<Fighter_Videos> fighters = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Fighter_Videos>>(data);
+        List<ActionCard> fighters = Newtonsoft.Json.JsonConvert.DeserializeObject<List<ActionCard>>(data);
         _VideoSelection.Initialize(fighters,_fighterSelection.SelectefFighter);
         SetupScreen(Screens.Figher_VideoSelection);
     }
@@ -267,5 +434,10 @@ public class UIController : MonoBehaviour
     public void OnVideoUplaodFailed(string data)
     {
         Debug.LogError(data);
+    }
+
+    public void OnCreateFightStrategyButtonClick()
+    {
+        SetupScreen(Screens.CreateFightStrategy);
     }
 }
