@@ -356,12 +356,12 @@ public class WebServicesManager : MonoBehaviour {
     public static event OnFetchStrategyComplete FetchStrategyComplete;
     public static event OnFetchStrategyFailed FetchStrategyFailed;
 
-    public void FetchStrategies(int _fighterID, int _page)
+    public void FetchStrategies(int _fighterID)
     {
-        StartCoroutine(_FetchStrategies(_fighterID, _page));
+        StartCoroutine(_FetchStrategies(_fighterID));
     }
 
-    IEnumerator _FetchStrategies(int _fighterID, int _page)
+    IEnumerator _FetchStrategies(int _fighterID)
     {
 
         string url = baseURL + "list_fight_strategy/" + _fighterID ;
@@ -383,13 +383,17 @@ public class WebServicesManager : MonoBehaviour {
         {
             if (item.Key.ToString() == "results")
             {
-                FetchVideosComplete(easy.JSON.JsonEncode(item.Value));
+                foreach (var res in item.Value as ArrayList)
+                {
+                    FetchStrategyComplete(easy.JSON.JsonEncode(res));
+                    break;
+                }
                 isScuccess = true;
             }
         }
         if (!isScuccess)
         {
-            FetchVideosFailed("Faild to find fighters");
+            FetchStrategyFailed("Faild to find fighters");
         }
         yield return null;
     }
@@ -412,7 +416,7 @@ public class WebServicesManager : MonoBehaviour {
         string url = baseURL + "user_profile";
         Dictionary<string, string> headers = new Dictionary<string, string>();
         headers.Add("Content-Type", contentType);
-        headers.Add("Authorization", "Token "+authorization);
+        headers.Add("Authorization", authorization);
         headers.Add("Accept", contentType);
         //Hashtable data = new Hashtable();
         //data.Add("email", "test@majid.com");
@@ -426,18 +430,62 @@ public class WebServicesManager : MonoBehaviour {
         bool isScuccess = false;
         foreach (DictionaryEntry item in responceData)
         {
-            if (item.Key.ToString() == "results")
+            if (item.Key.ToString() == "data")
             {
-                FetchVideosComplete(easy.JSON.JsonEncode(item.Value));
+                FetchUserComplete(easy.JSON.JsonEncode(item.Value));
                 isScuccess = true;
             }
         }
         if (!isScuccess)
         {
-            FetchVideosFailed("Faild to find fighters");
+            FetchUserFailed("Faild to get user profile");
         }
         yield return null;
     }
     #endregion
 
+    #region GetAllActionCards
+    public delegate void OnGetActionCardsComplete(string responce);
+    public delegate void OnGetActionCardsFailed(string error);
+    public static event OnGetActionCardsComplete GetActionCardsComplete;
+    public static event OnGetActionCardsFailed GetActionCardsFailed;
+
+    public void FetchActionCard(int _playerID)
+    {
+        StartCoroutine(_FetchVideos(_playerID));
+    }
+
+    IEnumerator _FetchVideos(int _playerID)
+    {
+
+        string url = baseURL + "player_videos/" + _playerID;
+        //Dictionary<string, string> headers = new Dictionary<string, string>();
+        //headers.Add("Content-Type", contentType);
+        //headers.Add("Authorization", authorization);
+        //headers.Add("Accept", contentType);
+        //Hashtable data = new Hashtable();
+        //data.Add("email", "test@majid.com");
+        //string JSONStr = easy.JSON.JsonEncode(data);
+        //byte[] pData = Encoding.ASCII.GetBytes(JSONStr);
+
+        WWW www = new WWW(url);
+
+        yield return www;
+        Hashtable responceData = (Hashtable)easy.JSON.JsonDecode(www.text);
+        bool isScuccess = false;
+        foreach (DictionaryEntry item in responceData)
+        {
+            if (item.Key.ToString() == "results")
+            {
+                GetActionCardsComplete(easy.JSON.JsonEncode(item.Value));
+                isScuccess = true;
+            }
+        }
+        if (!isScuccess)
+        {
+          GetActionCardsFailed("Faild to find fighters");
+        }
+        yield return null;
+    }
+    #endregion
 }

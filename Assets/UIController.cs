@@ -52,11 +52,18 @@ public class UIController : MonoBehaviour
     [SerializeField]
     VideoPlayerManager _VideoPlayer;
     [SerializeField]
+    CreateStrategyPanel _StrategyCreation;
+    [SerializeField]
     BlazePoseSample _BPS;
     [SerializeField]
     VideoPlayer _actionCardPreview;
     [SerializeField]
     VideoPlayer _masterCardPreview;
+    public bool _deletePlayerPrefs;
+    public bool _UseDefaultCridentials;
+    public string Defaultusername = "bilalkhan@mailinator.comm";
+    public string DefaultPwd = "Password@123";
+    public UserProfile _myprofile = null;
     // Start is called before the first frame update
     #region Initializers
     private static UIController instance = null;
@@ -86,19 +93,59 @@ public class UIController : MonoBehaviour
         instance = this;
         SetupScreen(Screens.SplashScreen);
         FB.Init(this.OnInitComplete, this.OnHideUnity);
+        if (_deletePlayerPrefs)
+        {
+            PlayerPrefs.DeleteKey("access_token");
+        }
     }
     void OnEnable()
     {
         WebServicesManager.loginUserComplete += OnLoginSuccess;
         WebServicesManager.loginUserFailed += OnLoginFailed;
+
         WebServicesManager.registerUserComplete += OnSignUpSuccess;
         WebServicesManager.registerUserFailed += OnSignUpFailed;
+
         WebServicesManager.FetchFightersComplete += OnFetchAllFighterComplete;
-        WebServicesManager.FetchFightersFailed += OnFetchAllFighterFailed;
+        WebServicesManager.FetchFightersFailed += OnFetchAllFighterFailed
+            ;
         WebServicesManager.FetchVideosComplete += OnFetchVideosComplete;
-        WebServicesManager.FetchVideosFailed += OnFetchVideosFailed;
+        WebServicesManager.FetchVideosFailed += OnFetchVideosFailed
+            ;
         WebServicesManager.UploadVideosComplete += OnVideoUploadComplete;
         WebServicesManager.UploadVideosFailed += OnVideoUplaodFailed;
+
+        WebServicesManager.FetchUserComplete += WebServicesManager_FetchUserComplete;
+        WebServicesManager.FetchUserFailed += WebServicesManager_FetchUserFailed;
+
+        WebServicesManager.FetchStrategyComplete += WebServicesManager_FetchStrategyComplete;
+        WebServicesManager.FetchStrategyFailed += WebServicesManager_FetchStrategyFailed;
+
+        WebServicesManager.GetActionCardsComplete += WebServicesManager_GetActionCardsComplete;
+        WebServicesManager.GetActionCardsFailed += WebServicesManager_GetActionCardsFailed;
+    }
+
+ 
+
+    private void WebServicesManager_FetchUserFailed(string error)
+    {
+        Debug.Log(error);
+    }
+
+    private void WebServicesManager_FetchUserComplete(string responce)
+    {
+        Hashtable responceData = (Hashtable)easy.JSON.JsonDecode(responce);
+        foreach (DictionaryEntry item in responceData)
+        {
+            if (item.Key.ToString() == "user")
+            {
+                string obj = easy.JSON.JsonEncode(item.Value);
+                _myprofile = Newtonsoft.Json.JsonConvert.DeserializeObject<UserProfile>(obj);
+                WebServicesManager.Instance.FetchActionCard(1);// _myprofile.id);
+            }
+        }
+       
+        Debug.Log(responce);
     }
 
     internal void PlayVideo(string path)
@@ -119,6 +166,8 @@ public class UIController : MonoBehaviour
         WebServicesManager.FetchVideosFailed -= OnFetchVideosFailed;
         WebServicesManager.UploadVideosComplete -= OnVideoUploadComplete;
         WebServicesManager.UploadVideosFailed -= OnVideoUplaodFailed;
+        WebServicesManager.FetchUserComplete -= WebServicesManager_FetchUserComplete;
+        WebServicesManager.FetchUserFailed -= WebServicesManager_FetchUserFailed;
     }
     public void SetupScreen(Screens _screenIndex = Screens.CurrentScreen)
     {
@@ -340,6 +389,11 @@ public class UIController : MonoBehaviour
     }
     public void Login()
     {
+        if (_UseDefaultCridentials)
+        {
+            WebServicesManager.Instance.LoginUser(Defaultusername, DefaultPwd);
+        }
+        else
         WebServicesManager.Instance.LoginUser(logInUserName.text, logInPWD.text);
     }
     void OnLoginSuccess(string data)
@@ -353,6 +407,7 @@ public class UIController : MonoBehaviour
         Debug.Log("UIController --" +data);
         StartCoroutine(ShowStatus(loginStatusText, data));
     }
+
     public void SignUp()
     {
         WebServicesManager.Instance.ResgisterUser(signUpEmail.text ,signUpUserName.text,  sighUpPWD.text);
@@ -365,6 +420,7 @@ public class UIController : MonoBehaviour
     {
         StartCoroutine(ShowStatus(signUpStatusText, data));
     }
+
     public void FetchAllFighters()
     {
         WebServicesManager.Instance.FetchFighter();
@@ -408,15 +464,16 @@ public class UIController : MonoBehaviour
             SetupScreen(_switchTo);
         }
     }
+
     public void SelectColor()
     {
         SetupScreen(Screens.HomeScreen);
     }
+
     public void RecordActionCard()
     {
         SetupScreen(Screens.ActionCardRecording);
     }
-
     public void GoToActionCardReview(string videoPath)
     {
         SetupScreen(Screens.ActionCardReview);
@@ -438,6 +495,51 @@ public class UIController : MonoBehaviour
 
     public void OnCreateFightStrategyButtonClick()
     {
+        WebServicesManager.Instance.FetchStrategies(1);//_myprofile.id);
+    }
+    private void WebServicesManager_FetchStrategyFailed(string error)
+    {
+        throw new NotImplementedException();
+    }
+    private void WebServicesManager_FetchStrategyComplete(string responce)
+    {
+        Debug.Log(responce);
+        
+        var strategy =  Newtonsoft.Json.JsonConvert.DeserializeObject<FightStrategy>(responce);
+        Hashtable responceData = (Hashtable)easy.JSON.JsonDecode(responce);
+        foreach (DictionaryEntry item in responceData)
+        {
+            if (item.Key.ToString() == "videos")
+            {
+                strategy._Combinations = new FightCombination[9];
+                int i = 0;
+                foreach (var res in item.Value as ArrayList)
+                {
+                    
+                    string combos = easy.JSON.JsonEncode(res);
+                    strategy._Combinations[i] =  Newtonsoft.Json.JsonConvert.DeserializeObject<FightCombination>(combos);
+                    i++;
+                    if (i >= 9)
+                    {
+                        break;
+                    }
+                }
+
+            }
+        }
+        _StrategyCreation.Initialize(_myprofile._allActionCards, strategy as FightStrategy);
         SetupScreen(Screens.CreateFightStrategy);
+    }
+
+    private void WebServicesManager_GetActionCardsFailed(string error)
+    {
+      
+    }
+
+    private void WebServicesManager_GetActionCardsComplete(string responce)
+    {
+        Debug.Log(responce);
+        List<ActionCard> fighters = Newtonsoft.Json.JsonConvert.DeserializeObject<List<ActionCard>>(responce);
+        _myprofile._allActionCards = fighters;
     }
 }

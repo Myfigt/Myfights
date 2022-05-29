@@ -68,9 +68,9 @@ Material:
     - _OutlineWidth: 0
     - _PerspectiveFilter: 0.875
     - _Reflectivity: 10
-    - _ScaleRatioA: 1
-    - _ScaleRatioB: 1
-    - _ScaleRatioC: 1
+    - _ScaleRatioA: 0.8333333
+    - _ScaleRatioB: 0.6770833
+    - _ScaleRatioC: 0.6770833
     - _ScaleX: 1
     - _ScaleY: 1
     - _ShaderFlags: 0
@@ -114,9 +114,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
   m_Name: LilitaOne-Regular SDF
   m_EditorClassIdentifier: 
-  hashCode: 0
+  hashCode: 1275464279
   material: {fileID: -390099897472726548}
-  materialHashCode: 0
+  materialHashCode: -224660969
   m_Version: 1.1.0
   m_SourceFontFileGUID: 827633294917a8448a9d36cddd40136c
   m_SourceFontFile_EditorRef: {fileID: 12800000, guid: 827633294917a8448a9d36cddd40136c,
