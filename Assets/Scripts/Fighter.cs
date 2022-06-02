@@ -27,6 +27,7 @@ namespace Assets.Scripts
         public string created_at;
         public string Name;
         public int id;
+        public string Photo;
         public int Status;
     }
     [Serializable]

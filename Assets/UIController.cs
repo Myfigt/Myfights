@@ -427,11 +427,10 @@ public class UIController : MonoBehaviour
     }
     void OnFetchAllFighterComplete(string data)
     {
-        Debug.Log("Recieved data " + data);
         List<Fighter> fighters = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Fighter>>(data);
-        Debug.Log("Deserializing done");
-        _fighterSelection.Initialize(fighters);
         SetupScreen(Screens.FighterSelection);
+        _fighterSelection.Initialize(fighters);
+       
     }
     void OnFetchAllFighterFailed(string data)
     {

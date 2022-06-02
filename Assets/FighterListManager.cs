@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Assets.Scripts;
 using UnityEngine.UI;
+using UnityEngine.Networking;
+
 public class FighterListManager : UIScreen
 {
     [SerializeField]
@@ -30,7 +32,7 @@ public class FighterListManager : UIScreen
         {
             GameObject fighter = GameObject.Instantiate(FighterTemplateObject, _content);
             fighter.GetComponentInChildren<TMPro.TMP_Text>().text = _allFighters[i].Name;
-
+            StartCoroutine(GetProfileImage(_allFighters[i].Photo, fighter.transform.GetChild(0).GetComponent<Image>()));
             //fighter.GetComponent<Button>().onClick.AddListener(() => OnFighterSelected(i));
             fighter.SetActive(true);
         }
@@ -53,6 +55,22 @@ public class FighterListManager : UIScreen
                 WebServicesManager.Instance.FetchVideos(item.id, Belts.blackbelt.ToString()); //UIController.Instance._myprofile.belt_type.ToString());
                 break;
             }
+        }
+    }
+
+    IEnumerator GetProfileImage(string MediaUrl ,Image _image)
+    {
+        UnityWebRequest request = UnityWebRequestTexture.GetTexture(MediaUrl);
+        yield return request.SendWebRequest();
+        if (request.isNetworkError || request.isHttpError)
+            Debug.Log(request.error);
+        else
+        {
+            // ImageComponent.texture = ((DownloadHandlerTexture) request.downloadHandler).texture;
+
+            Texture2D tex = ((DownloadHandlerTexture)request.downloadHandler).texture;
+            Sprite sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(tex.width / 2, tex.height / 2));
+            _image.overrideSprite = sprite;
         }
     }
 }
