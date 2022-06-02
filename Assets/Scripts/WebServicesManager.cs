@@ -263,15 +263,15 @@ public class WebServicesManager : MonoBehaviour {
     public static event OnFetchFightersComplete FetchVideosComplete;
     public static event OnFetchFightersFailed FetchVideosFailed;
 
-    public void FetchVideos(int _fighterID , int _page)
+    public void FetchVideos(int _fighterID , string _belt)
     {
-        StartCoroutine(_FetchVideos(_fighterID,_page));
+        StartCoroutine(_FetchVideos(_fighterID,_belt));
     }
 
-    IEnumerator _FetchVideos(int _fighterID, int _page)
+    IEnumerator _FetchVideos(int _fighterID, string _belt)
     {
 
-        string url = baseURL + "fighter_videos/"+_fighterID+"?Page="+_page;
+        string url = baseURL + "fighter_videos/"+_fighterID+"/"+ _belt;
         //Dictionary<string, string> headers = new Dictionary<string, string>();
         //headers.Add("Content-Type", contentType);
         //headers.Add("Authorization", authorization);

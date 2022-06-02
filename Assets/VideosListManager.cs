@@ -4,7 +4,7 @@ using UnityEngine;
 using Assets.Scripts;
 
 
-public class VideosListManager : MonoBehaviour
+public class VideosListManager : UIScreen
 {
     [SerializeField]
     GameObject FighterTemplateObject;

@@ -21,6 +21,7 @@ public class UIController : MonoBehaviour
         UserHometown = 0b_0100_0000,
         UserGender = 0b_1000_0000,
     };
+    [Serializable]
     public enum Screens
     {
         CurrentScreen = -1,
@@ -36,6 +37,7 @@ public class UIController : MonoBehaviour
         ActionCardRecording = 9,
         ActionCardReview = 10,
         CreateFightStrategy = 11,
+        LibraryScreen = 12,
     }
     public Screens _CurrentScreen = Screens.HomeScreen;
     public GameObject[] MyScreens;
@@ -54,7 +56,8 @@ public class UIController : MonoBehaviour
     [SerializeField]
     CreateStrategyPanel _StrategyCreation;
     [SerializeField]
-    BlazePoseSample _BPS;
+    LibraryScreen _librarycontroller;
+
     [SerializeField]
     VideoPlayer _actionCardPreview;
     [SerializeField]
@@ -204,10 +207,7 @@ public class UIController : MonoBehaviour
             SignUpPanel.SetActive(true);
             LoginPanel.SetActive(false);
         }
-        if (_CurrentScreen == Screens.HomeScreen)
-        {
-            WebServicesManager.Instance.FetchUser();
-        }
+       
         if (_CurrentScreen == Screens.ActionCardRecording)
         {
             //_BPS.gameObject.SetActive(true);
@@ -217,7 +217,7 @@ public class UIController : MonoBehaviour
         }
         else
         {
-            _BPS.gameObject.SetActive(false);
+            //_BPS.gameObject.SetActive(false);
             _masterCardPreview.transform.parent.gameObject.SetActive(false);
         }
     }
@@ -230,6 +230,7 @@ public class UIController : MonoBehaviour
                 if (PlayerPrefs.HasKey("access_token"))
                 {
                     SetupScreen(Screens.HomeScreen);
+                    WebServicesManager.Instance.FetchUser();
                 }
                 else
                 SetupScreen(Screens.LoginScreen);
@@ -368,7 +369,6 @@ public class UIController : MonoBehaviour
         {
             //this.LastResponse = "Empty Response\n";
         }
-
         String resultSummary = "Limited login results\n\n";
         var profile = FB.Mobile.CurrentProfile();
         resultSummary += "name: " + profile.Name + "\n";
@@ -399,8 +399,8 @@ public class UIController : MonoBehaviour
     void OnLoginSuccess(string data)
     {
         Debug.Log("UIController --" + data);
-
         StartCoroutine(ShowStatus(loginStatusText, "logged in successfully", Screens.ColorSelectionScreen));
+        WebServicesManager.Instance.FetchUser();
     }
     void OnLoginFailed(string data)
     {
@@ -541,5 +541,12 @@ public class UIController : MonoBehaviour
         Debug.Log(responce);
         List<ActionCard> fighters = Newtonsoft.Json.JsonConvert.DeserializeObject<List<ActionCard>>(responce);
         _myprofile._allActionCards = fighters;
+    }
+
+
+    public void OnlibraryButtonClick()
+    {
+        _librarycontroller.Initialize(_myprofile._allActionCards);
+        SetupScreen(Screens.LibraryScreen);
     }
 }

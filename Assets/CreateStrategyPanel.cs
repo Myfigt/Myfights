@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using Assets.Scripts;
 using System;
 
-public class CreateStrategyPanel : MonoBehaviour
+public class CreateStrategyPanel : UIScreen
 {
     [SerializeField]
     Color toggleSelectedColor;
@@ -28,6 +28,10 @@ public class CreateStrategyPanel : MonoBehaviour
     {
         
     }
+    //public override void Initialize(params object[] _params)
+    //{
+    //    Initializeer((List<ActionCard>)_params[0], (FightStrategy)_params[1]);
+    //}
     public void Initialize(List<ActionCard> _allActionCards, FightStrategy  _strategy)
     {
         MyActionCards = _allActionCards;
@@ -42,12 +46,13 @@ public class CreateStrategyPanel : MonoBehaviour
         }
         for (int i = 0; i < MyActionCards.Count; i++)
         {
-            GameObject fighter = GameObject.Instantiate(ActionCardTamplete, allActionCardContent);
-            var alltexts = fighter.GetComponentsInChildren<TMPro.TMP_Text>();
+            GameObject Card = GameObject.Instantiate(ActionCardTamplete, allActionCardContent);
+            var alltexts = Card.GetComponentsInChildren<TMPro.TMP_Text>();
             alltexts[0].text = MyActionCards[i].FileName;
             alltexts[1].text = MyActionCards[i].Belt;
             alltexts[2].text = MyActionCards[i].Type;
-            fighter.SetActive(true);
+            Card.transform.GetChild(5).gameObject.SetActive(false);
+            Card.SetActive(true);
         }
 
         // setting combination UI
@@ -162,8 +167,4 @@ public class FightCombination
     public DateTime created_at;
     public int updated_by;
     public DateTime updated_at;
-    
-     
-   
-
 }

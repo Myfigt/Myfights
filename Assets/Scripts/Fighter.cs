@@ -5,16 +5,22 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Assets.Scripts { 
-//black-belt
-//blue-belt-black-stripe
-//blue-belt
-//brown-belt-black-stripe
-//brown-belt
-//green-belt-black-stripe
-//green-belt
-//yellow-belt-black-stripe
-//yellow-belt
+namespace Assets.Scripts
+{
+    [Serializable]
+    public enum Belts {
+        white,
+        blackbelt,
+    bluebeltblackstripe,
+    bluebelt,
+    brownbeltblackstripe,
+    brownbelt,
+    greenbeltblackstripe,
+    greenbelt,
+    yellowbeltblackstripe,
+    yellowbelt,
+    }
+   
     [Serializable]
     public class Fighter
     {
@@ -44,7 +50,7 @@ namespace Assets.Scripts {
         public string name { get; set; }
         public string device { get; set; }
         public string device_id { get; set; }
-        public string belt_type { get; set; }
+        public Belts belt_type { get; set; }
         public string email { get; set; }
         public string firebase_token { get; set; }
         public List<ActionCard> _allActionCards;

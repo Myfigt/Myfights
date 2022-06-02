@@ -106,8 +106,10 @@ namespace Facebook.Unity.Example
             {
                 this.LastResponse = "Empty Response\n";
             }
-
             String resultSummary = "Limited login results\n\n";
+  
+           // Debug.LogError(authtoken.TokenString);
+             
             var profile = FB.Mobile.CurrentProfile();
             resultSummary += "name: " + profile.Name + "\n";
             resultSummary += "id: " + profile.UserID + "\n";

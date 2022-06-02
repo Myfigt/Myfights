@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Assets.Scripts;
 using UnityEngine.UI;
-public class FighterListManager : MonoBehaviour
+public class FighterListManager : UIScreen
 {
     [SerializeField]
     GameObject FighterTemplateObject;
@@ -50,7 +50,7 @@ public class FighterListManager : MonoBehaviour
             {
                 
                 SelectefFighter = item;
-                WebServicesManager.Instance.FetchVideos(item.id, 1);
+                WebServicesManager.Instance.FetchVideos(item.id, Belts.blackbelt.ToString()); //UIController.Instance._myprofile.belt_type.ToString());
                 break;
             }
         }
