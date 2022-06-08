@@ -38,6 +38,7 @@ public class UIController : MonoBehaviour
         ActionCardReview = 10,
         CreateFightStrategy = 11,
         LibraryScreen = 12,
+        LetsFightScreen = 13
     }
     public Screens _CurrentScreen = Screens.HomeScreen;
     public GameObject[] MyScreens;
@@ -57,6 +58,8 @@ public class UIController : MonoBehaviour
     CreateStrategyPanel _StrategyCreation;
     [SerializeField]
     LibraryScreen _librarycontroller;
+    [SerializeField]
+    LetsFightScreen _letsFightScreen;
 
     [SerializeField]
     VideoPlayer _actionCardPreview;

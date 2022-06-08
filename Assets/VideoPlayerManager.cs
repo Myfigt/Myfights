@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Video;
@@ -14,7 +15,14 @@ public class VideoPlayerManager : MonoBehaviour
     void Start()
     {
         _player.prepareCompleted += OnVideoPrepared;
+        _player.errorReceived += OnVideoError;
     }
+
+    private void OnVideoError(VideoPlayer source, string message)
+    {
+        Debug.Log("message : " + message);
+    }
+
     public void Initialize(string _path)
     {
         loading.SetActive(true);

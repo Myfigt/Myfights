@@ -263,12 +263,12 @@ public class WebServicesManager : MonoBehaviour {
     public static event OnFetchFightersComplete FetchVideosComplete;
     public static event OnFetchFightersFailed FetchVideosFailed;
 
-    public void FetchVideos(int _fighterID , string _belt)
+    public void FetchVideos(int _fighterID , string _belt, Action<bool, string> OnComplete = null)
     {
-        StartCoroutine(_FetchVideos(_fighterID,_belt));
+        StartCoroutine(_FetchVideos(_fighterID,_belt,OnComplete));
     }
 
-    IEnumerator _FetchVideos(int _fighterID, string _belt)
+    IEnumerator _FetchVideos(int _fighterID, string _belt,Action<bool,string> OnComplete)
     {
 
         string url = baseURL + "fighter_videos/"+_fighterID+"/"+ _belt;
@@ -292,11 +292,13 @@ public class WebServicesManager : MonoBehaviour {
             {
                 FetchVideosComplete(easy.JSON.JsonEncode(item.Value));
                 isScuccess = true;
+                OnComplete?.Invoke(isScuccess, easy.JSON.JsonEncode(item.Value));
             }
         }
         if (!isScuccess)
         {
             FetchVideosFailed("Faild to find fighters");
+            OnComplete?.Invoke(isScuccess, "Faild to find fighters");
         }
         yield return null;
     }
