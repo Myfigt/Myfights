@@ -33,16 +33,13 @@ public class VideosContainer : MonoBehaviour
     {
         public ActionCard actionCard;
         public VideoStatus status { get; private set; }
-        public VideoPlayer player;
         public string localPath;
         public Action OnLoaded;
         public Action OnPlayComplete;
 
-        public VideoData(ActionCard _actionCard, VideoPlayer _playerPrefab,Transform _playerParent)
+        public VideoData(ActionCard _actionCard)
         {
             actionCard = _actionCard;
-            player = GameObject.Instantiate(_playerPrefab, _playerParent);
-            player.gameObject.SetActive(false);
             status = VideoStatus.idle;
         }
         public void LoadVideo(int fighterId,string fighterName)
@@ -82,21 +79,8 @@ public class VideosContainer : MonoBehaviour
                     OnLoaded?.Invoke();
                 });
             }
-
-            player.seekCompleted += (tempPlayer) =>
-            {
-                player.gameObject.SetActive(false);
-                OnPlayComplete?.Invoke();
-            };
-
-            //player.prepareCompleted += (tempPlayer) =>
-            //{
-            //    status = VideoStatus.loaded;
-            //    OnLoaded?.Invoke();
-            //};
-            //player.Prepare();
         }
-        public void Play(Action OnPlayCompleted)
+        public void Play(Action OnPlayCompleted,VideoPlayer player)
         {
             player.gameObject.SetActive(true);
             OnPlayComplete = OnPlayCompleted;
@@ -115,13 +99,13 @@ public class VideosContainer : MonoBehaviour
             VideoData = new List<VideoData>();
         }
 
-        public void AddVideos(List<ActionCard> _actionCards, VideoPlayer _playerPrefab, Transform _playerParent, Action VideosLoaded)
+        public void AddVideos(List<ActionCard> _actionCards, Action VideosLoaded)
         {
             foreach(ActionCard action in _actionCards)
             {
                 if (VideoData.Find(item => item.actionCard.Path == action.Path) == null)
                 {
-                    VideoData newData = new VideoData(action, _playerPrefab, _playerParent);
+                    VideoData newData = new VideoData(action);
                     VideoData.Add(newData);
                 }
             }
@@ -139,11 +123,9 @@ public class VideosContainer : MonoBehaviour
         }
     }
 
-    public Transform videoParent;
-    public VideoPlayer videoPlayerTemplete;
     List<FighterData> fightersData = new List<FighterData>();
 
-    public void PlayVideo(int fighterID,int videoID,Action OnPlayCompleted)
+    public void PlayVideo(int fighterID,int videoID,VideoPlayer player,Action OnPlayCompleted)
     {
         int fighterIndex = fightersData.FindIndex(item => item.fighter.id == fighterID);
         if (fighterIndex == -1)
@@ -167,7 +149,7 @@ public class VideosContainer : MonoBehaviour
             OnPlayCompleted();
             return;
         }
-        vidData.Play(OnPlayCompleted);
+        vidData.Play(OnPlayCompleted,player);
     }
 
     public List<ActionCard> GetActionCards(int fighterID)
@@ -198,7 +180,7 @@ public class VideosContainer : MonoBehaviour
                     if (success)
                     {
                         List<ActionCard> fightersVideos = Newtonsoft.Json.JsonConvert.DeserializeObject<List<ActionCard>>(response);
-                        newFighterData.AddVideos(fightersVideos, videoPlayerTemplete, videoParent, () => {
+                        newFighterData.AddVideos(fightersVideos, () => {
                             counter++;
                             if (counter == fighters.Count)
                                 OnLoaded?.Invoke();

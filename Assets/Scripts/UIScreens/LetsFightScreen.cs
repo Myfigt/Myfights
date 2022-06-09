@@ -3,12 +3,16 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.Video;
 
 public class LetsFightScreen : UIScreen
 {
     public GameObject LoadingText;
     public Transform VideoItemParent;
     public VideoItem VideoItemTemplete;
+    public VideoPlayer videoPlayer;
+    public RawImage VideoItemRawImage;
     List<Fighter> currentFighters;
 
     private void OnEnable()
@@ -23,7 +27,7 @@ public class LetsFightScreen : UIScreen
 
     private void Handle_OnItemClicked(VideoItem obj)
     {
-        VideosContainer.Instance.PlayVideo(obj.FighterID, obj.VideoID, null);
+        VideosContainer.Instance.PlayVideo(obj.FighterID, obj.VideoID, videoPlayer,null);
     }
 
     public void Initialize(List<Fighter> _allFighters)
@@ -34,6 +38,10 @@ public class LetsFightScreen : UIScreen
         //    if (child.GetInstanceID() != VideoItemTemplete.GetInstanceID())
         //        Destroy(child.gameObject);
         //}
+
+        videoPlayer.targetTexture = new RenderTexture(Screen.width, Screen.height, 1);
+        VideoItemRawImage.texture = videoPlayer.targetTexture;
+
         currentFighters = _allFighters;
         VideosContainer.Instance.LoadAllFighterVideos(_allFighters, Handle_VideosLoaded);
     }

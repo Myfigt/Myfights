@@ -1,0 +1,129 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3828253359092221251
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3828253359092221253}
+  - component: {fileID: 3828253359092221254}
+  - component: {fileID: 3828253359092221255}
+  - component: {fileID: 3828253359092221252}
+  - component: {fileID: 3828253359092221256}
+  m_Layer: 0
+  m_Name: Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3828253359092221253
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3828253359092221251}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 339.78458, y: 117.336685, z: -465.375}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3828253359092221254
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3828253359092221251}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 722e285b34c83704e892a746803bff7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  video: {fileID: 0}
+  video2: {fileID: 0}
+  recordedplayer: {fileID: 0}
+  timerText: {fileID: 0}
+  BPS: {fileID: 0}
+--- !u!114 &3828253359092221255
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3828253359092221251}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ad5453abc7cc4d42acdb425d6b48520, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _CurrentScreen: 0
+  MyScreens:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  LoginPanel: {fileID: 0}
+  SignUpPanel: {fileID: 0}
+  signUpEmail: {fileID: 0}
+  signUpUserName: {fileID: 0}
+  sighUpPWD: {fileID: 0}
+  logInUserName: {fileID: 0}
+  logInPWD: {fileID: 0}
+  loginStatusText: {fileID: 0}
+  signUpStatusText: {fileID: 0}
+  Splashtime: 3
+  _fighterSelection: {fileID: 0}
+  _VideoSelection: {fileID: 0}
+  _VideoPlayer: {fileID: 0}
+  _StrategyCreation: {fileID: 0}
+  _librarycontroller: {fileID: 0}
+  _letsFightScreen: {fileID: 0}
+  _actionCardPreview: {fileID: 0}
+  _masterCardPreview: {fileID: 0}
+  _deletePlayerPrefs: 1
+  _UseDefaultCridentials: 1
+  Defaultusername: bilalkhan@mailinator.comm
+  DefaultPwd: Password@123
+  _myprofile:
+    _allActionCards: []
+--- !u!114 &3828253359092221252
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3828253359092221251}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b06675cf32270494a8eef396b02227d7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3828253359092221256
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3828253359092221251}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 204b40128aebb4ab888a68358f9268af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
