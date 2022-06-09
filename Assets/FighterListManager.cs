@@ -46,16 +46,19 @@ public class FighterListManager : UIScreen
     }
     public void OnFighterSelected(TMPro.TMP_Text index)
     {
-        foreach (var item in MyFighters)
-        {
-            if (item.Name == index.text)
-            {
-                
-                SelectefFighter = item;
-                WebServicesManager.Instance.FetchVideos(item.id, Belts.blackbelt.ToString()); //UIController.Instance._myprofile.belt_type.ToString());
-                break;
-            }
-        }
+        //foreach (var item in MyFighters)
+        //{
+        //    if (item.Name == index.text)
+        //    {
+
+        //        SelectefFighter = item;
+        //        WebServicesManager.Instance.FetchVideos(item.id, Belts.blackbelt.ToString()); //UIController.Instance._myprofile.belt_type.ToString());
+        //        break;
+        //    }
+        //}
+        Fighter selectedFighter = MyFighters.Find(item => item.Name == index.text);
+        UIController.Instance.SetupScreen(UIController.Screens.LetsFightScreen);
+        UIController.Instance._letsFightScreen.Initialize(new List<Fighter>() { selectedFighter });
     }
 
     IEnumerator GetProfileImage(string MediaUrl ,Image _image)

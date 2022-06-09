@@ -59,7 +59,7 @@ public class UIController : MonoBehaviour
     [SerializeField]
     LibraryScreen _librarycontroller;
     [SerializeField]
-    LetsFightScreen _letsFightScreen;
+    public LetsFightScreen _letsFightScreen;
 
     [SerializeField]
     VideoPlayer _actionCardPreview;
@@ -442,9 +442,9 @@ public class UIController : MonoBehaviour
 
     void OnFetchVideosComplete(string data)
     {
-        List<ActionCard> fighters = Newtonsoft.Json.JsonConvert.DeserializeObject<List<ActionCard>>(data);
-        _VideoSelection.Initialize(fighters,_fighterSelection.SelectefFighter);
-        SetupScreen(Screens.Figher_VideoSelection);
+        //List<ActionCard> fighters = Newtonsoft.Json.JsonConvert.DeserializeObject<List<ActionCard>>(data);
+        //_VideoSelection.Initialize(fighters,_fighterSelection.SelectefFighter);
+        //SetupScreen(Screens.Figher_VideoSelection);
     }
     void OnFetchVideosFailed(string data)
     {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Assets.Scripts;
 using UnityEngine;
@@ -25,13 +26,15 @@ public class VideosContainer : MonoBehaviour
     {
         idle = 0,
         loading = 1,
-        loaded
+        loaded,
+        Failed
     }
     public class VideoData
     {
         public ActionCard actionCard;
         public VideoStatus status { get; private set; }
         public VideoPlayer player;
+        public string localPath;
         public Action OnLoaded;
         public Action OnPlayComplete;
 
@@ -40,32 +43,64 @@ public class VideosContainer : MonoBehaviour
             actionCard = _actionCard;
             player = GameObject.Instantiate(_playerPrefab, _playerParent);
             player.gameObject.SetActive(false);
-            player.url = actionCard.Path;
             status = VideoStatus.idle;
         }
-        public void LoadVideo()
+        public void LoadVideo(int fighterId,string fighterName)
         {
             if (status != VideoStatus.idle)
                 return;
 
             status = VideoStatus.loading;
 
-            player.seekCompleted += (tempPlayer) => {
+            string FileName = Path.GetFileName(actionCard.Path);
+
+            localPath = Path.Combine(Application.persistentDataPath, fighterId.ToString() + "-" + fighterName);
+            if (!Directory.Exists(localPath))
+            {
+                Directory.CreateDirectory(localPath);
+            }
+            localPath = Path.Combine(localPath, FileName);
+
+            if (File.Exists(localPath))
+            {
+                status = VideoStatus.loaded;
+                OnLoaded?.Invoke();
+            }
+            else
+            {
+                FileUtility.Instance.DownloadFile(actionCard.Path, (success, handler) =>
+                {
+                    if (success)
+                    {
+                        FileUtility.Instance.WriteBytes(localPath, handler.data);
+                        status = VideoStatus.loaded;
+                    }
+                    else
+                    {
+                        status = VideoStatus.Failed;
+                    }
+                    OnLoaded?.Invoke();
+                });
+            }
+
+            player.seekCompleted += (tempPlayer) =>
+            {
                 player.gameObject.SetActive(false);
                 OnPlayComplete?.Invoke();
             };
 
-            player.prepareCompleted += (tempPlayer) =>
-            {
-                status = VideoStatus.loaded;
-                OnLoaded?.Invoke();
-            };
-            player.Prepare();
+            //player.prepareCompleted += (tempPlayer) =>
+            //{
+            //    status = VideoStatus.loaded;
+            //    OnLoaded?.Invoke();
+            //};
+            //player.Prepare();
         }
         public void Play(Action OnPlayCompleted)
         {
             player.gameObject.SetActive(true);
             OnPlayComplete = OnPlayCompleted;
+            player.url = localPath;
             player.Play();
         }
     }
@@ -99,7 +134,7 @@ public class VideosContainer : MonoBehaviour
                         VideosLoaded?.Invoke();
                     }
                 };
-                video.LoadVideo();
+                video.LoadVideo(fighter.id,fighter.Name);
             }
         }
     }
