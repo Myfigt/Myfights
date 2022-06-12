@@ -141,7 +141,7 @@ namespace Assets.Scripts
         }
 
         public IEnumerator SetupMatch() {
-            FightStrategy myStrategy, opponentStategy;
+            FightStrategy myStrategy = null, opponentStategy= null;
             foreach (var item in PhotonNetwork.CurrentRoom.Players)
             {
                 ExitGames.Client.Photon.Hashtable customprops = (item.Value as Player).CustomProperties;
@@ -163,6 +163,7 @@ namespace Assets.Scripts
                 }
             }
             yield return new WaitForSeconds(5);
+            UIController.Instance._letsFightScreen.Initialize(myStrategy, opponentStategy);
         }
     }
 }

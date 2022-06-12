@@ -46,6 +46,9 @@ public class LetsFightScreen : UIScreen
         VideosContainer.Instance.LoadAllFighterVideos(_allFighters, Handle_VideosLoaded);
     }
 
+    public void Initialize(FightStrategy _strategy , FightStrategy _opponentStrategy) { }
+
+
     private void Handle_VideosLoaded()
     {
         List<ActionCard> cards = VideosContainer.Instance.GetActionCards(currentFighters[0].id);
