@@ -4,6 +4,7 @@ using Photon.Pun;
 using UnityEngine.UI;
 using Photon.Realtime;
 using UnityEngine.SceneManagement;
+using System;
 
 namespace Assets.Scripts
 {
@@ -47,7 +48,7 @@ namespace Assets.Scripts
 
             //Settings (all optional and only for tutorial purpose)
             PhotonNetwork.OfflineMode = false;           //true would "fake" an online connection
-            PhotonNetwork.NickName = "Majid";       //to set a player name
+            PhotonNetwork.NickName = UIController.Instance._myprofile.name;       //to set a player name
             PhotonNetwork.AutomaticallySyncScene = true; //to call PhotonNetwork.LoadLevel()
             PhotonNetwork.GameVersion = "v1";            //only people with the same game version can play together
 
@@ -77,7 +78,13 @@ namespace Assets.Scripts
         {
             if (!PhotonNetwork.IsConnected)
                 return;
-
+            if (UIController.Instance._myprofile._myStrategy != null)
+            {
+                return;
+            }
+            ExitGames.Client.Photon.Hashtable strategy = new ExitGames.Client.Photon.Hashtable();
+            strategy.Add("_strategy", UIController.Instance._myprofile._myStrategy);
+            PhotonNetwork.LocalPlayer.SetCustomProperties(strategy);
             TriesToConnectToRoom = true;
             //PhotonNetwork.CreateRoom("Peter's Game 1"); //Create a specific Room - Error: OnCreateRoomFailed
             //PhotonNetwork.JoinRoom("Peter's Game 1");   //Join a specific Room   - Error: OnJoinRoomFailed  
@@ -104,23 +111,58 @@ namespace Assets.Scripts
         {
             base.OnJoinedRoom();
             TriesToConnectToRoom = false;
-
+            if (!PhotonNetwork.IsMasterClient && PhotonNetwork.CurrentRoom.PlayerCount == _MaxPlayers)
+            {
+                SetupMatch();
+            }
 
             Debug.Log("Master: " + PhotonNetwork.IsMasterClient + " | Players In Room: " + PhotonNetwork.CurrentRoom.PlayerCount + " | RoomName: " + PhotonNetwork.CurrentRoom.Name + " Region: " + PhotonNetwork.CloudRegion);
-            //if(PhotonNetwork.IsMasterClient && SceneManager.GetActiveScene().name != "Network")
-            //    PhotonNetwork.LoadLevel("Network");
-            if (PhotonNetwork.IsMasterClient && SceneManager.GetActiveScene().name != "Main")
-                PhotonNetwork.LoadLevel("Main");
+
+            //if (PhotonNetwork.IsMasterClient && SceneManager.GetActiveScene().name != "Main")
+            //    PhotonNetwork.LoadLevel("Main");
         }
 
         public override void OnPlayerEnteredRoom(Player newPlayer)
         {
-
+            if (PhotonNetwork.CurrentRoom.PlayerCount == _MaxPlayers)
+            {
+                SetupMatch();
+            }
             base.OnPlayerEnteredRoom(newPlayer);
         }
         public override void OnPlayerLeftRoom(Player otherPlayer)
         {
             base.OnPlayerLeftRoom(otherPlayer);
+        }
+
+        internal void JoinRandomRoom()
+        {
+            OnClickConnectToRoom();
+        }
+
+        public IEnumerator SetupMatch() {
+            FightStrategy myStrategy, opponentStategy;
+            foreach (var item in PhotonNetwork.CurrentRoom.Players)
+            {
+                ExitGames.Client.Photon.Hashtable customprops = (item.Value as Player).CustomProperties;
+
+                foreach (var props in customprops)
+                {
+                    if (props.Key.ToString() == "_strategy")
+                    {
+                        if ((item.Value as Player).IsLocal)
+                        {
+                            myStrategy = (FightStrategy)props.Value;
+                        }
+                        else
+                        {
+                            opponentStategy = (FightStrategy)props.Value;
+                        }
+
+                    }
+                }
+            }
+            yield return new WaitForSeconds(5);
         }
     }
 }

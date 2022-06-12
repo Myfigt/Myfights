@@ -10,7 +10,7 @@ public class UIScreen : MonoBehaviour
     {
         
     }
-    public void Goback()
+    public virtual void Goback()
     {
         UIController.Instance.SetupScreen(this.BackScreen);
     }

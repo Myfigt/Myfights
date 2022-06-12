@@ -133,7 +133,11 @@ public class CreateStrategyPanel : UIScreen
         combinationContent[i].GetChild(0).gameObject.SetActive(true);
         combinationContent[i].GetChild(0).GetChild(4).gameObject.SetActive(false);
     }
-
+    public override void Goback()
+    {
+        base.Goback();
+        UIController.Instance._myprofile._myStrategy = _mystrategy;
+    }
     int CheckAvailableSlot()
     {
         for (int i = selectedcombination * 3; i < selectedcombination * 3 + 3; i++)

@@ -27,7 +27,7 @@ public class UIController : MonoBehaviour
         CurrentScreen = -1,
         SplashScreen = 0,
         SignUpScreen = 1,
-        LoginScreen =2,
+        LoginScreen = 2,
         LoadingScreen = 3,
         ColorSelectionScreen = 4,
         HomeScreen = 5,
@@ -46,8 +46,8 @@ public class UIController : MonoBehaviour
     public GameObject[] MyScreens;
     public GameObject LoginPanel, SignUpPanel;
     public TMP_InputField signUpEmail, signUpUserName, sighUpPWD;
-    public TMP_InputField logInUserName, logInPWD ;
-    public TMP_Text loginStatusText , signUpStatusText;
+    public TMP_InputField logInUserName, logInPWD;
+    public TMP_Text loginStatusText, signUpStatusText;
     public float Splashtime = 3;
     float timer = 3;
     [SerializeField]
@@ -81,7 +81,7 @@ public class UIController : MonoBehaviour
     public bool _UseDefaultCridentials;
     public string Defaultusername = "bilalkhan@mailinator.comm";
     public string DefaultPwd = "Password@123";
- 
+
     // Start is called before the first frame update
     #region Initializers
     private static UIController instance = null;
@@ -103,7 +103,7 @@ public class UIController : MonoBehaviour
         }
     }
 
-    
+
     #endregion
     private void Start()
     {
@@ -147,7 +147,7 @@ public class UIController : MonoBehaviour
 
     }
 
-   
+
 
 
     #region Fetch user profile CallBacks
@@ -167,7 +167,7 @@ public class UIController : MonoBehaviour
                 WebServicesManager.Instance.FetchActionCard(1);// _myprofile.id);
             }
         }
-       
+
         Debug.Log(responce);
     }
     #endregion
@@ -197,7 +197,7 @@ public class UIController : MonoBehaviour
     public void SetupScreen(Screens _screenIndex = Screens.CurrentScreen)
     {
         Debug.Log("Setting Up Screen " + _screenIndex.ToString());
-        
+
         if (_screenIndex == Screens.CurrentScreen)
         {
             _screenIndex = _CurrentScreen;
@@ -209,7 +209,7 @@ public class UIController : MonoBehaviour
                 MyScreens[i].SetActive(true);
             }
             else
-	        {
+            {
                 MyScreens[i].SetActive(false);
             }
 
@@ -258,8 +258,8 @@ public class UIController : MonoBehaviour
                     WebServicesManager.Instance.FetchUser();
                 }
                 else
-                SetupScreen(Screens.LoginScreen);
-                
+                    SetupScreen(Screens.LoginScreen);
+
             }
             else
             {
@@ -270,11 +270,11 @@ public class UIController : MonoBehaviour
     #region Facebook Integration 
     private void OnInitComplete()
     {
-        
+
     }
     private void OnHideUnity(bool isGameShown)
     {
-        
+
     }
     public void LoginWithFB()
     {
@@ -331,18 +331,18 @@ public class UIController : MonoBehaviour
     {
         if (result == null)
         {
-           // this.LastResponse = "Null Response\n";
+            // this.LastResponse = "Null Response\n";
             //LogView.AddLog(this.LastResponse);
             return;
         }
 
-       // this.LastResponseTexture = null;
+        // this.LastResponseTexture = null;
 
         // Some platforms return the empty string instead of null.
         if (!string.IsNullOrEmpty(result.Error))
         {
-           // this.Status = "Error - Check log for details";
-           // this.LastResponse = "Error Response:\n" + result.Error;
+            // this.Status = "Error - Check log for details";
+            // this.LastResponse = "Error Response:\n" + result.Error;
         }
         else if (result.Cancelled)
         {
@@ -351,22 +351,22 @@ public class UIController : MonoBehaviour
         }
         else if (!string.IsNullOrEmpty(result.RawResult))
         {
-           // this.Status = "Success - Check log for details";
-           // this.LastResponse = "Success Response:\n" + result.RawResult;
+            // this.Status = "Success - Check log for details";
+            // this.LastResponse = "Success Response:\n" + result.RawResult;
         }
         else
         {
             //this.LastResponse = "Empty Response\n";
         }
 
-       // LogView.AddLog(result.ToString());
+        // LogView.AddLog(result.ToString());
     }
     protected void HandleLimitedLoginResult(IResult result)
     {
         if (result == null)
         {
-          //  this.LastResponse = "Null Response\n";
-          //  LogView.AddLog(this.LastResponse);
+            //  this.LastResponse = "Null Response\n";
+            //  LogView.AddLog(this.LastResponse);
             return;
         }
 
@@ -375,18 +375,18 @@ public class UIController : MonoBehaviour
         // Some platforms return the empty string instead of null.
         if (!string.IsNullOrEmpty(result.Error))
         {
-           // this.Status = "Error - Check log for details";
-           // this.LastResponse = "Error Response:\n" + result.Error;
+            // this.Status = "Error - Check log for details";
+            // this.LastResponse = "Error Response:\n" + result.Error;
         }
         else if (result.Cancelled)
         {
-          //  this.Status = "Cancelled - Check log for details";
-          //  this.LastResponse = "Cancelled Response:\n" + result.RawResult;
+            //  this.Status = "Cancelled - Check log for details";
+            //  this.LastResponse = "Cancelled Response:\n" + result.RawResult;
         }
         else if (!string.IsNullOrEmpty(result.RawResult))
         {
-          //  this.Status = "Success - Check log for details";
-          //  this.LastResponse = "Success Response:\n" + result.RawResult;
+            //  this.Status = "Success - Check log for details";
+            //  this.LastResponse = "Success Response:\n" + result.RawResult;
         }
         else
         {
@@ -408,9 +408,9 @@ public class UIController : MonoBehaviour
         resultSummary += "location: " + profile.Location?.Name + "\n";
         resultSummary += "gender: " + profile.Gender + "\n";
 
-      
+
     }
-#endregion
+    #endregion
 
     public void Login()
     {
@@ -419,7 +419,7 @@ public class UIController : MonoBehaviour
             WebServicesManager.Instance.LoginUser(Defaultusername, DefaultPwd);
         }
         else
-        WebServicesManager.Instance.LoginUser(logInUserName.text, logInPWD.text);
+            WebServicesManager.Instance.LoginUser(logInUserName.text, logInPWD.text);
     }
     void OnLoginSuccess(string data)
     {
@@ -429,13 +429,13 @@ public class UIController : MonoBehaviour
     }
     void OnLoginFailed(string data)
     {
-        Debug.Log("UIController --" +data);
+        Debug.Log("UIController --" + data);
         StartCoroutine(ShowStatus(loginStatusText, data));
     }
 
     public void SignUp()
     {
-        WebServicesManager.Instance.ResgisterUser(signUpEmail.text ,signUpUserName.text,  sighUpPWD.text);
+        WebServicesManager.Instance.ResgisterUser(signUpEmail.text, signUpUserName.text, sighUpPWD.text);
     }
     void OnSignUpSuccess(string data)
     {
@@ -455,7 +455,7 @@ public class UIController : MonoBehaviour
         List<Fighter> fighters = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Fighter>>(data);
         SetupScreen(Screens.FighterSelection);
         _fighterSelection.Initialize(fighters);
-       
+
     }
     void OnFetchAllFighterFailed(string data)
     {
@@ -477,7 +477,7 @@ public class UIController : MonoBehaviour
         SetupScreen(Screens.Figher_VideoSelection);
     }
 
-    public IEnumerator ShowStatus(TMP_Text _element, string _message , Screens _switchTo =Screens.CurrentScreen)
+    public IEnumerator ShowStatus(TMP_Text _element, string _message, Screens _switchTo = Screens.CurrentScreen)
     {
         _element.text = _message;
         _element.gameObject.SetActive(true);
@@ -529,8 +529,8 @@ public class UIController : MonoBehaviour
     private void WebServicesManager_FetchStrategyComplete(string responce)
     {
         Debug.Log(responce);
-        
-        var strategy =  Newtonsoft.Json.JsonConvert.DeserializeObject<FightStrategy>(responce);
+
+        var strategy = Newtonsoft.Json.JsonConvert.DeserializeObject<FightStrategy>(responce);
         Hashtable responceData = (Hashtable)easy.JSON.JsonDecode(responce);
         foreach (DictionaryEntry item in responceData)
         {
@@ -540,9 +540,9 @@ public class UIController : MonoBehaviour
                 int i = 0;
                 foreach (var res in item.Value as ArrayList)
                 {
-                    
+
                     string combos = easy.JSON.JsonEncode(res);
-                    strategy._Combinations[i] =  Newtonsoft.Json.JsonConvert.DeserializeObject<FightCombination>(combos);
+                    strategy._Combinations[i] = Newtonsoft.Json.JsonConvert.DeserializeObject<FightCombination>(combos);
                     i++;
                     if (i >= 9)
                     {
@@ -558,7 +558,7 @@ public class UIController : MonoBehaviour
 
     private void WebServicesManager_GetActionCardsFailed(string error)
     {
-      
+
     }
     private void WebServicesManager_GetActionCardsComplete(string responce)
     {
@@ -586,6 +586,8 @@ public class UIController : MonoBehaviour
         List<Tribe> _allTribes = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Tribe>>(responce);
         _tribesManager.Initialize(_allTribes);
         SetupScreen(Screens.AllTribes);
-        
+
     }
+
+    public void QuickMatch() => _NetworkHandle.JoinRandomRoom();
 }

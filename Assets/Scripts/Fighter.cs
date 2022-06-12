@@ -55,7 +55,7 @@ namespace Assets.Scripts
         public string email { get; set; }
         public string firebase_token { get; set; }
         public List<ActionCard> _allActionCards;
-
+        public FightStrategy _myStrategy;
         UserProfile()
         {
             _allActionCards = new List<ActionCard>();
