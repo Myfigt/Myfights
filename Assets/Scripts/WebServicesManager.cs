@@ -490,4 +490,138 @@ public class WebServicesManager : MonoBehaviour {
         yield return null;
     }
     #endregion
+
+    #region CreateTribe
+    public delegate void OnCreateTribeComplete(string responce);
+    public delegate void OnCreateTribeFailed(string error);
+    public static event OnCreateTribeComplete CreateTribeComplete;
+    public static event OnCreateTribeFailed CreateTribeFailed;
+
+    public void CreateTribe(string _tribeName , string _playerID)
+    {
+        StartCoroutine(_CreateTribe(_tribeName,_playerID));
+    }
+
+    IEnumerator _CreateTribe(string _tribeName, string _playerID)
+    {
+
+        string url = baseURL + "add_tribe";
+        WWWForm data = new WWWForm();
+        data.AddField("name", _tribeName);
+        //data.AddField("last_name", "zia");
+        data.AddField("user_id", _playerID);
+        data.AddField("platform", platform);
+        data.AddField("deviceId", deviceID);
+
+        WWW www = new WWW(url,data);
+
+        yield return www;
+        Hashtable responceData = (Hashtable)easy.JSON.JsonDecode(www.text);
+        bool isScuccess = false;
+        foreach (DictionaryEntry item in responceData)
+        {
+            if (item.Key.ToString() == "results")
+            {
+                CreateTribeComplete(easy.JSON.JsonEncode(item.Value));
+                isScuccess = true;
+            }
+        }
+        if (!isScuccess)
+        {
+            CreateTribeFailed("Faild to find fighters");
+        }
+        yield return null;
+    }
+    #endregion
+
+    #region GetAllTribes
+    public delegate void OnGetTribesComplete(string responce);
+    public delegate void OnGetTribesFailed(string error);
+    public static event OnGetTribesComplete GetTribesComplete;
+    public static event OnGetTribesFailed GetTribesFailed;
+
+    public void FetchTribes()
+    {
+        StartCoroutine(_FetchTribes());
+    }
+
+    IEnumerator _FetchTribes()
+    {
+
+        string url = baseURL + "list_tribes";
+        WWW www = new WWW(url);
+
+        yield return www;
+        Hashtable responceData = (Hashtable)easy.JSON.JsonDecode(www.text);
+        bool isScuccess = false;
+        foreach (DictionaryEntry item in responceData)
+        {
+            if (item.Key.ToString() == "results")
+            {
+                GetTribesComplete(easy.JSON.JsonEncode(item.Value));
+                isScuccess = true;
+            }
+        }
+        if (!isScuccess)
+        {
+            GetTribesFailed("Faild to Fetch Tribes");
+        }
+        yield return null;
+    }
+    #endregion
+
+    #region Join/Leave Tribe
+    public delegate void OnJoinTribesComplete(string responce);
+    public delegate void OnjoinTribesFailed(string error);
+    public static event OnJoinTribesComplete JoinTribesComplete;
+    public static event OnJoinTribesComplete JoinTribesFailed;
+
+    public delegate void OnLeaveTribesComplete(string responce);
+    public delegate void OnLeaveTribesFailed(string error);
+    public static event OnLeaveTribesComplete LeaveTribesComplete;
+    public static event OnLeaveTribesComplete LeaveTribesFailed;
+
+    public void JoinOrLeaveTribe(int _tribeID)
+    {
+        StartCoroutine(_JoinOrLeaveTribe(_tribeID));
+    }
+
+    IEnumerator _JoinOrLeaveTribe(int _tribeID)
+    {
+
+        string url = baseURL + "join_leave_tribe/"+_tribeID;
+        WWW www = new WWW(url);
+
+        yield return www;
+        Hashtable responceData = (Hashtable)easy.JSON.JsonDecode(www.text);
+        bool isScuccess = false;
+        foreach (DictionaryEntry item in responceData)
+        {
+            if (item.Key.ToString() == "results")
+            {
+                if (_tribeID  == 0)
+                {
+
+                }
+                else
+                {
+
+                }
+                isScuccess = true;
+            }
+        }
+        if (!isScuccess)
+        {
+            if (_tribeID == 0)
+            {
+
+            }
+            else
+            {
+
+            }
+        }
+        yield return null;
+    }
+    #endregion
 }

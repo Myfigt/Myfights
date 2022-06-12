@@ -18,11 +18,14 @@
 
 namespace Photon.Realtime
 {
+    using System;
     using System.Text;
     using System.Collections;
     using System.Collections.Generic;
 
     using Stopwatch = System.Diagnostics.Stopwatch;
+
+    using ExitGames.Client.Photon;
 
     #if SUPPORTED_UNITY
     using UnityEngine;
@@ -41,8 +44,10 @@ namespace Photon.Realtime
     /// </remarks>
     #if SUPPORTED_UNITY
     [DisallowMultipleComponent]
+    #if PUN_2_OR_NEWER || FUSION_UNITY
 	[AddComponentMenu("")] // hide from Unity Menus and searches
-	public class SupportLogger : MonoBehaviour, IConnectionCallbacks , IMatchmakingCallbacks , IInRoomCallbacks, ILobbyCallbacks
+    #endif
+	public class SupportLogger : MonoBehaviour, IConnectionCallbacks , IMatchmakingCallbacks , IInRoomCallbacks, ILobbyCallbacks, IErrorInfoCallback
     #else
 	public class SupportLogger : IConnectionCallbacks, IInRoomCallbacks, IMatchmakingCallbacks , ILobbyCallbacks
     #endif
@@ -56,6 +61,9 @@ namespace Photon.Realtime
         private LoadBalancingClient client;
 
         private Stopwatch startStopwatch;
+
+        /// helps skip the initial OnApplicationPause call, which is not really of interest on start
+        private bool initialOnApplicationPauseSkipped = false;
 
         private int pingMax;
         private int pingMin;
@@ -87,6 +95,8 @@ namespace Photon.Realtime
         #if SUPPORTED_UNITY
         protected void Start()
         {
+            this.LogBasics();
+
             if (this.startStopwatch == null)
             {
                 this.startStopwatch = new Stopwatch();
@@ -94,9 +104,20 @@ namespace Photon.Realtime
             }
         }
 
+        protected void OnDestroy()
+        {
+            this.Client = null; // will remove this SupportLogger as callback target
+        }
+
         protected void OnApplicationPause(bool pause)
         {
-            Debug.Log(this.GetFormattedTimestamp() + " SupportLogger OnApplicationPause: " + pause + " connected: " + (this.client == null ? "false" : this.client.IsConnected.ToString()));
+            if (!this.initialOnApplicationPauseSkipped)
+            {
+                this.initialOnApplicationPauseSkipped = true;
+                return;
+            }
+
+            Debug.Log(string.Format("{0} SupportLogger OnApplicationPause({1}). Client: {2}.", this.GetFormattedTimestamp(), pause, this.client == null ? "null" : this.client.State.ToString()));
         }
 
         protected void OnApplicationQuit()
@@ -148,7 +169,14 @@ namespace Photon.Realtime
                 this.startStopwatch = new Stopwatch();
                 this.startStopwatch.Start();
             }
-            return string.Format("[{0}.{1}]", this.startStopwatch.Elapsed.Seconds, this.startStopwatch.Elapsed.Milliseconds);
+
+            TimeSpan span = this.startStopwatch.Elapsed;
+            if (span.Minutes > 0)
+            {
+                return string.Format("[{0}:{1}.{1}]", span.Minutes, span.Seconds, span.Milliseconds);
+            }
+
+            return string.Format("[{0}.{1}]", span.Seconds, span.Milliseconds);
         }
 
 
@@ -182,7 +210,7 @@ namespace Photon.Realtime
 
             if (this.LogTrafficStats)
             {
-                Debug.Log(this.GetFormattedTimestamp() + " SupportLogger " + this.client.LoadBalancingPeer.VitalStatsToString(false) + " Ping min/max: " + this.pingMin + "/" + this.pingMax);
+                Debug.Log(string.Format("{0} SupportLogger {1} Ping min/max: {2}/{3}", this.GetFormattedTimestamp() , this.client.LoadBalancingPeer.VitalStatsToString(false) , this.pingMin , this.pingMax));
             }
         }
 
@@ -193,18 +221,61 @@ namespace Photon.Realtime
         {
             if (this.client != null)
             {
+                List<string> buildProperties = new List<string>(10);
+                #if SUPPORTED_UNITY
+                buildProperties.Add(Application.unityVersion);
+                buildProperties.Add(Application.platform.ToString());
+                #endif
+                #if ENABLE_IL2CPP
+                buildProperties.Add("ENABLE_IL2CPP");
+                #endif
+                #if ENABLE_MONO
+                buildProperties.Add("ENABLE_MONO");
+                #endif
+                #if DEBUG
+                buildProperties.Add("DEBUG");
+                #endif
+                #if MASTER
+                buildProperties.Add("MASTER");
+                #endif
+                #if NET_4_6
+                buildProperties.Add("NET_4_6");
+                #endif
+                #if NET_STANDARD_2_0
+                buildProperties.Add("NET_STANDARD_2_0");
+                #endif
+                #if NETFX_CORE
+                buildProperties.Add("NETFX_CORE");
+                #endif
+                #if NET_LEGACY
+                buildProperties.Add("NET_LEGACY");
+                #endif
+                #if UNITY_64
+                buildProperties.Add("UNITY_64");
+                #endif
+                #if UNITY_FUSION
+                buildProperties.Add("UNITY_FUSION");
+                #endif
+
+
                 StringBuilder sb = new StringBuilder();
 
-                sb.AppendFormat("{0} SupportLogger Info: ", this.GetFormattedTimestamp());
-                sb.AppendFormat("AppID: \"{0}\" AppVersion: \"{1}\" UserId: {3} PeerID: {2} ",
-                    string.IsNullOrEmpty(this.client.AppId) || this.client.AppId.Length < 8
-                        ? this.client.AppId
-                        : string.Concat(this.client.AppId.Substring(0, 8), "***"), this.client.AppVersion, this.client.LoadBalancingPeer.PeerID,
-                    this.client.UserId);
-                //NOTE: this.client.LoadBalancingPeer.ServerIpAddress requires Photon3Unity3d.dll v4.1.2.5 and up
-                sb.AppendFormat("NameServer: {0} Server: {1} IP: {2} Region: {3}", this.client.NameServerHost, this.client.CurrentServerAddress, this.client.LoadBalancingPeer.ServerIpAddress, this.client.CloudRegion);
+                string appIdShort = string.IsNullOrEmpty(this.client.AppId) || this.client.AppId.Length < 8 ? this.client.AppId : string.Concat(this.client.AppId.Substring(0, 8), "***");
 
-                Debug.Log(sb.ToString());
+                sb.AppendFormat("{0} SupportLogger Info: ", this.GetFormattedTimestamp());
+                sb.AppendFormat("AppID: \"{0}\" AppVersion: \"{1}\" Client: v{2} ({4}) Build: {3} ", appIdShort, this.client.AppVersion, PhotonPeer.Version, string.Join(", ", buildProperties.ToArray()), this.client.LoadBalancingPeer.TargetFramework);
+                if (this.client != null && this.client.LoadBalancingPeer != null && this.client.LoadBalancingPeer.SocketImplementation != null)
+                {
+                    sb.AppendFormat("Socket: {0} ", this.client.LoadBalancingPeer.SocketImplementation.Name);
+                }
+
+                sb.AppendFormat("UserId: \"{0}\" AuthType: {1} AuthMode: {2} {3} ", this.client.UserId, (this.client.AuthValues != null) ? this.client.AuthValues.AuthType.ToString() : "N/A", this.client.AuthMode, this.client.EncryptionMode);
+
+                sb.AppendFormat("State: {0} ", this.client.State);
+                sb.AppendFormat("PeerID: {0} ", this.client.LoadBalancingPeer.PeerID);
+                sb.AppendFormat("NameServer: {0} Current Server: {1} IP: {2} Region: {3} ", this.client.NameServerHost, this.client.CurrentServerAddress, this.client.LoadBalancingPeer.ServerIpAddress, this.client.CloudRegion);
+
+                Debug.LogWarning(sb.ToString());
             }
         }
 
@@ -258,6 +329,7 @@ namespace Photon.Realtime
 
         public void OnJoinRoomFailed(short returnCode, string message)
         {
+            Debug.Log(this.GetFormattedTimestamp() + " SupportLogger OnJoinRoomFailed(" + returnCode+","+message+").");
         }
 
         public void OnJoinRandomFailed(short returnCode, string message)
@@ -288,7 +360,6 @@ namespace Photon.Realtime
         public void OnRegionListReceived(RegionHandler regionHandler)
         {
 			Debug.Log(this.GetFormattedTimestamp() + " SupportLogger OnRegionListReceived(regionHandler).");
-            this.LogBasics();
         }
 
         public void OnRoomListUpdate(List<RoomInfo> roomList)
@@ -337,7 +408,7 @@ namespace Photon.Realtime
         }
 
 
-#if !SUPPORTED_UNITY
+        #if !SUPPORTED_UNITY
         private static class Debug
         {
             public static void Log(string msg)
@@ -353,6 +424,11 @@ namespace Photon.Realtime
                 System.Diagnostics.Debug.WriteLine(msg);
             }
         }
-#endif
+        #endif
+
+        public void OnErrorInfo(ErrorInfo errorInfo)
+        {
+            Debug.LogError(errorInfo.ToString());
+        }
     }
 }
