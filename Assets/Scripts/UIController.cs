@@ -54,9 +54,9 @@ public class UIController : MonoBehaviour
     [SerializeField]
     FighterListManager _fighterSelection;
     [SerializeField]
-    VideosListManager _VideoSelection;
+    public VideosListManager _VideoSelection;
     [SerializeField]
-    VideoPlayerManager _VideoPlayer;
+    public VideoPlayerManager _VideoPlayer;
     [SerializeField]
     CreateStrategyPanel _StrategyCreation;
     [SerializeField]
@@ -174,10 +174,10 @@ public class UIController : MonoBehaviour
         Debug.Log(responce);
     }
     #endregion
-    internal void PlayVideo(string path)
+    internal void PlayVideo(int fighterid,int videoid)
     {
         SetupScreen(Screens.VideoPlayerScreen);
-        _VideoPlayer.Initialize(path);
+        _VideoPlayer.Initialize(fighterid,videoid);
     }
 
     void OnDisable()

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Assets.Scripts;
-
+using System;
 
 public class VideosListManager : UIScreen
 {
@@ -13,12 +13,46 @@ public class VideosListManager : UIScreen
     List<ActionCard> MyVideos = null;
     [SerializeField]
     TMPro.TMP_Text FighterNameFeild;
+    Fighter selectedFighter;
     // Start is called before the first frame update
     public ActionCard SelectedVideo = null;
+    public TMPro.TMP_Text loading;
     void Start()
     {
 
     }
+    public void Initialize(Fighter _selectedFighter)
+    {
+        loading?.gameObject.SetActive(true);
+        selectedFighter = _selectedFighter;
+        for (int i = 0; i < _content.childCount; i++)
+        {
+            if (_content.GetChild(i).gameObject.activeSelf)
+            {
+                DestroyImmediate(_content.GetChild(i).gameObject);
+            }
+        }
+        VideosContainer.Instance.LoadFighterVideos(_selectedFighter, Handle_VideosLoaded);
+    }
+
+    private void Handle_VideosLoaded()
+    {
+        List<ActionCard> _allFighters = VideosContainer.Instance.GetActionCards(selectedFighter.id);
+
+        for (int i = 0; i < _allFighters.Count; i++)
+        {
+            GameObject fighter = GameObject.Instantiate(FighterTemplateObject, _content);
+            var alltexts = fighter.GetComponentsInChildren<TMPro.TMP_Text>();
+            alltexts[0].text = _allFighters[i].FileName;
+            alltexts[1].text = _allFighters[i].Belt;
+            alltexts[2].text = _allFighters[i].Type;
+            fighter.SetActive(true);
+        }
+        FighterNameFeild.text = selectedFighter.Name;
+        MyVideos = _allFighters;
+        loading?.gameObject.SetActive(false);
+    }
+
     public void Initialize(List<ActionCard> _allFighters , Fighter _selectedFighter = null)
     {
         for (int i = 0; i < _content.childCount; i++)
@@ -49,7 +83,7 @@ public class VideosListManager : UIScreen
             if (item.FileName == index.text)
             {
                 SelectedVideo = item;
-                GameObject.FindObjectOfType<UIController>().PlayVideo(item.Path);
+                GameObject.FindObjectOfType<UIController>().PlayVideo(selectedFighter.id,item.id);
             }
         }
     }

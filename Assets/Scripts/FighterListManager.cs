@@ -57,8 +57,10 @@ public class FighterListManager : UIScreen
         //    }
         //}
         Fighter selectedFighter = MyFighters.Find(item => item.Name == index.text);
-        UIController.Instance.SetupScreen(UIController.Screens.LetsFightScreen);
-        UIController.Instance._letsFightScreen.Initialize(new List<Fighter>() { selectedFighter });
+        //UIController.Instance.SetupScreen(UIController.Screens.LetsFightScreen);
+        //UIController.Instance._letsFightScreen.Initialize(new List<Fighter>() { selectedFighter });
+        UIController.Instance.SetupScreen(UIController.Screens.Figher_VideoSelection);
+        UIController.Instance._VideoSelection.Initialize(selectedFighter);
     }
 
     IEnumerator GetProfileImage(string MediaUrl ,Image _image)

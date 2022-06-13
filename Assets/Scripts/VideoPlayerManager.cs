@@ -14,13 +14,19 @@ public class VideoPlayerManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _player.prepareCompleted += OnVideoPrepared;
-        _player.errorReceived += OnVideoError;
+        //_player.prepareCompleted += OnVideoPrepared;
+        //_player.errorReceived += OnVideoError;
     }
 
     private void OnVideoError(VideoPlayer source, string message)
     {
         Debug.Log("message : " + message);
+    }
+
+    public void Initialize(int fighterid,int videoid)
+    {
+        loading.SetActive(false);
+        VideosContainer.Instance.PlayVideo(fighterid, videoid, _player, null);
     }
 
     public void Initialize(string _path)
