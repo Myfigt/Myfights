@@ -78,13 +78,14 @@ namespace Assets.Scripts
         {
             if (!PhotonNetwork.IsConnected)
                 return;
-            if (UIController.Instance._myprofile._myStrategy != null)
-            {
-                return;
-            }
-            ExitGames.Client.Photon.Hashtable strategy = new ExitGames.Client.Photon.Hashtable();
-            strategy.Add("_strategy", UIController.Instance._myprofile._myStrategy);
-            PhotonNetwork.LocalPlayer.SetCustomProperties(strategy);
+            //if (UIController.Instance._myprofile._myStrategy == null)
+            //{
+            //    return;
+            //}
+            ExitGames.Client.Photon.Hashtable _properties = new ExitGames.Client.Photon.Hashtable();
+            //strategy.Add("_strategy", UIController.Instance._myprofile._myStrategy);
+            _properties.Add("PlayerID", UIController.Instance._myprofile.id);
+            PhotonNetwork.LocalPlayer.SetCustomProperties(_properties);
             TriesToConnectToRoom = true;
             //PhotonNetwork.CreateRoom("Peter's Game 1"); //Create a specific Room - Error: OnCreateRoomFailed
             //PhotonNetwork.JoinRoom("Peter's Game 1");   //Join a specific Room   - Error: OnJoinRoomFailed  
@@ -115,6 +116,10 @@ namespace Assets.Scripts
             {
                 SetupMatch();
             }
+            else if (PhotonNetwork.IsMasterClient)
+            {
+                UIController.Instance.SetupScreen(UIController.Screens.MatchMakingScreen);
+            }
 
             Debug.Log("Master: " + PhotonNetwork.IsMasterClient + " | Players In Room: " + PhotonNetwork.CurrentRoom.PlayerCount + " | RoomName: " + PhotonNetwork.CurrentRoom.Name + " Region: " + PhotonNetwork.CloudRegion);
 
@@ -141,29 +146,67 @@ namespace Assets.Scripts
         }
 
         public IEnumerator SetupMatch() {
-            FightStrategy myStrategy = null, opponentStategy= null;
+            int opponentPlayerId= -1;
+            FightStrategy _opponentStrategy = null;
             foreach (var item in PhotonNetwork.CurrentRoom.Players)
             {
-                ExitGames.Client.Photon.Hashtable customprops = (item.Value as Player).CustomProperties;
-
-                foreach (var props in customprops)
+                if (!(item.Value as Player).IsLocal)
                 {
-                    if (props.Key.ToString() == "_strategy")
+                    ExitGames.Client.Photon.Hashtable customprops = (item.Value as Player).CustomProperties;
+                    foreach (var props in customprops)
                     {
-                        if ((item.Value as Player).IsLocal)
+                        if (props.Key.ToString() == "_strategy")
                         {
-                            myStrategy = (FightStrategy)props.Value;
+                            opponentPlayerId = (int)props.Value;
+                        }
+                    }
+                }
+                if (opponentPlayerId != -1)
+                {
+                    WebServicesManager.Instance.FetchStrategies(opponentPlayerId, (success, response) =>
+                    {
+                        if (success)
+                        {
+                            _opponentStrategy = Newtonsoft.Json.JsonConvert.DeserializeObject<FightStrategy>(response);
+                            Hashtable responceData = (Hashtable)easy.JSON.JsonDecode(response);
+                            foreach (DictionaryEntry ditem in responceData)
+                            {
+                                if (ditem.Key.ToString() == "videos")
+                                {
+                                    _opponentStrategy._Combinations = new FightCombination[9];
+                                    int i = 0;
+                                    foreach (var res in ditem.Value as ArrayList)
+                                    {
+
+                                        string combos = easy.JSON.JsonEncode(res);
+                                        _opponentStrategy._Combinations[i] = Newtonsoft.Json.JsonConvert.DeserializeObject<FightCombination>(combos);
+                                        i++;
+                                        if (i >= 9)
+                                        {
+                                            break;
+                                        }
+                                    }
+
+                                }
+                            }
                         }
                         else
                         {
-                            opponentStategy = (FightStrategy)props.Value;
+                           
                         }
-
-                    }
+                    });
                 }
+
+                yield return new WaitForSeconds(5);
+
+                if (_opponentStrategy != null)
+                {
+                 
+                }      
+     
             }
-            yield return new WaitForSeconds(5);
-            UIController.Instance._letsFightScreen.Initialize(myStrategy, opponentStategy);
+            
+            //UIController.Instance._letsFightScreen.Initialize(myStrategy, opponentStategy);
         }
     }
 }

@@ -40,6 +40,7 @@ public class UIController : MonoBehaviour
         LibraryScreen = 12,
         LetsFightScreen = 13,
         AllTribes = 14,
+        MatchMakingScreen = 15,
 
     }
     public Screens _CurrentScreen = Screens.HomeScreen;
@@ -69,6 +70,8 @@ public class UIController : MonoBehaviour
     VideoPlayer _actionCardPreview;
     [SerializeField]
     VideoPlayer _masterCardPreview;
+    [SerializeField]
+    GameObject MatcheMakingScreen;
 
     [SerializeField]
     NetworkConnectionManager _NetworkHandle;
@@ -109,7 +112,7 @@ public class UIController : MonoBehaviour
     {
         //SetupScreen(Screens.HomeScreen);
         instance = this;
-        SetupScreen(Screens.HomeScreen);
+        SetupScreen(Screens.SplashScreen);
         FB.Init(this.OnInitComplete, this.OnHideUnity);
         if (_deletePlayerPrefs)
         {
@@ -423,7 +426,7 @@ public class UIController : MonoBehaviour
     }
     void OnLoginSuccess(string data)
     {
-        Debug.Log("UIController --" + data);
+        //Debug.Log("UIController --" + data);
         StartCoroutine(ShowStatus(loginStatusText, "logged in successfully", Screens.ColorSelectionScreen));
         WebServicesManager.Instance.FetchUser();
     }
@@ -439,7 +442,8 @@ public class UIController : MonoBehaviour
     }
     void OnSignUpSuccess(string data)
     {
-        StartCoroutine(ShowStatus(signUpStatusText, data));
+        StartCoroutine(ShowStatus(signUpStatusText, data,Screens.ColorSelectionScreen));
+        WebServicesManager.Instance.FetchUser();
     }
     void OnSignUpFailed(string data)
     {
@@ -528,7 +532,6 @@ public class UIController : MonoBehaviour
     }
     private void WebServicesManager_FetchStrategyComplete(string responce)
     {
-        Debug.Log(responce);
 
         var strategy = Newtonsoft.Json.JsonConvert.DeserializeObject<FightStrategy>(responce);
         Hashtable responceData = (Hashtable)easy.JSON.JsonDecode(responce);
@@ -590,4 +593,11 @@ public class UIController : MonoBehaviour
     }
 
     public void QuickMatch() => _NetworkHandle.JoinRandomRoom();
+
+    public void GoToMatchScreen( FightStrategy _opponentStrategy)
+    {
+        SetupScreen(UIController.Screens.LetsFightScreen);
+        _letsFightScreen.Initialize(_myprofile._myStrategy, _opponentStrategy);
+    }
+    
 }

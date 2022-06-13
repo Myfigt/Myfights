@@ -71,10 +71,11 @@ public class WebServicesManager : MonoBehaviour {
         //data.AddField("last_name", "zia");
         data.AddField("email",_email);
 		data.AddField("password",_password);
-		data.AddField("platform",platform);
-		data.AddField("deviceId",deviceID);
+		data.AddField("device", platform);
+		data.AddField("device_id", deviceID); 
+        data.AddField("firebase_token", ""); 
 
-		WWW www = new WWW (url, data);
+          WWW www = new WWW (url, data);
 		yield return www;
         Debug.Log("ResgisterUser RESPONCE = " + www.text);
         Hashtable responceData = (Hashtable)easy.JSON.JsonDecode(www.text);
@@ -97,7 +98,7 @@ public class WebServicesManager : MonoBehaviour {
                                 }
                                 break;
                             }
-
+                           
                         }
                     }
                     else
@@ -108,8 +109,10 @@ public class WebServicesManager : MonoBehaviour {
                             if (result.Key.ToString() == "message")
                             {
 
-                                if (registerUserComplete != null)
+                            if (registerUserComplete != null)
                                 {
+                                    PlayerPrefs.SetString("access_token", "Token " + responceData["access_token"].ToString());
+                                    authorization = "Token " + responceData["access_token"].ToString();
                                     registerUserComplete(result.Value.ToString());
                                 }
                                 break;
@@ -358,12 +361,12 @@ public class WebServicesManager : MonoBehaviour {
     public static event OnFetchStrategyComplete FetchStrategyComplete;
     public static event OnFetchStrategyFailed FetchStrategyFailed;
 
-    public void FetchStrategies(int _fighterID)
+    public void FetchStrategies(int _fighterID, Action<bool, string> OnComplete = null)
     {
-        StartCoroutine(_FetchStrategies(_fighterID));
+        StartCoroutine(_FetchStrategies(_fighterID,OnComplete));
     }
 
-    IEnumerator _FetchStrategies(int _fighterID)
+    IEnumerator _FetchStrategies(int _fighterID, Action<bool, string> OnComplete = null)
     {
 
         string url = baseURL + "list_fight_strategy/" + _fighterID ;
@@ -388,6 +391,7 @@ public class WebServicesManager : MonoBehaviour {
                 foreach (var res in item.Value as ArrayList)
                 {
                     FetchStrategyComplete(easy.JSON.JsonEncode(res));
+                    OnComplete?.Invoke(isScuccess, easy.JSON.JsonEncode(item.Value));
                     break;
                 }
                 isScuccess = true;
