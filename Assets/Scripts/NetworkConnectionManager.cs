@@ -84,7 +84,7 @@ namespace Assets.Scripts
             //}
             ExitGames.Client.Photon.Hashtable _properties = new ExitGames.Client.Photon.Hashtable();
             //strategy.Add("_strategy", UIController.Instance._myprofile._myStrategy);
-            _properties.Add("PlayerID", UIController.Instance._myprofile.id);
+            _properties.Add("PlayerID", 1);//TODO:: UIController.Instance._myprofile.id);
             PhotonNetwork.LocalPlayer.SetCustomProperties(_properties);
             TriesToConnectToRoom = true;
             //PhotonNetwork.CreateRoom("Peter's Game 1"); //Create a specific Room - Error: OnCreateRoomFailed
@@ -155,9 +155,10 @@ namespace Assets.Scripts
                     ExitGames.Client.Photon.Hashtable customprops = (item.Value as Player).CustomProperties;
                     foreach (var props in customprops)
                     {
-                        if (props.Key.ToString() == "_strategy")
+                        if (props.Key.ToString() == "PlayerID")
                         {
                             opponentPlayerId = (int)props.Value;
+                            Debug.LogError("custom property found");
                         }
                     }
                 }
@@ -202,8 +203,13 @@ namespace Assets.Scripts
 
                 if (_opponentStrategy != null)
                 {
-                    UIController.Instance._letsFightScreen.Initialize(UIController.Instance._myprofile._myStrategy, _opponentStrategy);
-                }      
+                Debug.LogError("Match ready");
+                UIController.Instance._letsFightScreen.Initialize(UIController.Instance._myprofile._myStrategy, _opponentStrategy);
+                }
+            else
+            {
+                Debug.LogError("Unable to get opponent strategy");
+            }
     
             
         }
