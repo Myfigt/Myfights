@@ -51,6 +51,13 @@ public class TribesManager : UIScreen
 
     private void WebServicesManager_CreateTribeComplete(string responce)
     {
+        
+        Tribe _newTribes = Newtonsoft.Json.JsonConvert.DeserializeObject<Tribe>(responce);
+       
+            Tribe _tribe = GameObject.Instantiate(_tribeTamplate, _content);
+            _tribe.transform.GetComponentInChildren<TMPro.TMP_Text>().text = _newTribes.name;
+            _tribe.gameObject.SetActive(true);
+        CloseCreateTribePanel();
         Debug.Log(responce);
     }
 

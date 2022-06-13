@@ -520,20 +520,26 @@ public class WebServicesManager : MonoBehaviour {
         WWW www = new WWW(url,data);
 
         yield return www;
-        Hashtable responceData = (Hashtable)easy.JSON.JsonDecode(www.text);
-        bool isScuccess = false;
-        foreach (DictionaryEntry item in responceData)
+        if (www.error ==  null)
         {
-            if (item.Key.ToString() == "results")
+            Hashtable responceData = (Hashtable)easy.JSON.JsonDecode(www.text);
+            bool isScuccess = false;
+            foreach (DictionaryEntry item in responceData)
             {
-                CreateTribeComplete(easy.JSON.JsonEncode(item.Value));
-                isScuccess = true;
+                if (item.Key.ToString() == "status")
+                {
+                    if (bool.TryParse(item.Value.ToString(),out isScuccess) && !isScuccess)
+                    {
+                        CreateTribeComplete(easy.JSON.JsonEncode(responceData));
+                    }
+                }
+            }
+            if (isScuccess)
+            {
+                CreateTribeFailed("Faild to find fighters");
             }
         }
-        if (!isScuccess)
-        {
-            CreateTribeFailed("Faild to find fighters");
-        }
+
         yield return null;
     }
     #endregion
