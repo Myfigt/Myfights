@@ -524,7 +524,7 @@ public class UIController : MonoBehaviour
 
     public void OnCreateFightStrategyButtonClick()
     {
-        WebServicesManager.Instance.FetchStrategies(1);//_myprofile.id);
+        WebServicesManager.Instance.FetchStrategies(1);//TODO::_myprofile.id);
     }
     private void WebServicesManager_FetchStrategyFailed(string error)
     {
