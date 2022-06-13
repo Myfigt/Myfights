@@ -114,7 +114,7 @@ namespace Assets.Scripts
             TriesToConnectToRoom = false;
             if (!PhotonNetwork.IsMasterClient && PhotonNetwork.CurrentRoom.PlayerCount == _MaxPlayers)
             {
-                SetupMatch();
+                StartCoroutine( SetupMatch());
             }
             else if (PhotonNetwork.IsMasterClient)
             {
@@ -131,7 +131,7 @@ namespace Assets.Scripts
         {
             if (PhotonNetwork.CurrentRoom.PlayerCount == _MaxPlayers)
             {
-                SetupMatch();
+                StartCoroutine( SetupMatch());
             }
             base.OnPlayerEnteredRoom(newPlayer);
         }
@@ -161,6 +161,7 @@ namespace Assets.Scripts
                         }
                     }
                 }
+            }
                 if (opponentPlayerId != -1)
                 {
                     WebServicesManager.Instance.FetchStrategies(opponentPlayerId, (success, response) =>
@@ -201,12 +202,10 @@ namespace Assets.Scripts
 
                 if (_opponentStrategy != null)
                 {
-                 
+                    UIController.Instance._letsFightScreen.Initialize(UIController.Instance._myprofile._myStrategy, _opponentStrategy);
                 }      
-     
-            }
+    
             
-            //UIController.Instance._letsFightScreen.Initialize(myStrategy, opponentStategy);
         }
     }
 }
