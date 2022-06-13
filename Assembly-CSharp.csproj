@@ -71,9 +71,11 @@
     <Compile Include="Assets\Samples\TextClassification\TextClassificationSample.cs" />
     <Compile Include="Assets\FacebookSDK\Examples\Scripts\SubMenus\DialogShare.cs" />
     <Compile Include="Assets\NatSuite\Plugins\Managed\Recorders\GIFRecorder.cs" />
+    <Compile Include="Assets\MatchMakingScreen.cs" />
     <Compile Include="Assets\Scripts\SendSceneManager.cs" />
     <Compile Include="Assets\Samples\SuperResolution\SuperResolution.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\ChatAppIdCheckerUI.cs" />
+    <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\AppSettingsExtensions.cs" />
     <Compile Include="Assets\NatSuite\Examples\ReplayCam\RecordButton.cs" />
     <Compile Include="Assets\Samples\BlazePose\PoseDetect.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\NamePickGui.cs" />
@@ -151,8 +153,6 @@
     <Compile Include="Assets\Samples\StyleTransfer\StyleTransfer.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\Common\OnStartDelete.cs" />
     <Compile Include="Assets\FacebookSDK\Examples\Scripts\SubMenus\AppEvents.cs" />
-    <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\AppSettingsExtensions.cs" />
-    <Compile Include="Assets\MatchMakingScreen.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
@@ -445,6 +445,9 @@
     <Reference Include="UnityEditor.UnityConnectModule">
       <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.0f1\Editor\Data\Managed\UnityEngine\UnityEditor.UnityConnectModule.dll</HintPath>
     </Reference>
+    <Reference Include="Photon3Unity3D">
+      <HintPath>Assets\Photon\PhotonLibs\netstandard2.0\Photon3Unity3D.dll</HintPath>
+    </Reference>
     <Reference Include="Facebook.Unity.Gameroom">
       <HintPath>Assets\FacebookSDK\Plugins\Gameroom\Facebook.Unity.Gameroom.dll</HintPath>
     </Reference>
@@ -465,9 +468,6 @@
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>Assets\UnityPackages\JsonNet\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Photon3Unity3D">
-      <HintPath>Assets\Photon\PhotonLibs\netstandard2.0\Photon3Unity3D.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.iOS.Extensions.Xcode">
       <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.0f1\Editor\Data\PlaybackEngines\iOSSupport\UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
@@ -1147,6 +1147,10 @@
       <Project>{B96FB573-0A9B-98E5-4F89-0F675B7BEED2}</Project>
       <Name>Assembly-CSharp-firstpass</Name>
     </ProjectReference>
+    <ProjectReference Include="PhotonChat.csproj">
+      <Project>{705BF6A6-BC1B-11F2-361D-2737034F2C14}</Project>
+      <Name>PhotonChat</Name>
+    </ProjectReference>
     <ProjectReference Include="MediaPipe.Editor.csproj">
       <Project>{5D390F12-45D7-C983-1DD2-07EA1800BB78}</Project>
       <Name>MediaPipe.Editor</Name>
@@ -1154,6 +1158,30 @@
     <ProjectReference Include="TensorFlowLite.Common.Editor.csproj">
       <Project>{B4F53141-608C-A6EE-6A4F-3D35F7BD0919}</Project>
       <Name>TensorFlowLite.Common.Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="PhotonUnityNetworking.Editor.csproj">
+      <Project>{B448A0B6-F219-4232-91F3-E307E8FAA424}</Project>
+      <Name>PhotonUnityNetworking.Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="PhotonUnityNetworking.Utilities.PhotonPlayer.Editor.csproj">
+      <Project>{38D390B1-DD39-69E3-E5E1-84FAF846BAE8}</Project>
+      <Name>PhotonUnityNetworking.Utilities.PhotonPlayer.Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="PunDemos.DemoHubEditor.csproj">
+      <Project>{CD124829-262F-F582-E53D-E78E9E5F3DE5}</Project>
+      <Name>PunDemos.DemoHubEditor</Name>
+    </ProjectReference>
+    <ProjectReference Include="PhotonRealtime.csproj">
+      <Project>{092254B7-72C0-E2B5-9EBA-787D757094E1}</Project>
+      <Name>PhotonRealtime</Name>
+    </ProjectReference>
+    <ProjectReference Include="PhotonUnityNetworking.Utilities.csproj">
+      <Project>{EA068463-4C1A-4153-948B-2476BF1466E3}</Project>
+      <Name>PhotonUnityNetworking.Utilities</Name>
+    </ProjectReference>
+    <ProjectReference Include="PhotonUnityNetworking.csproj">
+      <Project>{01FBF4B9-BB5D-32B7-0851-4FE69C64C1C3}</Project>
+      <Name>PhotonUnityNetworking</Name>
     </ProjectReference>
     <ProjectReference Include="NativeCamera.Runtime.csproj">
       <Project>{92A7A87F-149E-7250-5B4B-DBC8EDC82BA8}</Project>
@@ -1163,6 +1191,10 @@
       <Project>{FCC88FC1-8D09-0785-AB01-AF580F8E9B83}</Project>
       <Name>TensorFlowLite.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="PhotonUnityNetworking.Demos.csproj">
+      <Project>{19B2EBA3-E3AF-2FED-22A5-54F4EE01FB87}</Project>
+      <Name>PhotonUnityNetworking.Demos</Name>
+    </ProjectReference>
     <ProjectReference Include="NativeCamera.Editor.csproj">
       <Project>{481F55FB-D045-9483-1499-E29B3ADA324F}</Project>
       <Name>NativeCamera.Editor</Name>
@@ -1171,49 +1203,17 @@
       <Project>{7CD2A2DA-5790-C520-F2EA-35947E8E188A}</Project>
       <Name>MediaPipe</Name>
     </ProjectReference>
-    <ProjectReference Include="TensorFlowLite.csproj">
-      <Project>{FD499D9F-22C0-877C-2EAC-B80A43FD2191}</Project>
-      <Name>TensorFlowLite</Name>
-    </ProjectReference>
-    <ProjectReference Include="PhotonUnityNetworking.csproj">
-      <Project>{01FBF4B9-BB5D-32B7-0851-4FE69C64C1C3}</Project>
-      <Name>PhotonUnityNetworking</Name>
-    </ProjectReference>
     <ProjectReference Include="PunDemos.DemoSlotcarEditor.csproj">
       <Project>{B87F76A0-6C0F-D010-22CD-262BE13E7496}</Project>
       <Name>PunDemos.DemoSlotcarEditor</Name>
     </ProjectReference>
+    <ProjectReference Include="TensorFlowLite.csproj">
+      <Project>{FD499D9F-22C0-877C-2EAC-B80A43FD2191}</Project>
+      <Name>TensorFlowLite</Name>
+    </ProjectReference>
     <ProjectReference Include="PhotonUnityNetworking.Utilities.Culling.Editor.csproj">
       <Project>{F4A8F40A-0038-1CC4-ED25-658C1E06A5C0}</Project>
       <Name>PhotonUnityNetworking.Utilities.Culling.Editor</Name>
-    </ProjectReference>
-    <ProjectReference Include="PhotonUnityNetworking.Utilities.csproj">
-      <Project>{EA068463-4C1A-4153-948B-2476BF1466E3}</Project>
-      <Name>PhotonUnityNetworking.Utilities</Name>
-    </ProjectReference>
-    <ProjectReference Include="PhotonUnityNetworking.Demos.csproj">
-      <Project>{19B2EBA3-E3AF-2FED-22A5-54F4EE01FB87}</Project>
-      <Name>PhotonUnityNetworking.Demos</Name>
-    </ProjectReference>
-    <ProjectReference Include="PhotonChat.csproj">
-      <Project>{705BF6A6-BC1B-11F2-361D-2737034F2C14}</Project>
-      <Name>PhotonChat</Name>
-    </ProjectReference>
-    <ProjectReference Include="PhotonUnityNetworking.Utilities.PhotonPlayer.Editor.csproj">
-      <Project>{38D390B1-DD39-69E3-E5E1-84FAF846BAE8}</Project>
-      <Name>PhotonUnityNetworking.Utilities.PhotonPlayer.Editor</Name>
-    </ProjectReference>
-    <ProjectReference Include="PhotonUnityNetworking.Editor.csproj">
-      <Project>{B448A0B6-F219-4232-91F3-E307E8FAA424}</Project>
-      <Name>PhotonUnityNetworking.Editor</Name>
-    </ProjectReference>
-    <ProjectReference Include="PunDemos.DemoHubEditor.csproj">
-      <Project>{CD124829-262F-F582-E53D-E78E9E5F3DE5}</Project>
-      <Name>PunDemos.DemoHubEditor</Name>
-    </ProjectReference>
-    <ProjectReference Include="PhotonRealtime.csproj">
-      <Project>{092254B7-72C0-E2B5-9EBA-787D757094E1}</Project>
-      <Name>PhotonRealtime</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
