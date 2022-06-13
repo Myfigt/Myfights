@@ -204,4 +204,34 @@ public class VideosContainer : MonoBehaviour
             }
         }
     }
+
+    public void LoadAllFighterVideos(List<FightStrategy> fightStrategies, Action OnLoaded)
+    {
+        int counter = 0;
+        foreach (FightStrategy strategy in fightStrategies)
+        {
+            FighterData newFighterData = new FighterData(new Fighter()
+            {
+                id = strategy.id,
+                created_at = "",
+                Name = "Strategy",
+                Photo = "",
+                Status = -1
+            });
+            List<ActionCard> cards = new List<ActionCard>();
+            foreach (FightCombination fightCombination in strategy._Combinations)
+            {
+                ActionCard newCard = new ActionCard();
+                newCard.Path = fightCombination.player_video_url;
+                newCard.id = fightCombination.id;
+                cards.Add(newCard);
+            }
+            newFighterData.AddVideos(cards, () => {
+                counter++;
+                if (counter == cards.Count)
+                    OnLoaded?.Invoke();
+            });
+            fightersData.Add(newFighterData);
+        }
+    }
 }

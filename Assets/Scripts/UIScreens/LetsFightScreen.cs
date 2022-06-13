@@ -14,6 +14,8 @@ public class LetsFightScreen : UIScreen
     public VideoPlayer videoPlayer;
     public RawImage VideoItemRawImage;
     List<Fighter> currentFighters;
+    FightStrategy selfStrategy;
+    FightStrategy opponentStrategy;
 
     private void OnEnable()
     {
@@ -33,11 +35,6 @@ public class LetsFightScreen : UIScreen
     public void Initialize(List<Fighter> _allFighters)
     {
         LoadingText.SetActive(true);
-        //foreach(Transform child in VideoItemParent)
-        //{
-        //    if (child.GetInstanceID() != VideoItemTemplete.GetInstanceID())
-        //        Destroy(child.gameObject);
-        //}
 
         videoPlayer.targetTexture = new RenderTexture(Screen.width, Screen.height, 1);
         VideoItemRawImage.texture = videoPlayer.targetTexture;
@@ -46,16 +43,28 @@ public class LetsFightScreen : UIScreen
         VideosContainer.Instance.LoadAllFighterVideos(_allFighters, Handle_VideosLoaded);
     }
 
-    public void Initialize(FightStrategy _strategy , FightStrategy _opponentStrategy) { }
+    public void Initialize(FightStrategy _strategy , FightStrategy _opponentStrategy)
+    {
+        LoadingText.SetActive(true);
+
+        videoPlayer.targetTexture = new RenderTexture(Screen.width, Screen.height, 1);
+        VideoItemRawImage.texture = videoPlayer.targetTexture;
+        selfStrategy = _strategy;
+        opponentStrategy = _opponentStrategy;
+        VideosContainer.Instance.LoadAllFighterVideos(new List<FightStrategy>(){
+            _strategy,
+            _opponentStrategy
+        }, Handle_VideosLoaded);
+    }
 
 
     private void Handle_VideosLoaded()
     {
-        List<ActionCard> cards = VideosContainer.Instance.GetActionCards(currentFighters[0].id);
+        List<ActionCard> cards = VideosContainer.Instance.GetActionCards(selfStrategy.id);
         foreach(ActionCard card in cards)
         {
             VideoItem tempItem = GameObject.Instantiate(VideoItemTemplete, VideoItemParent);
-            tempItem.Intialize(currentFighters[0].id, card.id, card.FileName);
+            tempItem.Intialize(selfStrategy.id, card.id, card.FileName);
             tempItem.gameObject.SetActive(true);
         }
         LoadingText.SetActive(false);
