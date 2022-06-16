@@ -21,17 +21,28 @@ public class VideosListManager : UIScreen
     {
 
     }
+    public override void Goback()
+    {
+        for (int i = 0; i < _content.childCount; i++)
+        {
+            if (_content.GetChild(i).gameObject.activeSelf)
+            {
+                Destroy(_content.GetChild(i).gameObject);
+            }
+        }
+        base.Goback();
+    }
     public void Initialize(Fighter _selectedFighter)
     {
-        loading?.gameObject.SetActive(true);
         selectedFighter = _selectedFighter;
         for (int i = 0; i < _content.childCount; i++)
         {
             if (_content.GetChild(i).gameObject.activeSelf)
             {
-                DestroyImmediate(_content.GetChild(i).gameObject);
+                Destroy(_content.GetChild(i).gameObject);
             }
         }
+        loading?.gameObject.SetActive(true);
         VideosContainer.Instance.LoadFighterVideos(_selectedFighter, Handle_VideosLoaded);
     }
 
