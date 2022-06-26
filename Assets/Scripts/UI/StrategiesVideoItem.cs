@@ -6,8 +6,17 @@ using UnityEngine.UI;
 public class StrategiesVideoItem : MonoBehaviour
 {
     public Image titleImage;
-    public void Initialize(Sprite _sprite)
+    public int fighterID;
+    public FightCombination combination;
+    public static System.Action<StrategiesVideoItem> OnVideoClicked;
+    public void Initialize(Sprite _sprite, int _fighterID ,FightCombination _combination)
     {
         titleImage.sprite = _sprite;
+        combination = _combination;
+        fighterID = _fighterID;
+    }
+    public void OnClick_VideoItem()
+    {
+        OnVideoClicked?.Invoke(this);
     }
 }

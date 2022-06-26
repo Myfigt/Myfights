@@ -592,7 +592,12 @@ public class UIController : MonoBehaviour
 
     }
 
-    public void QuickMatch() => _NetworkHandle.JoinRandomRoom();
+    //public void QuickMatch() => _NetworkHandle.JoinRandomRoom();
+    public void QuickMatch()
+    {
+        SetupScreen(UIController.Screens.LetsFightScreen);
+        _letsFightScreen.Initialize(_myprofile._myStrategy, _myprofile._myStrategy);
+    }
 
     public void GoToMatchScreen( FightStrategy _opponentStrategy)
     {

@@ -58,6 +58,8 @@ public class VideosContainer : MonoBehaviour
             }
             localPath = Path.Combine(localPath, FileName);
 
+            localPath = Path.ChangeExtension(localPath,"mp4");
+
             if (File.Exists(localPath))
             {
                 status = VideoStatus.loaded;
@@ -74,6 +76,9 @@ public class VideosContainer : MonoBehaviour
                     }
                     else
                     {
+                        if (!File.Exists(localPath))
+                        File.Copy(Path.Combine(Application.dataPath, "SampleVideo.mp4"), localPath);
+                        localPath = $"file:///{localPath}";
                         status = VideoStatus.Failed;
                     }
                     OnLoaded?.Invoke();
@@ -103,7 +108,8 @@ public class VideosContainer : MonoBehaviour
         {
             foreach(ActionCard action in _actionCards)
             {
-                if (VideoData.Find(item => item.actionCard.Path == action.Path) == null)
+                Debug.Log("Video Link : "+action.Path);
+                if (VideoData.Find(item => item.actionCard.id == action.id) == null)
                 {
                     VideoData newData = new VideoData(action);
                     VideoData.Add(newData);
@@ -113,7 +119,7 @@ public class VideosContainer : MonoBehaviour
             {
                 video.OnLoaded = () =>
                 {
-                    if (VideoData.Find(item => item.status != VideoStatus.loaded) == null)
+                    if (VideoData.Find(item => item.status == VideoStatus.loading) == null)
                     {
                         VideosLoaded?.Invoke();
                     }
@@ -139,16 +145,16 @@ public class VideosContainer : MonoBehaviour
         if (videoIndex == -1)
         {
             Debug.LogError("Video Not Found");
-            OnPlayCompleted();
+            OnPlayCompleted?.Invoke();
             return;
         }
         VideoData vidData = fightersData[fighterIndex].VideoData[videoIndex];
-        if (vidData.status != VideoStatus.loaded)
-        {
-            Debug.LogError($"Can't Play Because Video status is {vidData.status}");
-            OnPlayCompleted();
-            return;
-        }
+        //if (vidData.status != VideoStatus.loaded)
+        //{
+        //    Debug.LogError($"Can't Play Because Video status is {vidData.status}");
+        //    OnPlayCompleted?.Invoke();
+        //    return;
+        //}
         vidData.Play(OnPlayCompleted,player);
     }
 
@@ -214,7 +220,7 @@ public class VideosContainer : MonoBehaviour
             {
                 id = strategy.id,
                 created_at = "",
-                Name = "Strategy",
+                Name = strategy.title,
                 Photo = "",
                 Status = -1
             });
@@ -222,13 +228,14 @@ public class VideosContainer : MonoBehaviour
             foreach (FightCombination fightCombination in strategy._Combinations)
             {
                 ActionCard newCard = new ActionCard();
+                newCard.FileName = Path.GetFileName(fightCombination.player_video_url);
                 newCard.Path = fightCombination.player_video_url;
                 newCard.id = fightCombination.id;
                 cards.Add(newCard);
             }
             newFighterData.AddVideos(cards, () => {
                 counter++;
-                if (counter == cards.Count)
+                if (counter >= fightStrategies.Count)
                     OnLoaded?.Invoke();
             });
             fightersData.Add(newFighterData);

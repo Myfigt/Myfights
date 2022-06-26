@@ -13,18 +13,39 @@ public class LetsFightScreen : UIScreen
     public VideoItem VideoItemTemplete;
     public VideoPlayer videoPlayer;
     public RawImage VideoItemRawImage;
+    public Transform strategiesTitleItemParent;
+    public Transform strategiesVideoItemParent;
+    public StrategiesTitleItem strategiesTitleItem;
+    public StrategiesVideoItem strategiesVideoItem;
+    public GameObject strategiesItemLayout;
     List<Fighter> currentFighters;
     FightStrategy selfStrategy;
     FightStrategy opponentStrategy;
+    List<GameObject> layouts = new List<GameObject>();
 
     private void OnEnable()
     {
         VideoItem.OnItemClicked += Handle_OnItemClicked;
+        StrategiesTitleItem.OnClicked += Handle_OnStrategyItemClicked;
+        StrategiesVideoItem.OnVideoClicked += Handle_OnVideoClicked;
     }
 
     private void OnDisable()
     {
         VideoItem.OnItemClicked -= Handle_OnItemClicked;
+        StrategiesTitleItem.OnClicked -= Handle_OnStrategyItemClicked;
+        StrategiesVideoItem.OnVideoClicked -= Handle_OnVideoClicked;
+    }
+
+    private void Handle_OnVideoClicked(StrategiesVideoItem obj)
+    {
+        VideosContainer.Instance.PlayVideo(obj.fighterID, obj.combination.id, videoPlayer, null);
+    }
+
+    private void Handle_OnStrategyItemClicked(int index)
+    {
+        layouts.ForEach(item => item.SetActive(false));
+        layouts[index].SetActive(true);
     }
 
     private void Handle_OnItemClicked(VideoItem obj)
@@ -57,16 +78,26 @@ public class LetsFightScreen : UIScreen
         }, Handle_VideosLoaded);
     }
 
-
     private void Handle_VideosLoaded()
     {
+        layouts.Clear();
         List<ActionCard> cards = VideosContainer.Instance.GetActionCards(selfStrategy.id);
-        foreach(ActionCard card in cards)
+        int counter = 0;
+        for(int i = 0; i < selfStrategy._Combinations.Length; i+=3)
         {
-            VideoItem tempItem = GameObject.Instantiate(VideoItemTemplete, VideoItemParent);
-            tempItem.Intialize(selfStrategy.id, card.id, card.FileName);
-            tempItem.gameObject.SetActive(true);
+            StrategiesTitleItem title = GameObject.Instantiate(strategiesTitleItem, strategiesTitleItemParent);
+            title.Initialize("Strategy " + counter, counter);
+            GameObject itemsLayout = GameObject.Instantiate(strategiesItemLayout, strategiesVideoItemParent);
+            itemsLayout.SetActive(false);
+            layouts.Add(itemsLayout);
+            for (int j = 0; j < 3; j++)
+            {
+                StrategiesVideoItem videoItem = GameObject.Instantiate(strategiesVideoItem, itemsLayout.transform);
+                videoItem.Initialize(null, selfStrategy.id, selfStrategy._Combinations[i]);
+            }
+            counter++;
         }
+        Handle_OnStrategyItemClicked(0);
         LoadingText.SetActive(false);
     }
 }
