@@ -14,7 +14,7 @@ public class VideoItem : MonoBehaviour
         FighterID = _fighterID;
         VideoID = _videoID;
         VideoName = _videoName;
-        Title.text = VideoName;
+        //Title.text = VideoName;
     }
 
     public void OnClick_VideoItem()

@@ -86,12 +86,12 @@ GameObject:
   m_Component:
   - component: {fileID: 9120982507899987184}
   - component: {fileID: 117448775411800007}
-  - component: {fileID: 2781231884308419118}
   - component: {fileID: 129116666286104707}
   - component: {fileID: 3173500577204866006}
   - component: {fileID: 5936483411843995138}
+  - component: {fileID: 135939139684047712}
   m_Layer: 5
-  m_Name: StrategiesVideoItem
+  m_Name: StrategiesCombinationItem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -132,19 +132,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_AspectMode: 2
   m_AspectRatio: 1
---- !u!114 &2781231884308419118
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8254054123880731742}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 098c92684ff904c1e9d184ad1b0bdf7b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  titleImage: {fileID: 4990530145360946416}
 --- !u!222 &129116666286104707
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -227,15 +214,27 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2781231884308419118}
-        m_TargetAssemblyTypeName: StrategiesVideoItem, Assembly-CSharp
-        m_MethodName: OnClick_VideoItem
-        m_Mode: 1
+      - m_Target: {fileID: 135939139684047712}
+        m_TargetAssemblyTypeName: CombinationItem, Assembly-CSharp
+        m_MethodName: OnClick_CombinationItem
+        m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_ObjectArgument: {fileID: 135939139684047712}
+          m_ObjectArgumentAssemblyTypeName: CombinationItem, Assembly-CSharp
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &135939139684047712
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8254054123880731742}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec2b005d039cf44d492c509fcf92ca77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

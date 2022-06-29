@@ -106,9 +106,9 @@ public class VideosContainer : MonoBehaviour
 
         public void AddVideos(List<ActionCard> _actionCards, Action VideosLoaded)
         {
+            int counter = 0;
             foreach(ActionCard action in _actionCards)
             {
-                Debug.Log("Video Link : "+action.Path);
                 if (VideoData.Find(item => item.actionCard.id == action.id) == null)
                 {
                     VideoData newData = new VideoData(action);
@@ -119,10 +119,9 @@ public class VideosContainer : MonoBehaviour
             {
                 video.OnLoaded = () =>
                 {
-                    if (VideoData.Find(item => item.status == VideoStatus.loading) == null)
-                    {
+                    counter++;
+                    if (counter >= VideoData.Count)
                         VideosLoaded?.Invoke();
-                    }
                 };
                 video.LoadVideo(fighter.id,fighter.Name);
             }

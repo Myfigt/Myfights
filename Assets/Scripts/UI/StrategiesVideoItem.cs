@@ -11,7 +11,7 @@ public class StrategiesVideoItem : MonoBehaviour
     public static System.Action<StrategiesVideoItem> OnVideoClicked;
     public void Initialize(Sprite _sprite, int _fighterID ,FightCombination _combination)
     {
-        titleImage.sprite = _sprite;
+        //titleImage.sprite = _sprite;
         combination = _combination;
         fighterID = _fighterID;
     }
