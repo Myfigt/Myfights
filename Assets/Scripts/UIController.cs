@@ -41,6 +41,7 @@ public class UIController : MonoBehaviour
         LetsFightScreen = 13,
         AllTribes = 14,
         MatchMakingScreen = 15,
+        DebugScreen = 16
 
     }
     public Screens _CurrentScreen = Screens.HomeScreen;
@@ -210,6 +211,7 @@ public class UIController : MonoBehaviour
             if (i == (int)_screenIndex)
             {
                 MyScreens[i].SetActive(true);
+                MyScreens[i].GetComponent<UIScreen>()?.Initialize();
             }
             else
             {
@@ -603,6 +605,11 @@ public class UIController : MonoBehaviour
     {
         SetupScreen(UIController.Screens.LetsFightScreen);
         _letsFightScreen.Initialize(_myprofile._myStrategy, _opponentStrategy);
+    }
+
+    public void OnDebugScene()
+    {
+        SetupScreen(UIController.Screens.DebugScreen);
     }
     
 }
