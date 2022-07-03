@@ -34,7 +34,19 @@ public class LevelData
         Defense = 0;
     }
 
-    public LevelData(string _LevelName, int _Level, int _ActionCards,int _tCard,int _iCard,int _armElbow,int _legKnee,int _defense)
+    public LevelData(LevelData clone)
+    {
+        LevelName = clone.LevelName;
+        Level = clone.Level;
+        ActionCards = clone.ActionCards;
+        tCard = clone.tCard;
+        iCard = clone.iCard;
+        ArmElbow = clone.ArmElbow;
+        LegKnee = clone.LegKnee;
+        Defense = clone.Defense;
+    }
+
+    public LevelData(string _LevelName, int _Level, int _ActionCards, int _tCard, int _iCard, int _armElbow, int _legKnee, int _defense)
     {
         LevelName = _LevelName;
         Level = _Level;
@@ -45,9 +57,9 @@ public class LevelData
         LegKnee = _legKnee;
         Defense = _defense;
     }
-    public void AddData(LevelDataTypes type,int count)
+    public void AddData(LevelDataTypes type, int count)
     {
-        switch(type)
+        switch (type)
         {
             case LevelDataTypes.tCards:
                 tCard += count;
@@ -83,6 +95,17 @@ public class LevelData
             $": iCard : {iCard} : ArmElbow : {ArmElbow} " +
             $": LegKnee : {LegKnee} : Defense : {Defense}";
     }
+    public static LevelData operator +(LevelData b, LevelData c)
+    {
+        LevelData dataToReturn = new LevelData(b);
+        dataToReturn.ActionCards += c.ActionCards;
+        dataToReturn.tCard += c.tCard;
+        dataToReturn.iCard += c.iCard;
+        dataToReturn.ArmElbow += c.ArmElbow;
+        dataToReturn.LegKnee += c.LegKnee;
+        dataToReturn.Defense += c.Defense;
+        return dataToReturn;
+    }
 }
 public class PlayerEconomicMatrix
 {
@@ -90,7 +113,12 @@ public class PlayerEconomicMatrix
 
     public void AddLevelData(string _LevelName, int _Level, int _ActionCards, int _tCard, int _iCard, int _armElbow, int _legKnee, int _defense)
     {
-        levelDatas.Add(new LevelData(_LevelName, _Level, _ActionCards, _tCard, _iCard, _armElbow, _legKnee, _defense));
+        LevelData dataToAdd = new LevelData(_LevelName, _Level, _ActionCards, _tCard, _iCard, _armElbow, _legKnee, _defense);
+        if (levelDatas.Count > 0)
+        {
+            dataToAdd = dataToAdd + levelDatas[levelDatas.Count - 1];
+        }
+        levelDatas.Add(dataToAdd);
     }
 
     public LevelData GetData(string belt)

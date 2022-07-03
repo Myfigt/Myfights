@@ -82,6 +82,12 @@ public class DataManager : MonoBehaviour
     {
         _activePlayerData.AddData(type, count);
         CalculateRequiredThingsForLevel();
+        if (_requiredPlayerData.isCompleted)
+        {
+            _activePlayerData.Level = _requiredPlayerData.Level;
+            _activePlayerData.LevelName = _requiredPlayerData.LevelName;
+        }
+        CalculateRequiredThingsForLevel();
     }
 
     [ContextMenu("LoadPlayerEconomicMatrix")]
