@@ -41,7 +41,8 @@ public class UIController : MonoBehaviour
         LetsFightScreen = 13,
         AllTribes = 14,
         MatchMakingScreen = 15,
-        DebugScreen = 16
+        DebugScreen = 16,
+        Profile = 17,
 
     }
     public Screens _CurrentScreen = Screens.HomeScreen;
@@ -66,6 +67,8 @@ public class UIController : MonoBehaviour
     public LetsFightScreen _letsFightScreen;
     [SerializeField]
     TribesManager _tribesManager;
+    [SerializeField]
+    ProfileViewer _profileScreen;
 
     [SerializeField]
     VideoPlayer _actionCardPreview;
@@ -611,5 +614,12 @@ public class UIController : MonoBehaviour
     {
         SetupScreen(UIController.Screens.DebugScreen);
     }
+
+    public void OnProfileScreenClick()
+    {
+        _profileScreen.SetProfileData(_myprofile);
+        SetupScreen(Screens.Profile);
+    }
+
     
 }

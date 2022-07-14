@@ -21,6 +21,7 @@ public class TribesManager : UIScreen
 
     public void Initialize(List<Tribe> _allTribes)
     {
+        string[] tribes = DataManager.Instance.LoadTribesData();
         for (int i = 0; i < _content.childCount; i++)
         {
             if (_content.GetChild(i).gameObject.activeSelf)
@@ -30,7 +31,10 @@ public class TribesManager : UIScreen
         }
         for (int i = 0; i < _allTribes.Count; i++)
         {
-            Tribe _tribe = GameObject.Instantiate(_tribeTamplate, _content);
+            string[] values = tribes[i].Split(new char[] { ',' });
+                //int.Parse(values[0])
+        
+        Tribe _tribe = GameObject.Instantiate(_tribeTamplate, _content);
             _tribe.transform.GetComponentInChildren<TMPro.TMP_Text>().text = _allTribes[i].name;
             _tribe.gameObject.SetActive(true);
         }
