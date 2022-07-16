@@ -27,5 +27,10 @@ public class MatchMakingScreen : UIScreen
         gameModePanel.SetActive(false);
         matchMakigPanel.SetActive(true);
     }
+
+    public void OnOpponentJoined()
+    {
+
+    }
     // Update is called once per frame
 }

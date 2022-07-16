@@ -388,6 +388,7 @@ public class WebServicesManager : MonoBehaviour {
         {
             if (item.Key.ToString() == "results")
             {
+                isScuccess = true;
                 foreach (var res in item.Value as ArrayList)
                 {
                     if (OnComplete == null)
@@ -399,7 +400,7 @@ public class WebServicesManager : MonoBehaviour {
                     //OnComplete?.Invoke(isScuccess, easy.JSON.JsonEncode(item.Value));
                     break;
                 }
-                isScuccess = true;
+               
             }
         }
         if (!isScuccess)
