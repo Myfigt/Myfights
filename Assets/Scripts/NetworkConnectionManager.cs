@@ -205,8 +205,9 @@ namespace Assets.Scripts
                 if (_opponentStrategy != null)
                 {
                 Debug.LogError("Match ready");
-                UIController.Instance._letsFightScreen.Initialize(UIController.Instance._myprofile._myStrategy, _opponentStrategy);
                 UIController.Instance.SetupScreen(UIController.Screens.LetsFightScreen);
+                UIController.Instance._letsFightScreen.Initialize(UIController.Instance._myprofile._myStrategy, _opponentStrategy);
+                
             }
             else
             {
