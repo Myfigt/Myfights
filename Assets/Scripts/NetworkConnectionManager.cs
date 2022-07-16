@@ -118,7 +118,7 @@ namespace Assets.Scripts
             }
             else if (PhotonNetwork.IsMasterClient)
             {
-                UIController.Instance.SetupScreen(UIController.Screens.MatchMakingScreen);
+                UIController.Instance.OnRoomJoined();
             }
 
             Debug.Log("Master: " + PhotonNetwork.IsMasterClient + " | Players In Room: " + PhotonNetwork.CurrentRoom.PlayerCount + " | RoomName: " + PhotonNetwork.CurrentRoom.Name + " Region: " + PhotonNetwork.CloudRegion);

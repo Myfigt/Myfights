@@ -146,29 +146,8 @@ public class DataManager : MonoBehaviour
     }
     public string[] LoadTribesData()
     {
-       string[] Lines = LevelRewardMatrixText.text.Split(new char[] { '\n', '\r' });
+       string[] Lines = TribesData.text.Split(new char[] { '\n', '\r' });
         return Lines;
-        foreach (string line in Lines)
-        {
-            if (!string.IsNullOrWhiteSpace(line))
-            {
-                string[] values = line.Split(new char[] { ',' });
-                LevelRewardMatrix.AddRewardData(
-                    int.Parse(values[0]),
-                    int.Parse(values[1]),
-                    int.Parse(values[2]),
-                    int.Parse(values[3]),
-                    int.Parse(values[4]),
-                    int.Parse(values[5]),
-                    int.Parse(values[6]),
-                    int.Parse(values[7]),
-                    int.Parse(values[8]),
-                    int.Parse(values[9]),
-                    int.Parse(values[10]),
-                    float.Parse(values[11]));
-            }
-        }
        
-
     }
 }

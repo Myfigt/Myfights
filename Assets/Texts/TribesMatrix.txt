@@ -1,22 +1,22 @@
-﻿Color ,Pantone Color ,Tribe ,Japanese  ,Meaning of your  
-Red ,ED1C24 ,Body ,Yakuza ,The body meets all challenges 
-Blue ,00A1DD ,Spirit ,Yamabushi ,The spirit rises to overcome all  
-Yellow ,FEBFOF ,Mind ,Hatamoto ,The mind bends all to its will 
-Gold ,16-0952-TCX ,Lord ,Dai-Daimyo ,Dominating all around them 
-Silver ,14-5002-TCX ,Commander ,Niban-Daimyo ,Master of all  
-Brown ,C2956D ,Honor ,Miyo ,Great respect well earned 
-Electric Blue ,9CD0E8 ,Truth ,Seijitsu ,Their word and actions are true 
-Lilac ,CDCBACF ,Benevolence ,Kandai ,Pure of heart and soul 
-Deep Blue ,4F617B ,Self-Control ,Kokkishin ,Spirit of achievement  
-Deep Red ,D86462 ,Courage ,Yuuki ,Brave in the face of adversity 
-Bright Green ,8EBE5C ,Justice ,Adashi-Koto ,Seeks what is right and fair 
-Orange ,C2956D ,Loyalty ,Chuujitsu ,Devoted and faithful to their tribe 
-Light Green  ,C2D8A7 ,Humility ,Kenson ,A humble attitude achieves 
-Amethyst  ,9B91AC ,Artist ,Sozoteki ,Expert practitioner of the arts 
-Lime  ,55B073 ,Wellbeing ,Kenko ,Positive path within oneself 
-Lemon ,E9E17A ,Researcher ,Shodo ,Mastery of knowledge 
-Grey ,C6C4C7 ,Etiquette ,Reishiki ,Knows the code of conduct 
-Light Yellow ,E4E5BB ,Strategist ,Shushi ,Highly skilled in knowing the way 
-Sky Blue ,97CDE0 ,Political  ,Shinshi ,Influences through power 
-Black ,433F3D ,Ninja ,Kakusu ,To endure through stealth 
-Light Orange ,EBCC9B ,Finance ,Kinsen ,Wealth is their destiny 
+﻿Color,Pantone Color,Tribe,Japanese,Meaning of you
+Red,ED1C24,Body,Yakuza,The body meets all challenges
+Blue,00A1DD,Spirit,Yamabushi,The spirit rises to overcome all
+Yellow,FEBFOF,Mind,Hatamoto,The mind bends all to its will
+Gold,16-0952-TCX,Lord,Dai-Daimyo,Dominating all around them
+Silver,14-5002-TCX,Commander,Niban-Daimyo,Master of all
+Brown,C2956D,Honor,Miyo,Great respect well earned
+Electric Blue,9CD0E8,Truth,Seijitsu,Their word and actions are true
+Lilac,CDCBACF,Benevolence,Kandai,Pure of heart and soul
+Deep Blue,4F617B,Self-Control,Kokkishin,Spirit of achievement
+Deep Red,D86462,Courage,Yuuki,Brave in the face of adversity
+Bright Green,8EBE5C,Justice,Adashi-Koto,Seeks what is right and fair
+Orange,C2956D,Loyalty,Chuujitsu,Devoted and faithful to their tribe
+Light Green,C2D8A7,Humility,Kenson,A humble attitude achieves
+Amethyst,9B91AC,Artist,Sozoteki,Expert practitioner of the arts
+Lime,55B073,Wellbeing,Kenko,Positive path within oneself
+Lemon,E9E17A,Researcher,Shodo,Mastery of knowledge
+Grey,C6C4C7,Etiquette,Reishiki,Knows the code of conduct
+Light Yellow,E4E5BB,Strategist,Shushi,Highly skilled in knowing the way
+Sky Blue,97CDE0,Political,Shinshi,Influences through power
+Black,433F3D,Ninja,Kakusu,To endure through stealth
+Light Orange,EBCC9B,Finance,Kinsen,Wealth is their destiny

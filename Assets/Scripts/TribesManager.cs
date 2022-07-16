@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class TribesManager : UIScreen
 {
@@ -19,7 +20,7 @@ public class TribesManager : UIScreen
 
     List<Tribe> AllTribes = null;
 
-    public void Initialize(List<Tribe> _allTribes)
+    public void Initialize(List<Tribe> _allTribes = null)
     {
         string[] tribes = DataManager.Instance.LoadTribesData();
         for (int i = 0; i < _content.childCount; i++)
@@ -29,14 +30,29 @@ public class TribesManager : UIScreen
                 DestroyImmediate(_content.GetChild(i).gameObject);
             }
         }
-        for (int i = 0; i < _allTribes.Count; i++)
+        for (int i = 1; i < tribes.Length; i++)
         {
-            string[] values = tribes[i].Split(new char[] { ',' });
-                //int.Parse(values[0])
-        
-        Tribe _tribe = GameObject.Instantiate(_tribeTamplate, _content);
-            _tribe.transform.GetComponentInChildren<TMPro.TMP_Text>().text = _allTribes[i].name;
-            _tribe.gameObject.SetActive(true);
+            if (!string.IsNullOrWhiteSpace(tribes[i]))
+            {
+                string[] values = tribes[i].Split(new char[] { ',' });
+
+                Tribe _tribe = GameObject.Instantiate(_tribeTamplate, _content);
+                TMPro.TMP_Text[] _alltexts =  _tribe.transform.GetComponentsInChildren<TMPro.TMP_Text>();
+                _alltexts[0].text = values[3];
+                _alltexts[1].text = values[4];
+                if (ColorUtility.TryParseHtmlString("#"+values[1], out var newCol))
+                {
+                    if (_tribe.TryGetComponent<Image>(out var _image))
+                    {
+                        _image.color = newCol;
+                    }
+                }
+                else
+                    Debug.Log("can not convert color " + values[1]);
+                
+               
+                _tribe.gameObject.SetActive(true);
+            }
         }
 
         AllTribes = _allTribes;

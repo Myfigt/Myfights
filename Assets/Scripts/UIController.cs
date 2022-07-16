@@ -75,10 +75,10 @@ public class UIController : MonoBehaviour
     [SerializeField]
     VideoPlayer _masterCardPreview;
     [SerializeField]
-    GameObject MatcheMakingScreen;
+    MatchMakingScreen _MatcheMakingScreen;
 
     [SerializeField]
-    NetworkConnectionManager _NetworkHandle;
+    public NetworkConnectionManager _NetworkHandle;
 
     public UserProfile _myprofile = null;
 
@@ -583,7 +583,9 @@ public class UIController : MonoBehaviour
 
     public void OnAllTribesButtonClick()
     {
-        WebServicesManager.Instance.FetchTribes();
+        _tribesManager.Initialize(null);
+        SetupScreen(Screens.AllTribes);
+        //WebServicesManager.Instance.FetchTribes();
     }
     private void WebServicesManager_GetTribesFailed(string error)
     {
@@ -600,8 +602,10 @@ public class UIController : MonoBehaviour
     //public void QuickMatch() => _NetworkHandle.JoinRandomRoom();
     public void QuickMatch()
     {
-        SetupScreen(UIController.Screens.LetsFightScreen);
-        _letsFightScreen.Initialize(_myprofile._myStrategy, _myprofile._myStrategy);
+        SetupScreen(Screens.MatchMakingScreen);
+        _MatcheMakingScreen.Initialize();
+       // SetupScreen(UIController.Screens.LetsFightScreen);
+       // _letsFightScreen.Initialize(_myprofile._myStrategy, _myprofile._myStrategy);
     }
 
     public void GoToMatchScreen( FightStrategy _opponentStrategy)
@@ -621,5 +625,8 @@ public class UIController : MonoBehaviour
         SetupScreen(Screens.Profile);
     }
 
-    
+    public void OnRoomJoined()
+    {
+        _MatcheMakingScreen.ShowMatchMakingScreen();
+    }
 }
