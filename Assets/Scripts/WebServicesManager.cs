@@ -390,8 +390,13 @@ public class WebServicesManager : MonoBehaviour {
             {
                 foreach (var res in item.Value as ArrayList)
                 {
-                    FetchStrategyComplete(easy.JSON.JsonEncode(res));
-                    OnComplete?.Invoke(isScuccess, easy.JSON.JsonEncode(item.Value));
+                    if (OnComplete == null)
+                    {
+                        FetchStrategyComplete(easy.JSON.JsonEncode(res));
+                    }
+                    else
+                        OnComplete.Invoke(isScuccess, easy.JSON.JsonEncode(item.Value));
+                    //OnComplete?.Invoke(isScuccess, easy.JSON.JsonEncode(item.Value));
                     break;
                 }
                 isScuccess = true;
