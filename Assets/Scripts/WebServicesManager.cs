@@ -396,7 +396,7 @@ public class WebServicesManager : MonoBehaviour {
                         FetchStrategyComplete(easy.JSON.JsonEncode(res));
                     }
                     else
-                        OnComplete.Invoke(isScuccess, easy.JSON.JsonEncode(item.Value));
+                        OnComplete.Invoke(isScuccess, easy.JSON.JsonEncode(res));
                     //OnComplete?.Invoke(isScuccess, easy.JSON.JsonEncode(item.Value));
                     break;
                 }

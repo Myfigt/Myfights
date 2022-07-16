@@ -131,6 +131,7 @@ namespace Assets.Scripts
         {
             if (PhotonNetwork.CurrentRoom.PlayerCount == _MaxPlayers)
             {
+                UIController.Instance.OnRoomJoined();
                 StartCoroutine( SetupMatch());
             }
             base.OnPlayerEnteredRoom(newPlayer);
@@ -205,7 +206,8 @@ namespace Assets.Scripts
                 {
                 Debug.LogError("Match ready");
                 UIController.Instance._letsFightScreen.Initialize(UIController.Instance._myprofile._myStrategy, _opponentStrategy);
-                }
+                UIController.Instance.SetupScreen(UIController.Screens.LetsFightScreen);
+            }
             else
             {
                 Debug.LogError("Unable to get opponent strategy");
