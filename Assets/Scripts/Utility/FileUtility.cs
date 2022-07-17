@@ -29,7 +29,8 @@ public class FileUtility : MonoBehaviour
             yield return www.Send();
             if (www.isNetworkError || www.isHttpError)
             {
-                OnComplete?.Invoke(false, null);
+                Debug.Log($"Not able to Download url : {url} : Error : " + www.error);
+                OnComplete?.Invoke(false, www.downloadHandler);
             }
             else
             {
