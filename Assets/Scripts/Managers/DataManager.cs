@@ -118,7 +118,7 @@ public class DataManager : MonoBehaviour
     public void LoadLevelRewardMatrix()
     {
         LevelRewardMatrix = new LevelRewardMatrix();
-        string[] Lines = TribesData.text.Split(new char[] { '\n', '\r' });
+        string[] Lines = LevelRewardMatrixText.text.Split(new char[] { '\n', '\r' });
         for (int i = 0; i < Lines.Length; i++)
         {
 
