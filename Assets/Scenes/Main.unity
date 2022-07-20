@@ -35192,7 +35192,7 @@ MonoBehaviour:
       title: 
       id: 0
       _Combinations: []
-  _deletePlayerPrefs: 1
+  _deletePlayerPrefs: 0
   _UseDefaultCridentials: 1
   Defaultusername: bilalkhan@mailinator.comm
   DefaultPwd: Password@123
