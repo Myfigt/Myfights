@@ -18,9 +18,12 @@ namespace Assets.Scripts
 
         protected bool TriesToConnectToMaster;
         protected bool TriesToConnectToRoom;
+        Player opponent;
+        Player selfPlayer;
 
         private void Awake()
         {
+            
             PhotonNetwork.OfflineMode = false;
         }
         // Use this for initialization
@@ -153,6 +156,7 @@ namespace Assets.Scripts
             {
                 if (!(item.Value as Player).IsLocal)
                 {
+                    opponent = item.Value;
                     ExitGames.Client.Photon.Hashtable customprops = (item.Value as Player).CustomProperties;
                     foreach (var props in customprops)
                     {
@@ -162,6 +166,10 @@ namespace Assets.Scripts
                             Debug.LogError("custom property found");
                         }
                     }
+                }
+                else
+                {
+                    selfPlayer = item.Value;
                 }
             }
                 if (opponentPlayerId != -1)
@@ -215,6 +223,15 @@ namespace Assets.Scripts
             }
     
             
+        }
+        public void SendRPC(string rpcLable,params object[] parameters)
+        {
+            photonView.RPC(rpcLable, opponent, parameters);
+        }
+        [PunRPC]
+        public void PlayVideo(object parameter)
+        {
+            UIController.Instance._letsFightScreen.PlayOpponentVideo((int)parameter);
         }
     }
 }

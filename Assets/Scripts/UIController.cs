@@ -560,8 +560,8 @@ public class UIController : MonoBehaviour
 
             }
         }
-        _StrategyCreation.Initialize(_myprofile._allActionCards, strategy as FightStrategy);
         SetupScreen(Screens.CreateFightStrategy);
+        _StrategyCreation.Initialize(_myprofile._allActionCards, strategy as FightStrategy);
     }
 
     private void WebServicesManager_GetActionCardsFailed(string error)
@@ -604,8 +604,8 @@ public class UIController : MonoBehaviour
     {
         SetupScreen(Screens.MatchMakingScreen);
         _MatcheMakingScreen.Initialize();
-       // SetupScreen(UIController.Screens.LetsFightScreen);
-       // _letsFightScreen.Initialize(_myprofile._myStrategy, _myprofile._myStrategy);
+        //SetupScreen(UIController.Screens.LetsFightScreen);
+        //_letsFightScreen.Initialize(_myprofile._myStrategy, _myprofile._myStrategy);
     }
 
     public void GoToMatchScreen( FightStrategy _opponentStrategy)

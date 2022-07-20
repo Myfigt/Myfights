@@ -61,6 +61,7 @@ public class LetsFightScreen : UIScreen
     private void Handle_OnVideoClicked(StrategiesVideoItem obj)
     {
         VideosContainer.Instance.PlayVideo(obj.fighterID, obj.combination.id, selfVideoPlayer, null);
+        UIController.Instance._NetworkHandle.SendRPC("PlayVideo", obj.combination.id);
     }
 
     private void Handle_OnStrategyItemClicked(int index)
@@ -72,6 +73,7 @@ public class LetsFightScreen : UIScreen
     private void Handle_OnItemClicked(VideoItem obj)
     {
         VideosContainer.Instance.PlayVideo(obj.FighterID, obj.VideoID, selfVideoPlayer, null);
+        UIController.Instance._NetworkHandle.SendRPC("PlayVideo",obj.VideoID);
     }
 
     public void Initialize(List<Fighter> _allFighters)
@@ -146,5 +148,10 @@ public class LetsFightScreen : UIScreen
         }
         Handle_OnStrategyItemClicked(0);
         LoadingText.SetActive(false);
+    }
+
+    public void PlayOpponentVideo(int id)
+    {
+        VideosContainer.Instance.PlayVideo(opponentStrategy.id, id, opponentVideoPlayer, null);
     }
 }
