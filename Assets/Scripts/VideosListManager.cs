@@ -39,7 +39,7 @@ public class VideosListManager : UIScreen
         {
             if (_content.GetChild(i).gameObject.activeSelf)
             {
-                Destroy(_content.GetChild(i).gameObject);
+                DestroyImmediate(_content.GetChild(i).gameObject);
             }
         }
         loading?.gameObject.SetActive(true);

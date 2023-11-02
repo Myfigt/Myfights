@@ -5,6 +5,8 @@ using UnityEngine.UI;
 using Photon.Realtime;
 using UnityEngine.SceneManagement;
 using System;
+using Unity.Mathematics;
+using System.Collections.Generic;
 
 namespace Assets.Scripts
 {
@@ -82,16 +84,25 @@ namespace Assets.Scripts
             //{
             //    return;
             //}
-            ExitGames.Client.Photon.Hashtable _properties = new ExitGames.Client.Photon.Hashtable();
+            
             //strategy.Add("_strategy", UIController.Instance._myprofile._myStrategy);
-            _properties.Add("PlayerID", 1);//TODO:: UIController.Instance._myprofile.id);
-            PhotonNetwork.LocalPlayer.SetCustomProperties(_properties);
+           
             TriesToConnectToRoom = true;
             //PhotonNetwork.CreateRoom("Peter's Game 1"); //Create a specific Room - Error: OnCreateRoomFailed
             //PhotonNetwork.JoinRoom("Peter's Game 1");   //Join a specific Room   - Error: OnJoinRoomFailed  
             PhotonNetwork.JoinRandomRoom();               //Join a random Room     - Error: OnJoinRandomRoomFailed  
         }
 
+        public void CreateNewRoom(string ownerID)
+        {
+            int random = UnityEngine.Random.Range(1000, 999999);
+            PhotonNetwork.CreateRoom("My_Fight_Game_Room_" + ownerID + random, new RoomOptions { MaxPlayers = _MaxPlayers });
+            PhotonNetwork.JoinRoom("My_Fight_Game_Room_" + ownerID + random);
+        }
+        public void JoinRoom(string roomID)
+        {
+            PhotonNetwork.JoinRoom(roomID);
+        }
         public override void OnJoinRandomFailed(short returnCode, string message)
         {
             base.OnJoinRandomFailed(returnCode, message);
@@ -111,6 +122,9 @@ namespace Assets.Scripts
         public override void OnJoinedRoom()
         {
             base.OnJoinedRoom();
+            ExitGames.Client.Photon.Hashtable _properties = new ExitGames.Client.Photon.Hashtable();
+            _properties.Add("PlayerID", UIController.Instance._myprofile.id);
+            PhotonNetwork.LocalPlayer.SetCustomProperties(_properties);
             TriesToConnectToRoom = false;
             if (!PhotonNetwork.IsMasterClient && PhotonNetwork.CurrentRoom.PlayerCount == _MaxPlayers)
             {
@@ -118,7 +132,8 @@ namespace Assets.Scripts
             }
             else if (PhotonNetwork.IsMasterClient)
             {
-                UIController.Instance.SetupScreen(UIController.Screens.MatchMakingScreen);
+               
+                UIController.Instance.GoToMatchMakingScreen(PhotonNetwork.CurrentRoom.Name);
             }
 
             Debug.Log("Master: " + PhotonNetwork.IsMasterClient + " | Players In Room: " + PhotonNetwork.CurrentRoom.PlayerCount + " | RoomName: " + PhotonNetwork.CurrentRoom.Name + " Region: " + PhotonNetwork.CloudRegion);
@@ -139,6 +154,10 @@ namespace Assets.Scripts
         {
             base.OnPlayerLeftRoom(otherPlayer);
         }
+        public override void OnCreatedRoom()
+        {
+
+        }
 
         internal void JoinRandomRoom()
         {
@@ -146,6 +165,7 @@ namespace Assets.Scripts
         }
 
         public IEnumerator SetupMatch() {
+            yield return new WaitForSeconds(3);
             int opponentPlayerId= -1;
             FightStrategy _opponentStrategy = null;
             foreach (var item in PhotonNetwork.CurrentRoom.Players)
@@ -164,54 +184,57 @@ namespace Assets.Scripts
                 }
             }
                 if (opponentPlayerId != -1)
+            {
+                //::TODO revese
+               WebServicesManager.Instance.FetchStrategies(opponentPlayerId, (success, response) =>
                 {
-                    WebServicesManager.Instance.FetchStrategies(opponentPlayerId, (success, response) =>
+                    if (success)
                     {
-                        if (success)
+                        //List<ActionCard> fighters = Newtonsoft.Json.JsonConvert.DeserializeObject<List<ActionCard>>(response);
+                        _opponentStrategy = Newtonsoft.Json.JsonConvert.DeserializeObject<FightStrategy>(response);
+                        Hashtable responceData = (Hashtable)easy.JSON.JsonDecode(response);
+                        foreach (DictionaryEntry ditem in responceData)
                         {
-                            _opponentStrategy = Newtonsoft.Json.JsonConvert.DeserializeObject<FightStrategy>(response);
-                            Hashtable responceData = (Hashtable)easy.JSON.JsonDecode(response);
-                            foreach (DictionaryEntry ditem in responceData)
+                            if (ditem.Key.ToString() == "combinations")
                             {
-                                if (ditem.Key.ToString() == "videos")
+                                _opponentStrategy.combinations = new FightCombination[9];
+                                int i = 0;
+                                foreach (var res in ditem.Value as ArrayList)
                                 {
-                                    _opponentStrategy._Combinations = new FightCombination[9];
-                                    int i = 0;
-                                    foreach (var res in ditem.Value as ArrayList)
+
+                                    string combos = easy.JSON.JsonEncode(res);
+                                    _opponentStrategy.combinations[i] = Newtonsoft.Json.JsonConvert.DeserializeObject<FightCombination>(combos);
+                                    i++;
+                                    if (i >= 9)
                                     {
-
-                                        string combos = easy.JSON.JsonEncode(res);
-                                        _opponentStrategy._Combinations[i] = Newtonsoft.Json.JsonConvert.DeserializeObject<FightCombination>(combos);
-                                        i++;
-                                        if (i >= 9)
-                                        {
-                                            break;
-                                        }
+                                        break;
                                     }
-
                                 }
+
                             }
                         }
-                        else
-                        {
-                           
-                        }
-                    });
-                }
+                    }
+                    else
+                    {
 
-                yield return new WaitForSeconds(5);
+                    }
+                });
+              
+            }
 
-                if (_opponentStrategy != null)
+            yield return new WaitForSeconds(3);
+
+            if (_opponentStrategy != null)
                 {
                 Debug.LogError("Match ready");
-                UIController.Instance._letsFightScreen.Initialize(UIController.Instance._myprofile._myStrategy, _opponentStrategy);
+                UIController.Instance.SetupScreen(UIController.Screens.LetsFightScreen);
+                UIController.Instance._letsFightScreen.Initialize(UIController.Instance._myprofile._myStrategy, _opponentStrategy,this);
                 }
             else
             {
                 Debug.LogError("Unable to get opponent strategy");
             }
-    
-            
+
         }
     }
 }

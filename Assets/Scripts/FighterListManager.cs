@@ -13,7 +13,7 @@ public class FighterListManager : UIScreen
     Transform _content;
     List<Fighter> MyFighters = null;
 
-    public Fighter SelectefFighter;
+    public Fighter SelectedFighter;
     // Start is called before the first frame update
     void Start()
     {
@@ -26,6 +26,7 @@ public class FighterListManager : UIScreen
             if (_content.GetChild(i).gameObject.activeSelf)
             {
                 DestroyImmediate(_content.GetChild(i).gameObject);
+                i--;
             }
         }
         for (int i = 0; i < _allFighters.Count; i++)
@@ -46,21 +47,9 @@ public class FighterListManager : UIScreen
     }
     public void OnFighterSelected(TMPro.TMP_Text index)
     {
-        //foreach (var item in MyFighters)
-        //{
-        //    if (item.Name == index.text)
-        //    {
-
-        //        SelectefFighter = item;
-        //        WebServicesManager.Instance.FetchVideos(item.id, Belts.blackbelt.ToString()); //UIController.Instance._myprofile.belt_type.ToString());
-        //        break;
-        //    }
-        //}
-        Fighter selectedFighter = MyFighters.Find(item => item.Name == index.text);
-        //UIController.Instance.SetupScreen(UIController.Screens.LetsFightScreen);
-        //UIController.Instance._letsFightScreen.Initialize(new List<Fighter>() { selectedFighter });
+        SelectedFighter = MyFighters.Find(item => item.Name == index.text);
         UIController.Instance.SetupScreen(UIController.Screens.Figher_VideoSelection);
-        UIController.Instance._VideoSelection.Initialize(selectedFighter);
+        UIController.Instance._VideoSelection.Initialize(SelectedFighter);
     }
 
     IEnumerator GetProfileImage(string MediaUrl ,Image _image)

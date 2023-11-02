@@ -130,6 +130,8 @@ public class VideosContainer : MonoBehaviour
 
     List<FighterData> fightersData = new List<FighterData>();
 
+    public List<FighterData> opponentVidoData = new List<FighterData>();
+
     public void PlayVideo(int fighterID,int videoID,VideoPlayer player,Action OnPlayCompleted)
     {
         int fighterIndex = fightersData.FindIndex(item => item.fighter.id == fighterID);
@@ -212,6 +214,7 @@ public class VideosContainer : MonoBehaviour
 
     public void LoadAllFighterVideos(List<FightStrategy> fightStrategies, Action OnLoaded)
     {
+        opponentVidoData = new List<FighterData>();
         int counter = 0;
         foreach (FightStrategy strategy in fightStrategies)
         {
@@ -219,25 +222,29 @@ public class VideosContainer : MonoBehaviour
             {
                 id = strategy.id,
                 created_at = "",
-                Name = strategy.title,
+                Name = strategy.player_name,
                 Photo = "",
                 Status = -1
             });
             List<ActionCard> cards = new List<ActionCard>();
-            foreach (FightCombination fightCombination in strategy._Combinations)
+            foreach (FightCombination fightCombination in strategy.combinations)
             {
-                ActionCard newCard = new ActionCard();
-                newCard.FileName = Path.GetFileName(fightCombination.player_video_url);
-                newCard.Path = fightCombination.player_video_url;
-                newCard.id = fightCombination.id;
-                cards.Add(newCard);
+                if (fightCombination != null)
+                {
+                    ActionCard newCard = new ActionCard();
+                    newCard.FileName = Path.GetFileName(fightCombination.player_video_url);
+                    newCard.Path = fightCombination.player_video_url;
+                    newCard.id = fightCombination.ActionCardID;
+                    cards.Add(newCard);
+                }
+              
             }
             newFighterData.AddVideos(cards, () => {
                 counter++;
                 if (counter >= fightStrategies.Count)
                     OnLoaded?.Invoke();
             });
-            fightersData.Add(newFighterData);
+            opponentVidoData.Add(newFighterData);
         }
     }
 }

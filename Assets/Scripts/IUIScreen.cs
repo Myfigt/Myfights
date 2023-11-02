@@ -14,4 +14,13 @@ public class UIScreen : MonoBehaviour
     {
         UIController.Instance.SetupScreen(this.BackScreen);
     }
+
+    public virtual void SetGobackScreen(UIController.Screens _screen)
+    {
+        BackScreen = _screen;
+    }
+    public virtual UIController.Screens GetGobackScreen()
+    {
+         return BackScreen;
+    }
 }

@@ -28,10 +28,6 @@ public class CreateStrategyPanel : UIScreen
     {
         
     }
-    //public override void Initialize(params object[] _params)
-    //{
-    //    Initializeer((List<ActionCard>)_params[0], (FightStrategy)_params[1]);
-    //}
     public void Initialize(List<ActionCard> _allActionCards, FightStrategy  _strategy)
     {
         MyActionCards = _allActionCards;
@@ -56,9 +52,9 @@ public class CreateStrategyPanel : UIScreen
         }
 
         // setting combination UI
-        for (int i = 0; i < _strategy._Combinations.Length; i++)
+        for (int i = 0; i < _strategy.combinations.Length; i++)
         {
-            if (_strategy._Combinations[i] == null)
+            if (_strategy.combinations[i] == null)
                 combinationContent[i].GetChild(0).gameObject.SetActive(false);
             else
             combinationContent[i].GetChild(0).gameObject.SetActive(true);
@@ -99,7 +95,7 @@ public class CreateStrategyPanel : UIScreen
     }
     public void RemoveActionCardFromCombination(int index)
     {
-        _mystrategy._Combinations[index] = null;
+        _mystrategy.combinations[index] = null;
         combinationContent[index].GetChild(0).gameObject.SetActive(false);
     }
     public void OnActionCardSelected(GameObject ub)
@@ -117,16 +113,7 @@ public class CreateStrategyPanel : UIScreen
         {
             if (item.FileName == index.text)
             {
-                _mystrategy._Combinations[i] = new FightCombination();
-                _mystrategy._Combinations[i].id = item.id;
-                _mystrategy._Combinations[i].player = UIController.Instance._myprofile.id;
-                _mystrategy._Combinations[i].combination = selectedcombination;
-                _mystrategy._Combinations[i].player_video_url = item.Path;
-                _mystrategy._Combinations[i].status = item.sub_type;
-                _mystrategy._Combinations[i].created_by = UIController.Instance._myprofile.id;
-                _mystrategy._Combinations[i].created_at = DateTime.Now;
-                _mystrategy._Combinations[i].updated_by = UIController.Instance._myprofile.id;
-                _mystrategy._Combinations[i].updated_at = DateTime.Now;
+                _mystrategy.combinations[i] = new FightCombination() { ActionCardID = item.id ,combination = selectedcombination , player_video_url = item.Path , status = item.sub_type , created_by = _mystrategy.playerID };
             }
         }
 
@@ -142,7 +129,7 @@ public class CreateStrategyPanel : UIScreen
     {
         for (int i = selectedcombination * 3; i < selectedcombination * 3 + 3; i++)
         {
-            if (_mystrategy._Combinations[i] == null)
+            if (_mystrategy.combinations[i] == null)
             {
                 return i;
             }
@@ -150,20 +137,26 @@ public class CreateStrategyPanel : UIScreen
        
         return -1;
     }
+
+    public void SaveStrategy()
+    {
+        WebServicesManager.Instance.CreateStrategy( _mystrategy);
+    }
 }
 [Serializable]
 public class FightStrategy
 {
     public string title;
     public int id;
+    public int playerID;
+    public string player_name;
     public DateTime created_at;
-    public FightCombination[] _Combinations;
+    public FightCombination[] combinations;
 }
 [Serializable]
 public class FightCombination
 {
-    public int id;
-    public int player;
+    public int ActionCardID;
     public int combination;
     public string player_video_url;
     public string status;

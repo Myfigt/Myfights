@@ -40,6 +40,30 @@ namespace Assets.Scripts
         public string FileName;
         public string Path;
         public DateTime created_at;
+        public float result;
+        public int fighter_id;
+        public int fighter_video_id;
+        public int player_id;
+        public ComparisonResults comparison_results;
+
+    }
+    [Serializable]
+    public class ComparisonResults
+    {
+        public float Head;
+        public float LShoulder;
+        public float RShoulder;
+        public float LElbow;
+        public float RElbow;
+        public float LWrist;
+        public float RWrist;
+        public float LHip;
+        public float RHip;
+        public float LKnee;
+        public float RKnee;
+        public float LAnkle;
+        public float RAnkle;
+
     }
 
     [Serializable]
@@ -55,6 +79,7 @@ namespace Assets.Scripts
         public string email { get; set; }
         public string firebase_token { get; set; }
         public List<ActionCard> _allActionCards;
+        public List<Friends> _allFriends;
         public FightStrategy _myStrategy;
         UserProfile()
         {

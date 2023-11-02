@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <LangVersion>7.3</LangVersion>
+    <LangVersion>9.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -53,6 +53,9 @@
     <UnityVersion>2021.3.0f1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Analyzer Include="C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="Assets\Photon\PhotonRealtime\Demos\DemoLoadBalancing\ConnectAndJoinRandomLb.cs" />
     <Compile Include="Assets\Scripts\NetworkConnectionManager.cs" />
     <Compile Include="Assets\NatSuite\Plugins\Managed\Recorders\Internal\Bridge.cs" />
@@ -76,6 +79,7 @@
     <Compile Include="Assets\Samples\SuperResolution\SuperResolution.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\ChatAppIdCheckerUI.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\AppSettingsExtensions.cs" />
+    <Compile Include="Assets\Scripts\UI\StrategiesVideoItem.cs" />
     <Compile Include="Assets\NatSuite\Examples\ReplayCam\RecordButton.cs" />
     <Compile Include="Assets\Samples\BlazePose\PoseDetect.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\NamePickGui.cs" />
@@ -86,10 +90,12 @@
     <Compile Include="Assets\Samples\SmartReply\SmartReplySample.cs" />
     <Compile Include="Assets\Scripts\WebServicesManager.cs" />
     <Compile Include="Assets\EasyJson\Sample\EncodeJson.cs" />
+    <Compile Include="Assets\Scripts\LobbyMessaging.cs" />
     <Compile Include="Assets\Samples\MeetSegmentation\MeetSegmentation.cs" />
     <Compile Include="Assets\Scripts\Utility\FileUtility.cs" />
     <Compile Include="Assets\Samples\SuperResolution\SuperResolutionSample.cs" />
     <Compile Include="Assets\Samples\BlazePose\HandTracking\PalmDetect.cs" />
+    <Compile Include="Assets\Scripts\UIScreens\DebugScreen.cs" />
     <Compile Include="Assets\NatSuite\Plugins\Managed\Recorders\HEVCRecorder.cs" />
     <Compile Include="Assets\Samples\BlazePose\PoseLandmarkDetect.cs" />
     <Compile Include="Assets\Samples\PoseNet\PoseNet.cs" />
@@ -103,6 +109,7 @@
     <Compile Include="Assets\Scripts\UIScreens\LetsFightScreen.cs" />
     <Compile Include="Assets\Samples\SSD\SsdSample.cs" />
     <Compile Include="Assets\Samples\Index\IndexSample.cs" />
+    <Compile Include="Assets\MyProfileScreen.cs" />
     <Compile Include="Assets\NatSuite\Examples\ReplayCam\ReplayCam.cs" />
     <Compile Include="Assets\Scripts\CreateStrategyPanel.cs" />
     <Compile Include="Assets\NatSuite\Plugins\Managed\Recorders\Inputs\CameraInput.cs" />
@@ -110,12 +117,17 @@
     <Compile Include="Assets\Samples\GpuBind\GpuBindSample.cs" />
     <Compile Include="Assets\NatSuite\Examples\ReplayCam\CameraPreview.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\IgnoreUiRaycastWhenInactive.cs" />
+    <Compile Include="Assets\Scripts\WSClient.cs" />
     <Compile Include="Assets\Scripts\Managers\VideosContainer.cs" />
+    <Compile Include="Assets\GameFriendsManager.cs" />
     <Compile Include="Assets\Samples\SSD\SSD.cs" />
+    <Compile Include="Assets\Scripts\ServerCommunication.cs" />
     <Compile Include="Assets\Samples\MNIST\MnistSample.cs" />
+    <Compile Include="Assets\Scripts\Managers\DataManager.cs" />
     <Compile Include="Assets\Scripts\Test\VideoDownloadTest.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\Common\EventSystemSpawner.cs" />
     <Compile Include="Assets\EasyJson\Json\JSON.cs" />
+    <Compile Include="Assets\PopupMessageScreen.cs" />
     <Compile Include="Assets\NatSuite\Plugins\Managed\Recorders\Clocks\FixedIntervalClock.cs" />
     <Compile Include="Assets\Scripts\LibraryScreen.cs" />
     <Compile Include="Assets\ScreenRecorder.cs" />
@@ -128,21 +140,26 @@
     <Compile Include="Assets\NatSuite\Examples\WebCam\WebCam.cs" />
     <Compile Include="Assets\FacebookSDK\Examples\Scripts\ConsoleBase.cs" />
     <Compile Include="Assets\Samples\StyleTransfer\StylePredict.cs" />
+    <Compile Include="Assets\Scripts\UI\CombinationItem.cs" />
     <Compile Include="Assets\Samples\BlazePose\BlazePoseSample.cs" />
+    <Compile Include="Assets\Scripts\CommunicationUtils.cs" />
     <Compile Include="Assets\Scripts\IUIScreen.cs" />
     <Compile Include="Assets\FacebookSDK\Examples\Scripts\SubMenus\GraphRequest.cs" />
     <Compile Include="Assets\Scripts\Tribe.cs" />
     <Compile Include="Assets\Samples\Recorder\3.0.1\Movie Recorder Sample\MovieRecorderExample.cs" />
     <Compile Include="Assets\Scripts\Manager.cs" />
     <Compile Include="Assets\Samples\MeetSegmentation\MeetSegmentationSample.cs" />
+    <Compile Include="Assets\Scripts\Models\LevelRewardMatrix.cs" />
     <Compile Include="Assets\EasyJson\Json\JSONSerialised.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\ChatGui.cs" />
+    <Compile Include="Assets\Scripts\UI\StrategiesTitleItem.cs" />
     <Compile Include="Assets\FacebookSDK\Examples\Scripts\SubMenus\AccessTokenMenu.cs" />
     <Compile Include="Assets\FacebookSDK\Examples\Scripts\SubMenus\AppLinks.cs" />
     <Compile Include="Assets\NativeCameraControll.cs" />
     <Compile Include="Assets\Scripts\FighterListManager.cs" />
     <Compile Include="Assets\FacebookSDK\Examples\Scripts\SubMenus\MainMenu.cs" />
     <Compile Include="Assets\Scripts\Fighter.cs" />
+    <Compile Include="Assets\Scripts\Models\PlayerEconomicMatrix.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\Common\TextToggleIsOnTransition.cs" />
     <Compile Include="Assets\Samples\PoseNet\PoseNetSample.cs" />
     <Compile Include="Assets\Scripts\TribesManager.cs" />
@@ -152,7 +169,10 @@
     <Compile Include="Assets\Samples\BlazePose\HandTracking\HandLandmarkDetect.cs" />
     <Compile Include="Assets\Samples\StyleTransfer\StyleTransfer.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\Common\OnStartDelete.cs" />
+    <Compile Include="Assets\Scripts\test.cs" />
     <Compile Include="Assets\FacebookSDK\Examples\Scripts\SubMenus\AppEvents.cs" />
+    <Compile Include="Assets\Scripts\BaseMessaging.cs" />
+    <Compile Include="Assets\Scripts\MultiPlayerMatchInstance.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
@@ -177,6 +197,7 @@
     <None Include="Assets\NatSuite\Plugins\Windows\NatCorder.dll" />
     <None Include="Assets\UnityPackages\JsonNet\Newtonsoft.Json.dll" />
     <None Include="Assets\Samples\TextClassification\vocab.txt" />
+    <None Include="Assets\Fonts\OFL.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface.shader" />
     <None Include="Assets\FacebookSDK\Plugins\Facebook.Unity.dll" />
     <None Include="Assets\TextMesh Pro\Sprites\EmojiOne Attribution.txt" />

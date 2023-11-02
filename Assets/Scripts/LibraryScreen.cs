@@ -5,11 +5,14 @@ using UnityEngine;
 
 public class LibraryScreen : UIScreen
 {
-    public Transform allActionCardContent;
 
+    public Transform allActionCardContent;
+    List<ActionCard> _myActionCards;
     public GameObject ActionCardTamplete;
     public void Initialize(List<ActionCard> _allActionCards)
     {
+        _myActionCards = new List<ActionCard>();
+        _myActionCards = _allActionCards;
         for (int i = 0; i < allActionCardContent.childCount; i++)
         {
             if (allActionCardContent.GetChild(i).gameObject.activeSelf)
@@ -28,5 +31,15 @@ public class LibraryScreen : UIScreen
             Card.SetActive(true);
         }
     }
-
+    public void OnActionCardSelected(TMPro.TMP_Text index)
+    {
+        foreach (var item in _myActionCards)
+        {
+            if (item.FileName == index.text)
+            {
+                UIController.Instance.ViewActionCard(item);
+               // GameObject.FindObjectOfType<UIController>().PlayVideo(item.Path);
+            }
+        }
+    }
 }

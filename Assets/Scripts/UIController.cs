@@ -7,6 +7,10 @@ using Assets.Scripts;
 using System;
 using UnityEngine.Video;
 using Facebook.Unity;
+using System.Windows.Forms;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using static VideosContainer;
 
 public class UIController : MonoBehaviour
 {
@@ -41,10 +45,15 @@ public class UIController : MonoBehaviour
         LetsFightScreen = 13,
         AllTribes = 14,
         MatchMakingScreen = 15,
-        DebugScreen = 16
+        DebugScreen = 16,
+        FightModeSelectionScreen = 17,
+        FriendsManagerScreen = 18,
+        ProfileScreen = 19,
 
     }
+    
     public Screens _CurrentScreen = Screens.HomeScreen;
+    //::TODO Technical debt .... change myscreens varialble type to UI screen ... for code cleaning;
     public GameObject[] MyScreens;
     public GameObject LoginPanel, SignUpPanel;
     public TMP_InputField signUpEmail, signUpUserName, sighUpPWD;
@@ -66,26 +75,32 @@ public class UIController : MonoBehaviour
     public LetsFightScreen _letsFightScreen;
     [SerializeField]
     TribesManager _tribesManager;
+    [SerializeField]
+    MatchMakingScreen _matchMakingScreen;
+    [SerializeField]
+    UIScreen _popUpMessage;
 
     [SerializeField]
     VideoPlayer _actionCardPreview;
     [SerializeField]
     VideoPlayer _masterCardPreview;
     [SerializeField]
-    GameObject MatcheMakingScreen;
+    public ServerCommunication WSConnector;
+
 
     [SerializeField]
     NetworkConnectionManager _NetworkHandle;
-
+    [SerializeField]
+    private TMP_Text homeScreenProfileText;
     public UserProfile _myprofile = null;
 
 
     [Header("Debug Settings")]
     public bool _deletePlayerPrefs;
     public bool _UseDefaultCridentials;
-    public string Defaultusername = "bilalkhan@mailinator.comm";
-    public string DefaultPwd = "Password@123";
-
+    public const string Defaultusername = "bilalkhan@mailinator.comm";
+    public const string DefaultPwd = "Password@123";
+   
     // Start is called before the first frame update
     #region Initializers
     private static UIController instance = null;
@@ -111,19 +126,23 @@ public class UIController : MonoBehaviour
     #endregion
     private void Start()
     {
-        //SetupScreen(Screens.HomeScreen);
         instance = this;
         SetupScreen(Screens.SplashScreen);
+        //Task.Run(() => ServerCommunication .Instance.Initialize());   
         FB.Init(this.OnInitComplete, this.OnHideUnity);
         if (_deletePlayerPrefs)
         {
             PlayerPrefs.DeleteKey("access_token");
         }
+        UnityEngine.Screen.sleepTimeout = SleepTimeout.NeverSleep;
     }
     void OnEnable()
     {
         WebServicesManager.loginUserComplete += OnLoginSuccess;
         WebServicesManager.loginUserFailed += OnLoginFailed;
+
+        WebServicesManager.logOutComplete += OnLogOutSuccess;
+        WebServicesManager.logOutFailed += OnLogOutFailed;
 
         WebServicesManager.registerUserComplete += OnSignUpSuccess;
         WebServicesManager.registerUserFailed += OnSignUpFailed;
@@ -149,15 +168,32 @@ public class UIController : MonoBehaviour
         WebServicesManager.GetTribesComplete += WebServicesManager_GetTribesComplete;
         WebServicesManager.GetTribesFailed += WebServicesManager_GetTribesFailed;
 
+        ServerCommunication.NewMessageRecieved += ServerCommunication_NewMessageRecieved;
+
+        WebServicesManager.GetFriendListComplete += WebServicesManager_GetFriendListComplete;
+        WebServicesManager.GetFriendListFailed += WebServicesManager_GetFriendListFailed;
+
+    }
+    private void WebServicesManager_GetFriendListFailed(string responce)
+    {
+        throw new NotImplementedException();
     }
 
+    private void WebServicesManager_GetFriendListComplete(string responce)
+    {
+        _myprofile._allFriends = new List<Friends>();
+        _myprofile._allFriends = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Friends>>(responce);
+    }
+    private void ServerCommunication_NewMessageRecieved(string responce, WS_ActionType _action)
+    {
+        _popUpMessage.gameObject.SetActive(true);
+        _popUpMessage.Initialize(responce ,_action);
 
-
-
+    }
     #region Fetch user profile CallBacks
     private void WebServicesManager_FetchUserFailed(string error)
     {
-        Debug.Log(error);
+      UnityEngine.Debug.Log(error);
     }
     private void WebServicesManager_FetchUserComplete(string responce)
     {
@@ -168,11 +204,15 @@ public class UIController : MonoBehaviour
             {
                 string obj = easy.JSON.JsonEncode(item.Value);
                 _myprofile = Newtonsoft.Json.JsonConvert.DeserializeObject<UserProfile>(obj);
-                WebServicesManager.Instance.FetchActionCard(1);// _myprofile.id);
+                homeScreenProfileText.text = _myprofile.name;
+                WebServicesManager.Instance.FetchActionCard(_myprofile.id);// _myprofile.id);
+                WebServicesManager.Instance.FetchStrategies(_myprofile.id);
+                WebServicesManager.Instance.GetFriendList();
+                WSConnector.ConnectToServer(_myprofile.id);
             }
         }
 
-        Debug.Log(responce);
+        UnityEngine.Debug.Log(responce);
     }
     #endregion
     internal void PlayVideo(int fighterid,int videoid)
@@ -180,7 +220,16 @@ public class UIController : MonoBehaviour
         SetupScreen(Screens.VideoPlayerScreen);
         _VideoPlayer.Initialize(fighterid,videoid);
     }
-
+    internal void PlayVideo(string videopath)
+    {
+        SetupScreen(Screens.VideoPlayerScreen);
+        _VideoPlayer.Initialize(videopath);
+    }
+    internal void ViewActionCard(ActionCard card)
+    {
+        SetupScreen(Screens.VideoPlayerScreen);
+        _VideoPlayer.Initialize(card);
+    }
     void OnDisable()
     {
         WebServicesManager.loginUserComplete -= OnLoginSuccess;
@@ -197,10 +246,15 @@ public class UIController : MonoBehaviour
         WebServicesManager.FetchUserFailed -= WebServicesManager_FetchUserFailed;
         WebServicesManager.GetTribesComplete -= WebServicesManager_GetTribesComplete;
         WebServicesManager.GetTribesFailed -= WebServicesManager_GetTribesFailed;
+        ServerCommunication.NewMessageRecieved -= ServerCommunication_NewMessageRecieved;
+        WebServicesManager.GetFriendListComplete -= WebServicesManager_GetFriendListComplete;
+        WebServicesManager.GetFriendListFailed -= WebServicesManager_GetFriendListFailed;
+        WebServicesManager.FetchStrategyComplete -= WebServicesManager_FetchStrategyComplete;
+        WebServicesManager.FetchStrategyFailed -= WebServicesManager_FetchStrategyFailed;
     }
     public void SetupScreen(Screens _screenIndex = Screens.CurrentScreen)
     {
-        Debug.Log("Setting Up Screen " + _screenIndex.ToString());
+        UnityEngine.Debug.Log("Setting Up Screen " + _screenIndex.ToString());
 
         if (_screenIndex == Screens.CurrentScreen)
         {
@@ -417,6 +471,7 @@ public class UIController : MonoBehaviour
     }
     #endregion
 
+    #region UserSignup/Signin
     public void Login()
     {
         if (_UseDefaultCridentials)
@@ -429,14 +484,29 @@ public class UIController : MonoBehaviour
     void OnLoginSuccess(string data)
     {
         //Debug.Log("UIController --" + data);
-        StartCoroutine(ShowStatus(loginStatusText, "logged in successfully", Screens.ColorSelectionScreen));
+        StartCoroutine(ShowStatus(loginStatusText, "logged in successfully", Screens.HomeScreen));
         WebServicesManager.Instance.FetchUser();
     }
     void OnLoginFailed(string data)
     {
-        Debug.Log("UIController --" + data);
+        UnityEngine.Debug.Log("UIController --" + data);
         StartCoroutine(ShowStatus(loginStatusText, data));
     }
+
+    public void LogOut()
+    {
+            WebServicesManager.Instance.LogOutUser();
+    }
+    void OnLogOutSuccess(string data)
+    {
+        PlayerPrefs.DeleteKey("access_token");
+        SetupScreen(Screens.SplashScreen);
+    }
+    void OnLogOutFailed(string data)
+    {
+        UnityEngine.Debug.Log("Unable to log out due to error " + data);
+    }
+
 
     public void SignUp()
     {
@@ -444,14 +514,14 @@ public class UIController : MonoBehaviour
     }
     void OnSignUpSuccess(string data)
     {
-        StartCoroutine(ShowStatus(signUpStatusText, data,Screens.ColorSelectionScreen));
+        StartCoroutine(ShowStatus(signUpStatusText, data,Screens.HomeScreen));
         WebServicesManager.Instance.FetchUser();
     }
     void OnSignUpFailed(string data)
     {
         StartCoroutine(ShowStatus(signUpStatusText, data));
     }
-
+    #endregion
     public void FetchAllFighters()
     {
         WebServicesManager.Instance.FetchFighter();
@@ -465,7 +535,7 @@ public class UIController : MonoBehaviour
     }
     void OnFetchAllFighterFailed(string data)
     {
-        Debug.Log(data);
+        UnityEngine.Debug.Log(data);
     }
 
     void OnFetchVideosComplete(string data)
@@ -513,20 +583,26 @@ public class UIController : MonoBehaviour
 
     public void OnUploadVideoButtonClick()
     {
-        WebServicesManager.Instance.UploadVideos(_VideoSelection.SelectedVideo.sub_type, _actionCardPreview.url, _fighterSelection.SelectefFighter.id, 1);
+        WebServicesManager.Instance.UploadVideos(_VideoSelection.SelectedVideo.sub_type, _actionCardPreview.url, _fighterSelection.SelectedFighter.id, _myprofile.id);
     }
     public void OnVideoUploadComplete(string data)
     {
-        Debug.LogError("Video Uploaded successfully");
+        UnityEngine.Debug.LogError("Video Uploaded successfully " + data);
+        ActionCard card = Newtonsoft.Json.JsonConvert.DeserializeObject <ActionCard>(data);
+        if (card!= null)
+            _myprofile._allActionCards.Add(card);
+        ViewActionCard(card);
     }
     public void OnVideoUplaodFailed(string data)
     {
-        Debug.LogError(data);
+        UnityEngine.Debug.LogError(data);
     }
 
     public void OnCreateFightStrategyButtonClick()
     {
-        WebServicesManager.Instance.FetchStrategies(1);//TODO::_myprofile.id);
+        _StrategyCreation.Initialize(_myprofile._allActionCards, _myprofile._myStrategy);
+        SetupScreen(Screens.CreateFightStrategy);
+        //WebServicesManager.Instance.FetchStrategies(_myprofile.id);
     }
     private void WebServicesManager_FetchStrategyFailed(string error)
     {
@@ -534,20 +610,26 @@ public class UIController : MonoBehaviour
     }
     private void WebServicesManager_FetchStrategyComplete(string responce)
     {
-
-        var strategy = Newtonsoft.Json.JsonConvert.DeserializeObject<FightStrategy>(responce);
+        if (_CurrentScreen != Screens.HomeScreen)
+        {
+            return;
+        }
+        FightStrategy strategy = null;
+        try
+        {
+        strategy = Newtonsoft.Json.JsonConvert.DeserializeObject<FightStrategy>(responce);
         Hashtable responceData = (Hashtable)easy.JSON.JsonDecode(responce);
         foreach (DictionaryEntry item in responceData)
         {
-            if (item.Key.ToString() == "videos")
+            if (item.Key.ToString() == "combinations")
             {
-                strategy._Combinations = new FightCombination[9];
+                strategy.combinations = new FightCombination[9];
                 int i = 0;
                 foreach (var res in item.Value as ArrayList)
                 {
 
                     string combos = easy.JSON.JsonEncode(res);
-                    strategy._Combinations[i] = Newtonsoft.Json.JsonConvert.DeserializeObject<FightCombination>(combos);
+                    strategy.combinations[i] = Newtonsoft.Json.JsonConvert.DeserializeObject<FightCombination>(combos);
                     i++;
                     if (i >= 9)
                     {
@@ -557,8 +639,17 @@ public class UIController : MonoBehaviour
 
             }
         }
-        _StrategyCreation.Initialize(_myprofile._allActionCards, strategy as FightStrategy);
-        SetupScreen(Screens.CreateFightStrategy);
+        }
+        catch (Exception)
+        {
+            UnityEngine.Debug.Log("unable to parse fight strategy");
+        }
+        if (strategy == null)
+        {
+            strategy = new FightStrategy() { title = _myprofile.name+"_Strategy" +_myprofile.id, combinations = new FightCombination[9] , playerID = _myprofile.id, player_name = _myprofile.name };
+        }
+        _myprofile._myStrategy = strategy;
+        
     }
 
     private void WebServicesManager_GetActionCardsFailed(string error)
@@ -567,7 +658,7 @@ public class UIController : MonoBehaviour
     }
     private void WebServicesManager_GetActionCardsComplete(string responce)
     {
-        Debug.Log(responce);
+        UnityEngine.Debug.Log(responce);
         List<ActionCard> fighters = Newtonsoft.Json.JsonConvert.DeserializeObject<List<ActionCard>>(responce);
         _myprofile._allActionCards = fighters;
     }
@@ -584,7 +675,7 @@ public class UIController : MonoBehaviour
     }
     private void WebServicesManager_GetTribesFailed(string error)
     {
-        Debug.LogError("Error Fetching tribes");
+        UnityEngine.Debug.LogError("Error Fetching tribes");
     }
     private void WebServicesManager_GetTribesComplete(string responce)
     {
@@ -597,19 +688,49 @@ public class UIController : MonoBehaviour
     //public void QuickMatch() => _NetworkHandle.JoinRandomRoom();
     public void QuickMatch()
     {
-        SetupScreen(UIController.Screens.LetsFightScreen);
-        _letsFightScreen.Initialize(_myprofile._myStrategy, _myprofile._myStrategy);
+        SetupScreen(UIController.Screens.FightModeSelectionScreen);
+        //::TODO this is to be done when fight mode is selected and opponent has already joined the room.
+        //SetupScreen(UIController.Screens.LetsFightScreen);
+        //_letsFightScreen.Initialize(_myprofile._myStrategy, _myprofile._myStrategy);
     }
 
+    public void PlayWithFriendsButtonClick(TMP_Text status)
+    {
+        status.gameObject.SetActive(true);
+        _NetworkHandle.CreateNewRoom(_myprofile.id.ToString());
+    }
+    public void FriendsManagerButtonClick()
+    {
+        SetupScreen(UIController.Screens.FriendsManagerScreen);
+    }
+    public void PlayRandom(TMP_Text status)
+    {
+        status.gameObject.SetActive(true);
+        _NetworkHandle.JoinRandomRoom();
+        //SetupScreen(UIController.Screens.LetsFightScreen);
+    }
+    public void GoToMatchMakingScreen( string roomID)
+    {
+        _matchMakingScreen.Initialize(roomID);
+        SetupScreen(UIController.Screens.MatchMakingScreen);
+    }
     public void GoToMatchScreen( FightStrategy _opponentStrategy)
     {
         SetupScreen(UIController.Screens.LetsFightScreen);
         _letsFightScreen.Initialize(_myprofile._myStrategy, _opponentStrategy);
     }
-
+    public void OnShowProfileButtonClick()
+    {
+        SetupScreen(UIController.Screens.ProfileScreen);
+    }
     public void OnDebugScene()
     {
         SetupScreen(UIController.Screens.DebugScreen);
     }
-    
+
+    public void OnFriendChallangeAccepted(string roomID)
+    {
+        _NetworkHandle.JoinRoom(roomID) ;
+    }
+
 }
