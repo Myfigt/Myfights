@@ -104,12 +104,12 @@ public class VideosContainer : MonoBehaviour
             VideoData = new List<VideoData>();
         }
 
-        public void AddVideos(List<ActionCard> _actionCards, Action VideosLoaded)
+        public void AddVideos(List<ActionCard> _actionCards, Action VideosLoaded , bool allowDuplicate = false)
         {
             int counter = 0;
             foreach(ActionCard action in _actionCards)
             {
-                if (VideoData.Find(item => item.actionCard.id == action.id) == null)
+                if (VideoData.Find(item => item.actionCard.id == action.id) == null || allowDuplicate)
                 {
                     VideoData newData = new VideoData(action);
                     VideoData.Add(newData);
@@ -243,7 +243,7 @@ public class VideosContainer : MonoBehaviour
                 counter++;
                 if (counter >= fightStrategies.Count)
                     OnLoaded?.Invoke();
-            });
+            }, true);
             opponentVidoData.Add(newFighterData);
         }
     }

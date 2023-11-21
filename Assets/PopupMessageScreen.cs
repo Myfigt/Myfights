@@ -25,7 +25,7 @@ public class PopupMessageScreen : UIScreen
     }
     WS_ActionType myAction;
     string payLoadData;
-    public override void Initialize(params object[] _params)// 0 payload data //1 action type.
+    public override void Initialize(params object[] _params)// 0 payload data //1 action type. ::TODO change the ation type to delegate.. this is tech debt
     {
         payLoadData = _params[0] as string;
 

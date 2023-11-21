@@ -421,7 +421,7 @@ public class WebServicesManager : MonoBehaviour
         }
         if (!isScuccess)
         {
-            UploadVideosFailed("Failed to upload video");
+            UploadVideosFailed(www.text);
         }
         yield return null;
     }

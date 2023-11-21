@@ -596,6 +596,9 @@ public class UIController : MonoBehaviour
     public void OnVideoUplaodFailed(string data)
     {
         UnityEngine.Debug.LogError(data);
+        _popUpMessage.gameObject.SetActive(true);
+        _popUpMessage.Initialize(data);
+       
     }
 
     public void OnCreateFightStrategyButtonClick()

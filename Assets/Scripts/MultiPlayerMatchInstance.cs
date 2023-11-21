@@ -11,6 +11,8 @@ public class MultiPlayerMatchInstance : MonoBehaviour
     private LetsFightScreen screen;
 
     private const byte ActionCardDeployedEventCode = 1;
+    private const byte StartMatchTimerEventCode = 2;
+    private const byte StopMatchTimerEventCode = 3;
 
     private void Awake()
     {
@@ -33,11 +35,19 @@ public class MultiPlayerMatchInstance : MonoBehaviour
         matchInstance.screen = matchScreen;
         return matchInstance;
     }
-    public void RaiseActionCardEvent(int id)
+    public void RaiseActionCardEvent(int deployedActionCardID)
     {
-        object[] content = new object[] { id, UIController.Instance._myprofile.id };
+        object[] content = new object[] { deployedActionCardID, UIController.Instance._myprofile.id };
         RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All }; // You would have to set the Receivers to All in order to receive this event on the local client as well
         PhotonNetwork.RaiseEvent(ActionCardDeployedEventCode, content, raiseEventOptions, SendOptions.SendReliable);
+
+    }
+
+    public void RaiseAStartMatchEvent()
+    {
+        object[] content = new object[] {};
+        RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All }; // You would have to set the Receivers to All in order to receive this event on the local client as well
+        PhotonNetwork.RaiseEvent(StartMatchTimerEventCode, content, raiseEventOptions, SendOptions.SendReliable);
 
     }
     private void OnEvent(EventData _event)
@@ -59,6 +69,14 @@ public class MultiPlayerMatchInstance : MonoBehaviour
                 screen.opponentVideoPlayer.url = VideosContainer.Instance.opponentVidoData[1].VideoData.Find(item => item.actionCard.fighter_video_id == videoId).localPath;
                 screen.opponentVideoPlayer.Play();
             }
+
+        }
+        else if (eventCode == StartMatchTimerEventCode)
+        {
+            //start timer 
+        }
+        else if (eventCode == StopMatchTimerEventCode)
+        {
 
         }
     }

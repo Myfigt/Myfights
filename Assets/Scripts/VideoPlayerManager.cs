@@ -87,7 +87,8 @@ public class VideoPlayerManager : UIScreen
         textBox_RWrist.text = _card.comparison_results.RWrist.ToString();
 
         cardDetailsPanel.SetActive(true);
-        _player.url = _card.Path;
+        Uri u = new Uri(_card.Path);
+        _player.url = u.AbsoluteUri;
         _player.Prepare();
 
     }

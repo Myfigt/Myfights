@@ -47,7 +47,7 @@ public class LetsFightScreen : UIScreen
         StrategiesTitleItem.OnClicked += Handle_OnStrategyItemClicked;
         CombinationItem.OnCombinationClicked += Handle_OnCombinationClicked;
         StrategiesVideoItem.OnVideoClicked += Handle_OnVideoClicked;
-        //PhotonNetwork.NetworkingClient.EventReceived += OnEvent;
+        PhotonNetwork.NetworkingClient.EventReceived += OnEvent;
     }
 
     private void OnDisable()
@@ -56,7 +56,7 @@ public class LetsFightScreen : UIScreen
         StrategiesTitleItem.OnClicked -= Handle_OnStrategyItemClicked;
         CombinationItem.OnCombinationClicked -= Handle_OnCombinationClicked;
         StrategiesVideoItem.OnVideoClicked -= Handle_OnVideoClicked;
-        //PhotonNetwork.NetworkingClient.EventReceived -= OnEvent;
+        PhotonNetwork.NetworkingClient.EventReceived -= OnEvent;
         selfVideoPlayer.targetTexture.Release();
         opponentVideoPlayer.targetTexture.Release();
     }
