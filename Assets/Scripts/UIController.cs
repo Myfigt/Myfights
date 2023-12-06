@@ -1,15 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
+//using UnityEngine.UI;
 using TMPro;
 using Assets.Scripts;
 using System;
 using UnityEngine.Video;
 using Facebook.Unity;
-using System.Windows.Forms;
-using System.Diagnostics;
-using System.Threading.Tasks;
+//using System.Windows.Forms;
+//using System.Diagnostics;
+//using System.Threading.Tasks;
 using static VideosContainer;
 
 public class UIController : MonoBehaviour
@@ -505,9 +505,33 @@ public class UIController : MonoBehaviour
     void OnLogOutFailed(string data)
     {
         UnityEngine.Debug.Log("Unable to log out due to error " + data);
+ 
     }
 
-
+    public void ShowSignInPWD(bool value)
+    {
+        if (value)
+        {
+            logInPWD.contentType = TMP_InputField.ContentType.Standard;
+        }
+        else
+        {
+            logInPWD.contentType = TMP_InputField.ContentType.Password;
+        }
+        logInPWD.textComponent.SetAllDirty();
+    }
+    public void ShowSignUpPWD(bool value)
+    {
+        if (value)
+        {
+            sighUpPWD.contentType = TMP_InputField.ContentType.Standard;
+        }
+        else
+        {
+            sighUpPWD.contentType = TMP_InputField.ContentType.Password;
+        }
+        logInPWD.textComponent.SetAllDirty();
+    }
     public void SignUp()
     {
         WebServicesManager.Instance.ResgisterUser(signUpEmail.text, signUpUserName.text, sighUpPWD.text);
