@@ -1,11 +1,11 @@
 ﻿using Assets.Scripts;
 using System;
-using System.Collections;
-using System.Collections.Generic;
+//using System.Collections;
+//using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Video;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
+//using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 public class VideoPlayerManager : UIScreen
 {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 using System.IO;
-
+using UnityEngine.Networking;
 
 public class WebServicesManager : MonoBehaviour
 {
@@ -167,7 +167,25 @@ public class WebServicesManager : MonoBehaviour
             data.AddField("override", _override.ToString());
         }
 
+        //using (UnityWebRequest webRequest = UnityWebRequest.Post(url,data))
+        //{
+        //    // Request and wait for the desired page.
+        //    yield return webRequest.SendWebRequest();
 
+
+        //    switch (webRequest.result)
+        //    {
+        //        case UnityWebRequest.Result.ConnectionError:
+        //        case UnityWebRequest.Result.DataProcessingError:
+        //            break;
+        //        case UnityWebRequest.Result.ProtocolError:
+        //            Debug.LogError( ": HTTP Error: " + webRequest.error);
+        //            break;
+        //        case UnityWebRequest.Result.Success:
+        //            Debug.Log(":\nReceived: " + webRequest.downloadHandler.text);
+        //            break;
+        //    }
+        //}
         WWW www = new WWW(url, data);
         yield return www;
         Hashtable responceData = (Hashtable)easy.JSON.JsonDecode(www.text);

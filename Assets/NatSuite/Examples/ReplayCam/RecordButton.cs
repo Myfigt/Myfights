@@ -10,14 +10,16 @@ namespace NatSuite.Examples.Components {
 	using UnityEngine.UI;
 	using UnityEngine.Events;
 	using UnityEngine.EventSystems;
+	using TMPro;
 
 	[RequireComponent(typeof(EventTrigger))]
-	public class RecordButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
+	public class RecordButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler,IPointerClickHandler {
 
 		public Image button, countdown;
 		public UnityEvent onTouchDown, onTouchUp;
-		private bool pressed;
-		private const float MaxRecordingTime = 10f; // seconds
+		private bool pressed =false;
+		private const float MaxRecordingTime = 5f; // seconds
+		public TMP_Text countdownText;
 
 		private void Start () {
 			Reset();
@@ -30,10 +32,18 @@ namespace NatSuite.Examples.Components {
 			if (countdown)
 				countdown.fillAmount = 0.0f;
 		}
-
+		public void OnRecordButtonPress()
+		{
+			if (!pressed)
+			{
+				StartCoroutine(Countdown());
+			}
+			else
+				pressed = false;
+		}
 		void IPointerDownHandler.OnPointerDown (PointerEventData eventData) {
 			// Start counting
-			StartCoroutine(Countdown());
+			//StartCoroutine(Countdown());
             //WebCam.instance.StartRecording();
 		}
 
@@ -46,11 +56,21 @@ namespace NatSuite.Examples.Components {
 		private IEnumerator Countdown () {
 			pressed = true;
 			// First wait a short time to make sure it's not a tap
-			yield return new WaitForSeconds(0.2f);
+			countdownText.gameObject.SetActive(true);
+			float getREadyTime = 3f;
+            while (getREadyTime>0)
+            {
+				getREadyTime -= Time.deltaTime;
+				countdownText.text = ((int)getREadyTime+1).ToString();
+				yield return null;
+			}
+			
+			//yield return new WaitForSeconds(3f);
 			if (!pressed)
 				yield break;
 			// Start recording
 			onTouchDown?.Invoke();
+			countdownText.gameObject.SetActive(false);
 			// Animate the countdown
 			float startTime = Time.time, ratio = 0f;
 			while (pressed && (ratio = (Time.time - startTime) / MaxRecordingTime) < 1.0f) {
@@ -63,5 +83,11 @@ namespace NatSuite.Examples.Components {
 			// Stop recording
 			onTouchUp?.Invoke();
 		}
-	}
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+			OnRecordButtonPress();
+
+		}
+    }
 }

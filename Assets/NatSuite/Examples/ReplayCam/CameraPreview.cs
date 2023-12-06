@@ -32,7 +32,7 @@ namespace NatSuite.Examples.Components {
                     yield break;
             }
             // Start the WebCamTexture
-            cameraTexture = new WebCamTexture(null, 1280, 720, 30);
+            cameraTexture = new WebCamTexture(WebCamTexture.devices[0].name, 1280, 720, 30);//requesting front camera
             cameraTexture.Play();
             yield return new WaitUntil(() => cameraTexture.width != 16 && cameraTexture.height != 16); // Workaround for weird bug on macOS
             // Setup preview shader with correct orientation
