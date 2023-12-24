@@ -9,17 +9,23 @@ namespace NatSuite.Examples.Components {
     using UnityEngine.Android;
     using UnityEngine.UI;
     using System.Collections;
-
+    using TMPro;
 	[RequireComponent(typeof(RawImage), typeof(AspectRatioFitter))]
     public class CameraPreview : MonoBehaviour {
 
         public WebCamTexture cameraTexture { get; private set; }
-		private RawImage rawImage;
+		public RawImage rawImage;
 		private AspectRatioFitter aspectFitter;
-		
-		IEnumerator Start () {
+        public TMP_Text temp;
+        public Quaternion baseRotation;
+        private void OnEnable()
+        {
+            StartCoroutine(InitializeCamera());
+        }
+        IEnumerator InitializeCamera() {
 			rawImage = GetComponent<RawImage>();
 			aspectFitter = GetComponent<AspectRatioFitter>();
+            yield return new WaitForSeconds(1);
             // Request camera permission
             if (Application.platform == RuntimePlatform.Android) {
                 if (!Permission.HasUserAuthorizedPermission(Permission.Camera)) {
@@ -32,7 +38,14 @@ namespace NatSuite.Examples.Components {
                     yield break;
             }
             // Start the WebCamTexture
-            cameraTexture = new WebCamTexture(WebCamTexture.devices[0].name, 1280, 720, 30);//requesting front camera
+            if (WebCamTexture.devices.Length >=2)
+            {
+                cameraTexture = new WebCamTexture(WebCamTexture.devices[1].name, Screen.width, Screen.height, 30);//requesting front camera
+
+            }
+            else
+                cameraTexture = new WebCamTexture(WebCamTexture.devices[0].name, 720, 1280, 30);
+            baseRotation = transform.rotation;
             cameraTexture.Play();
             yield return new WaitUntil(() => cameraTexture.width != 16 && cameraTexture.height != 16); // Workaround for weird bug on macOS
             // Setup preview shader with correct orientation
@@ -45,5 +58,18 @@ namespace NatSuite.Examples.Components {
             else
                 aspectFitter.aspectRatio = (float)cameraTexture.width / cameraTexture.height;
         }
-	}
+
+        private void OnDisable()
+        {
+            cameraTexture.Stop();
+        }
+        private void Update()
+        {
+            if (cameraTexture !=  null)
+            {
+                temp.text = cameraTexture.videoRotationAngle.ToString();
+               // transform.rotation = baseRotation * Quaternion.AngleAxis(cameraTexture.videoRotationAngle, Vector3.up);
+            }
+        }
+    }
 }

@@ -85,6 +85,8 @@ public class UIController : MonoBehaviour
     [SerializeField]
     VideoPlayer _masterCardPreview;
     [SerializeField]
+    GameObject _RecordingCotroll;
+    [SerializeField]
     public ServerCommunication WSConnector;
 
 
@@ -260,11 +262,30 @@ public class UIController : MonoBehaviour
         {
             _screenIndex = _CurrentScreen;
         }
+        if (_screenIndex == Screens.ActionCardRecording)
+        {
+            Screen.orientation = ScreenOrientation.Portrait;
+            _masterCardPreview.url = _VideoPlayer._player.url;
+            _masterCardPreview.Play();
+            _RecordingCotroll.SetActive(true);
+
+
+        }
+        else
+        {
+           Screen.orientation = ScreenOrientation.LandscapeRight;
+            _RecordingCotroll.SetActive(false);
+        }
         for (int i = 0; i < MyScreens.Length; i++)
         {
             if (i == (int)_screenIndex)
             {
                 MyScreens[i].SetActive(true);
+                if (_screenIndex == Screens.LibraryScreen)
+                {
+                    MyScreens[i].GetComponent<UIScreen>()?.Initialize(_myprofile._allActionCards);
+                }
+                else
                 MyScreens[i].GetComponent<UIScreen>()?.Initialize();
             }
             else
@@ -292,18 +313,8 @@ public class UIController : MonoBehaviour
         {
             _NetworkHandle.gameObject.SetActive(true);
         }
-        if (_CurrentScreen == Screens.ActionCardRecording)
-        {
-            //_BPS.gameObject.SetActive(true);
-            _masterCardPreview.url = _VideoPlayer._player.url;
-            _masterCardPreview.Play();
-            _masterCardPreview.transform.parent.gameObject.SetActive(true);
-        }
-        else
-        {
-            //_BPS.gameObject.SetActive(false);
-            _masterCardPreview.transform.parent.gameObject.SetActive(false);
-        }
+
+       // yield return null;
     }
     public void Update()
     {
@@ -596,7 +607,7 @@ public class UIController : MonoBehaviour
 
     public void RecordActionCard()
     {
-        SetupScreen(Screens.ActionCardRecording);
+       SetupScreen(Screens.ActionCardRecording);
     }
     public void GoToActionCardReview(string videoPath)
     {
@@ -605,8 +616,11 @@ public class UIController : MonoBehaviour
         _actionCardPreview.Play();
     }
 
+    [SerializeField]
+    TMP_Text UploadingVideoText;
     public void OnUploadVideoButtonClick()
     {
+        UploadingVideoText.gameObject.SetActive(true);
         WebServicesManager.Instance.UploadVideos(_VideoSelection.SelectedVideo.sub_type, _actionCardPreview.url, _fighterSelection.SelectedFighter.id, _myprofile.id);
     }
     public void OnVideoUploadComplete(string data)
@@ -614,15 +628,17 @@ public class UIController : MonoBehaviour
         UnityEngine.Debug.LogError("Video Uploaded successfully " + data);
         ActionCard card = Newtonsoft.Json.JsonConvert.DeserializeObject <ActionCard>(data);
         if (card!= null)
-            _myprofile._allActionCards.Add(card);
+            _myprofile._allActionCards.Insert(0,card);
         ViewActionCard(card);
+        UploadingVideoText.gameObject.SetActive(false);
     }
     public void OnVideoUplaodFailed(string data)
     {
         UnityEngine.Debug.LogError(data);
         _popUpMessage.gameObject.SetActive(true);
         _popUpMessage.Initialize(data);
-       
+        UploadingVideoText.gameObject.SetActive(false);
+
     }
 
     public void OnCreateFightStrategyButtonClick()

@@ -22,12 +22,73 @@ public class CreateStrategyPanel : UIScreen
     public Transform allActionCardContent;
     public Transform[] combinationContent;
     public GameObject ActionCardTamplete;
+    public GameObject WaitingPanel;
 
     // Start is called before the first frame update
     void Start()
     {
         
     }
+
+    private void OnEnable()
+    {
+        WebServicesManager.CreateStrategyComplete += WebServicesManager_CreateStrategyComplete; ;
+        WebServicesManager.CreateStrategyFailed += WebServicesManager_CreateStrategyFailed;
+        WaitingPanel.SetActive(false);
+
+    }
+    private void OnDisable()
+    {
+        WebServicesManager.CreateStrategyComplete -= WebServicesManager_CreateStrategyComplete; ;
+        WebServicesManager.CreateStrategyFailed -= WebServicesManager_CreateStrategyFailed; 
+    }
+
+    private void WebServicesManager_CreateStrategyFailed(string error)
+    {
+        WaitingPanel.SetActive(false);
+    }
+
+    private void WebServicesManager_CreateStrategyComplete(string responce)
+    {
+        FightStrategy strategy = null;
+        try
+        {
+            strategy = Newtonsoft.Json.JsonConvert.DeserializeObject<FightStrategy>(responce);
+            Hashtable responceData = (Hashtable)easy.JSON.JsonDecode(responce);
+            foreach (DictionaryEntry item in responceData)
+            {
+                if (item.Key.ToString() == "combinations")
+                {
+                    strategy.combinations = new FightCombination[9];
+                    int i = 0;
+                    foreach (var res in item.Value as ArrayList)
+                    {
+
+                        string combos = easy.JSON.JsonEncode(res);
+                        strategy.combinations[i] = Newtonsoft.Json.JsonConvert.DeserializeObject<FightCombination>(combos);
+                        i++;
+                        if (i >= 9)
+                        {
+                            break;
+                        }
+                    }
+
+                }
+            }
+        }
+        catch (Exception)
+        {
+            UnityEngine.Debug.Log("unable to parse fight strategy");
+        }
+        if (strategy != null)
+        {
+            UIController.Instance._myprofile._myStrategy = strategy;
+        }
+     
+        Initialize(UIController.Instance._myprofile._allActionCards, UIController.Instance._myprofile._myStrategy);
+        WaitingPanel.SetActive(false);
+    }
+
     public void Initialize(List<ActionCard> _allActionCards, FightStrategy  _strategy)
     {
         MyActionCards = _allActionCards;
@@ -140,6 +201,7 @@ public class CreateStrategyPanel : UIScreen
 
     public void SaveStrategy()
     {
+        WaitingPanel.SetActive(true);
         WebServicesManager.Instance.CreateStrategy( _mystrategy);
     }
 }

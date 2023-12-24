@@ -9,8 +9,10 @@ public class LibraryScreen : UIScreen
     public Transform allActionCardContent;
     List<ActionCard> _myActionCards;
     public GameObject ActionCardTamplete;
-    public void Initialize(List<ActionCard> _allActionCards)
+    public override void Initialize(params object[] _params)
     {
+        base.Initialize(_params);
+        List<ActionCard> _allActionCards = _params[0] as List<ActionCard>;
         _myActionCards = new List<ActionCard>();
         _myActionCards = _allActionCards;
         for (int i = 0; i < allActionCardContent.childCount; i++)
@@ -18,6 +20,7 @@ public class LibraryScreen : UIScreen
             if (allActionCardContent.GetChild(i).gameObject.activeSelf)
             {
                 DestroyImmediate(allActionCardContent.GetChild(i).gameObject);
+                i--;
             }
         }
         for (int i = 0; i < _allActionCards.Count; i++)
@@ -31,6 +34,7 @@ public class LibraryScreen : UIScreen
             Card.SetActive(true);
         }
     }
+    
     public void OnActionCardSelected(TMPro.TMP_Text index)
     {
         foreach (var item in _myActionCards)

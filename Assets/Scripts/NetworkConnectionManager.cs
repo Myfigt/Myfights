@@ -32,6 +32,7 @@ namespace Assets.Scripts
             TriesToConnectToMaster = false;
             TriesToConnectToRoom = false;
             OnClickConnectToMaster();
+            PhotonNetwork.AddCallbackTarget(this);
         }
 
 
@@ -51,7 +52,7 @@ namespace Assets.Scripts
             //Settings (all optional and only for tutorial purpose)
             PhotonNetwork.OfflineMode = false;           //true would "fake" an online connection
             PhotonNetwork.NickName = UIController.Instance._myprofile.name;       //to set a player name
-            PhotonNetwork.AutomaticallySyncScene = true; //to call PhotonNetwork.LoadLevel()
+            PhotonNetwork.AutomaticallySyncScene = false; //to call PhotonNetwork.LoadLevel()
             PhotonNetwork.GameVersion = "v1";            //only people with the same game version can play together
 
             //PhotonNetwork.ConnectToMaster(ip,port,appid); //manual connection
@@ -80,28 +81,28 @@ namespace Assets.Scripts
         {
             if (!PhotonNetwork.IsConnected)
                 return;
-            //if (UIController.Instance._myprofile._myStrategy == null)
-            //{
-            //    return;
-            //}
-            
-            //strategy.Add("_strategy", UIController.Instance._myprofile._myStrategy);
+           
            
             TriesToConnectToRoom = true;
-            //PhotonNetwork.CreateRoom("Peter's Game 1"); //Create a specific Room - Error: OnCreateRoomFailed
-            //PhotonNetwork.JoinRoom("Peter's Game 1");   //Join a specific Room   - Error: OnJoinRoomFailed  
             PhotonNetwork.JoinRandomRoom();               //Join a random Room     - Error: OnJoinRandomRoomFailed  
         }
 
         public void CreateNewRoom(string ownerID)
         {
-            int random = UnityEngine.Random.Range(1000, 999999);
-            PhotonNetwork.CreateRoom("My_Fight_Game_Room_" + ownerID + random, new RoomOptions { MaxPlayers = _MaxPlayers });
-            PhotonNetwork.JoinRoom("My_Fight_Game_Room_" + ownerID + random);
+            if (PhotonNetwork.IsConnected)
+            {
+                int random = UnityEngine.Random.Range(1000, 999999);
+                PhotonNetwork.CreateRoom("My_Fight_Game_Room_" + ownerID + random, new RoomOptions { MaxPlayers = _MaxPlayers });
+            }
+            else
+            {
+                Debug.Log("not connected to master");
+            }
+           // PhotonNetwork.JoinRoom("My_Fight_Game_Room_" + ownerID + random);
         }
         public void JoinRoom(string roomID)
         {
-            PhotonNetwork.JoinRoom(roomID);
+            Debug.Log( PhotonNetwork.JoinRoom(roomID).ToString());
         }
         public override void OnJoinRandomFailed(short returnCode, string message)
         {

@@ -79,15 +79,15 @@ namespace NatSuite.Examples {
             var path = await recorder.FinishWriting();
             // Playback recording
             Debug.Log($"Saved recording to: {path}");
-#if UNITY_ANDROID
-              Handheld.PlayFullScreenMovie($"file://{path}");
-#elif UNITY_IOS
-                Handheld.PlayFullScreenMovie($"file://{path}");
-#elif UNITY_STANDALONE_OSX
-                 Handheld.PlayFullScreenMovie($"file://{path}");
-#elif UNITY_STANDALONE_WIN
-                 Handheld.PlayFullScreenMovie($"file://{path}");
-#endif
+//#if UNITY_ANDROID
+//              Handheld.PlayFullScreenMovie($"file://{path}");
+//#elif UNITY_IOS
+//                Handheld.PlayFullScreenMovie($"file://{path}");
+//#elif UNITY_STANDALONE_OSX
+//                 Handheld.PlayFullScreenMovie($"file://{path}");
+//#elif UNITY_STANDALONE_WIN
+//                 Handheld.PlayFullScreenMovie($"file://{path}");
+//#endif
             UIController.Instance.GoToActionCardReview(path);
         }
     }

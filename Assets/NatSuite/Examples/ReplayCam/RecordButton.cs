@@ -18,7 +18,7 @@ namespace NatSuite.Examples.Components {
 		public Image button, countdown;
 		public UnityEvent onTouchDown, onTouchUp;
 		private bool pressed =false;
-		private const float MaxRecordingTime = 5f; // seconds
+		private const float MaxRecordingTime = 3f; // seconds
 		public TMP_Text countdownText;
 
 		private void Start () {
@@ -57,7 +57,7 @@ namespace NatSuite.Examples.Components {
 			pressed = true;
 			// First wait a short time to make sure it's not a tap
 			countdownText.gameObject.SetActive(true);
-			float getREadyTime = 3f;
+			float getREadyTime = 5f;
             while (getREadyTime>0)
             {
 				getREadyTime -= Time.deltaTime;

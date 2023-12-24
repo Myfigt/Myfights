@@ -95,6 +95,7 @@ public class VideoPlayerManager : UIScreen
 
     public override void Goback()
     {
+       
         UIController.Instance.SetupScreen(GetGobackScreen());
     }
     void OnVideoPrepared(VideoPlayer vPlayer)
