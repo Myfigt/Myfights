@@ -51,7 +51,7 @@ namespace Assets.Scripts
 
             //Settings (all optional and only for tutorial purpose)
             PhotonNetwork.OfflineMode = false;           //true would "fake" an online connection
-            PhotonNetwork.NickName = UIController.Instance._myprofile.name;       //to set a player name
+            PhotonNetwork.NickName = UIController.Instance._myprofile.name;  //to set a player name
             PhotonNetwork.AutomaticallySyncScene = false; //to call PhotonNetwork.LoadLevel()
             PhotonNetwork.GameVersion = "v1";            //only people with the same game version can play together
 
@@ -84,7 +84,7 @@ namespace Assets.Scripts
            
            
             TriesToConnectToRoom = true;
-            PhotonNetwork.JoinRandomRoom();               //Join a random Room     - Error: OnJoinRandomRoomFailed  
+            PhotonNetwork.JoinRandomRoom();               //Join a random Room - Error: OnJoinRandomRoomFailed  
         }
 
         public void CreateNewRoom(string ownerID)
@@ -154,6 +154,7 @@ namespace Assets.Scripts
         public override void OnPlayerLeftRoom(Player otherPlayer)
         {
             base.OnPlayerLeftRoom(otherPlayer);
+            UIController.Instance.OnplayerLeavelRoom("The Player have left the room");
         }
         public override void OnCreatedRoom()
         {
