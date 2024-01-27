@@ -54,7 +54,7 @@
     <UnityVersion>2021.3.32f1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Analyzer Include="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
+    <Analyzer Include="C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Photon\PhotonRealtime\Demos\DemoLoadBalancing\ConnectAndJoinRandomLb.cs" />
@@ -495,12 +495,6 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>Assets\UnityPackages\JsonNet\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEditor.iOS.Extensions.Xcode">
-      <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.32f1\Editor\Data\PlaybackEngines\iOSSupport\UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.iOS.Extensions.Common">
-      <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.32f1\Editor\Data\PlaybackEngines\iOSSupport\UnityEditor.iOS.Extensions.Common.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.Android.Types">
       <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.32f1\Editor\Data\PlaybackEngines\AndroidPlayer\Unity.Android.Types.dll</HintPath>
     </Reference>
@@ -897,14 +891,23 @@
     <Reference Include="Unity.2D.Sprite.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.2D.Sprite.Editor.dll</HintPath>
     </Reference>
+    <Reference Include="UniTask.DOTween">
+      <HintPath>Library\ScriptAssemblies\UniTask.DOTween.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEditor.UI">
       <HintPath>Library\ScriptAssemblies\UnityEditor.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="UniTask.Linq">
+      <HintPath>Library\ScriptAssemblies\UniTask.Linq.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>Library\ScriptAssemblies\UnityEngine.UI.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Mathematics">
       <HintPath>Library\ScriptAssemblies\Unity.Mathematics.dll</HintPath>
+    </Reference>
+    <Reference Include="UniTask.TextMeshPro">
+      <HintPath>Library\ScriptAssemblies\UniTask.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Mobile.AndroidLogcat.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.Mobile.AndroidLogcat.Editor.dll</HintPath>
@@ -914,6 +917,12 @@
     </Reference>
     <Reference Include="Unity.Mathematics.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.Mathematics.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="UniTask">
+      <HintPath>Library\ScriptAssemblies\UniTask.dll</HintPath>
+    </Reference>
+    <Reference Include="UniTask.Addressables">
+      <HintPath>Library\ScriptAssemblies\UniTask.Addressables.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Recorder">
       <HintPath>Library\ScriptAssemblies\Unity.Recorder.dll</HintPath>
@@ -944,10 +953,6 @@
       <Project>{38D390B1-DD39-69E3-E5E1-84FAF846BAE8}</Project>
       <Name>PhotonUnityNetworking.Utilities.PhotonPlayer.Editor</Name>
     </ProjectReference>
-    <ProjectReference Include="UniTask.DOTween.csproj">
-      <Project>{653F3BE6-B88C-EB00-00E2-0737081E8E48}</Project>
-      <Name>UniTask.DOTween</Name>
-    </ProjectReference>
     <ProjectReference Include="PunDemos.DemoHubEditor.csproj">
       <Project>{CD124829-262F-F582-E53D-E78E9E5F3DE5}</Project>
       <Name>PunDemos.DemoHubEditor</Name>
@@ -956,10 +961,6 @@
       <Project>{092254B7-72C0-E2B5-9EBA-787D757094E1}</Project>
       <Name>PhotonRealtime</Name>
     </ProjectReference>
-    <ProjectReference Include="UniTask.Linq.csproj">
-      <Project>{5F1EF2EC-1C1F-5653-4099-03D07C919229}</Project>
-      <Name>UniTask.Linq</Name>
-    </ProjectReference>
     <ProjectReference Include="PhotonUnityNetworking.Utilities.csproj">
       <Project>{EA068463-4C1A-4153-948B-2476BF1466E3}</Project>
       <Name>PhotonUnityNetworking.Utilities</Name>
@@ -967,10 +968,6 @@
     <ProjectReference Include="PhotonUnityNetworking.csproj">
       <Project>{01FBF4B9-BB5D-32B7-0851-4FE69C64C1C3}</Project>
       <Name>PhotonUnityNetworking</Name>
-    </ProjectReference>
-    <ProjectReference Include="UniTask.TextMeshPro.csproj">
-      <Project>{A0CF761E-19C3-CB7B-21CD-C9668967AB75}</Project>
-      <Name>UniTask.TextMeshPro</Name>
     </ProjectReference>
     <ProjectReference Include="NativeCamera.Runtime.csproj">
       <Project>{92A7A87F-149E-7250-5B4B-DBC8EDC82BA8}</Project>
@@ -988,10 +985,6 @@
       <Project>{481F55FB-D045-9483-1499-E29B3ADA324F}</Project>
       <Name>NativeCamera.Editor</Name>
     </ProjectReference>
-    <ProjectReference Include="UniTask.csproj">
-      <Project>{471ADB85-6715-36CB-4B01-A1A4E1341247}</Project>
-      <Name>UniTask</Name>
-    </ProjectReference>
     <ProjectReference Include="MediaPipe.csproj">
       <Project>{7CD2A2DA-5790-C520-F2EA-35947E8E188A}</Project>
       <Name>MediaPipe</Name>
@@ -999,10 +992,6 @@
     <ProjectReference Include="PunDemos.DemoSlotcarEditor.csproj">
       <Project>{B87F76A0-6C0F-D010-22CD-262BE13E7496}</Project>
       <Name>PunDemos.DemoSlotcarEditor</Name>
-    </ProjectReference>
-    <ProjectReference Include="UniTask.Addressables.csproj">
-      <Project>{55C37BA4-4EEC-5B95-2352-DBDE0ED5A7C4}</Project>
-      <Name>UniTask.Addressables</Name>
     </ProjectReference>
     <ProjectReference Include="TensorFlowLite.csproj">
       <Project>{FD499D9F-22C0-877C-2EAC-B80A43FD2191}</Project>

@@ -192,6 +192,7 @@ public class UIController : MonoBehaviour
         _popUpMessage.Initialize(responce ,_action);
 
     }
+
     #region Fetch user profile CallBacks
     private void WebServicesManager_FetchUserFailed(string error)
     {
@@ -774,6 +775,12 @@ public class UIController : MonoBehaviour
     public void OnFriendChallangeAccepted(string roomID)
     {
         _NetworkHandle.JoinRoom(roomID) ;
+    }
+
+    public void OnplayerLeavelRoom(string message)
+    {
+        _popUpMessage.gameObject.SetActive(true);
+        _popUpMessage.Initialize(message);
     }
 
 }
