@@ -4,7 +4,7 @@ using UnityEngine;
 using Assets.Scripts;
 using UnityEngine.UI;
 using UnityEngine.Networking;
-
+using TMPro;
 public class FighterListManager : UIScreen
 {
     [SerializeField]
@@ -14,6 +14,7 @@ public class FighterListManager : UIScreen
     List<Fighter> MyFighters = null;
 
     public Fighter SelectedFighter;
+    [SerializeField] private TextMeshProUGUI userName;
     // Start is called before the first frame update
     void Start()
     {
@@ -36,9 +37,11 @@ public class FighterListManager : UIScreen
             StartCoroutine(GetProfileImage(_allFighters[i].Photo, fighter.transform.GetChild(0).GetComponent<Image>()));
             //fighter.GetComponent<Button>().onClick.AddListener(() => OnFighterSelected(i));
             fighter.SetActive(true);
+            
         }
        
         MyFighters = _allFighters;
+        userName.text = UIController.Instance._myprofile.name;
     }
     // Update is called once per frame
     public void OnFighterSelectionChanged(Vector2 vector)
