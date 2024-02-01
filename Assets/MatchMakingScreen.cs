@@ -38,7 +38,7 @@ public class MatchMakingScreen : UIScreen
         {
             GameObject searchedUserObject = GameObject.Instantiate(FriendTemplate, FriendTemplate.transform.parent);
             searchedUserObject.transform.GetChild(1).gameObject.GetComponent<TMP_Text>().text = request.Friends_name.ToString();
-            //searchedUserObject.transform.GetChild(2).gameObject.GetComponent<TMP_Text>().text = request.Friends_is_online.ToString();
+            searchedUserObject.transform.GetChild(2).gameObject.GetComponent<TMP_Text>().text = request.Friend_id.ToString();
             searchedUserObject.SetActive(true);
         }
     }
@@ -54,6 +54,7 @@ public class MatchMakingScreen : UIScreen
                 {
                     GameObject searchedUserObject = GameObject.Instantiate(FriendTemplate, FriendTemplate.transform.parent);
                     searchedUserObject.transform.GetChild(1).gameObject.GetComponent<TMP_Text>().text = request.Friends_name.ToString();
+                    searchedUserObject.transform.GetChild(2).gameObject.GetComponent<TMP_Text>().text = request.Friend_id.ToString();
                     searchedUserObject.SetActive(true);
                 }
             }

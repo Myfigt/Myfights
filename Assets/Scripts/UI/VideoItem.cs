@@ -9,11 +9,13 @@ public class VideoItem : MonoBehaviour
     public string VideoName { get; private set; }
     public static System.Action<VideoItem> OnItemClicked;
     public TMPro.TMP_Text Title;
-    public void Intialize(int _fighterID,int _videoID,string _videoName)
+    public int score = 0;
+    public void Intialize(int _fighterID,int _videoID,string _videoName, int itemScore)
     {
         FighterID = _fighterID;
         VideoID = _videoID;
         VideoName = _videoName;
+        score = itemScore;
         //Title.text = VideoName;
     }
 

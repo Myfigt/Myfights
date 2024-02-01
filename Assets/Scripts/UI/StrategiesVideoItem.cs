@@ -7,9 +7,9 @@ public class StrategiesVideoItem : MonoBehaviour
 {
     public Image titleImage;
     public int fighterID;
-    public FightCombination combination;
+    public FightStrategy combination;
     public static System.Action<StrategiesVideoItem> OnVideoClicked;
-    public void Initialize(Sprite _sprite, int _fighterID ,FightCombination _combination)
+    public void Initialize(Sprite _sprite, int _fighterID ,FightStrategy _combination)
     {
         //titleImage.sprite = _sprite;
         combination = _combination;

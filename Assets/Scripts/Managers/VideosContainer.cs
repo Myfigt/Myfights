@@ -45,8 +45,10 @@ public class VideosContainer : MonoBehaviour
         public void LoadVideo(int fighterId,string fighterName)
         {
             if (status != VideoStatus.idle)
+            {
+                OnLoaded?.Invoke();
                 return;
-
+            }
             status = VideoStatus.loading;
 
             string FileName = Path.GetFileName(actionCard.Path);
@@ -132,6 +134,8 @@ public class VideosContainer : MonoBehaviour
 
     public List<FighterData> opponentVidoData = new List<FighterData>();
 
+    public FighterData PlayerActionCards;
+
     public void PlayVideo(int fighterID,int videoID,VideoPlayer player,Action OnPlayCompleted)
     {
         int fighterIndex = fightersData.FindIndex(item => item.fighter.id == fighterID);
@@ -212,11 +216,11 @@ public class VideosContainer : MonoBehaviour
         }
     }
 
-    public void LoadAllFighterVideos(List<FightStrategy> fightStrategies, Action OnLoaded)
+    public void LoadAllFighterVideos(List<FightCombo> fightStrategies, Action OnLoaded)
     {
         opponentVidoData = new List<FighterData>();
         int counter = 0;
-        foreach (FightStrategy strategy in fightStrategies)
+        foreach (FightCombo strategy in fightStrategies)
         {
             FighterData newFighterData = new FighterData(new Fighter()
             {
@@ -227,15 +231,22 @@ public class VideosContainer : MonoBehaviour
                 Status = -1
             });
             List<ActionCard> cards = new List<ActionCard>();
-            foreach (FightCombination fightCombination in strategy.combinations)
+            foreach (FightStrategy fightCombination in strategy.strategies)
             {
                 if (fightCombination != null)
                 {
-                    ActionCard newCard = new ActionCard();
-                    newCard.FileName = Path.GetFileName(fightCombination.player_video_url);
-                    newCard.Path = fightCombination.player_video_url;
-                    newCard.id = fightCombination.ActionCardID;
-                    cards.Add(newCard);
+                    for (int i = 0; i < fightCombination.actionCards.Length; i++)
+                    {
+                        if (fightCombination.actionCards[i]!= null)
+                        {
+                            ActionCard newCard = new ActionCard();
+                            newCard.FileName = Path.GetFileName(fightCombination.actionCards[0].Path);//::TODO
+                            newCard.Path = fightCombination.actionCards[0].Path;//::TODO
+                            newCard.id = fightCombination.actionCards[0].id;
+                            cards.Add(newCard);
+                        }
+                    }
+                    
                 }
               
             }
@@ -246,5 +257,25 @@ public class VideosContainer : MonoBehaviour
             }, true);
             opponentVidoData.Add(newFighterData);
         }
+    }
+
+    public void LoadAllAllPlayerActionCards(List<ActionCard> cards, Action OnLoaded)
+    {
+        if (PlayerActionCards == null)
+        {
+            PlayerActionCards = new FighterData(new Fighter()
+            {
+                id = UIController.Instance._myprofile.id,
+                Name = UIController.Instance._myprofile.name,
+                created_at = "",
+                Photo = "",
+                Status = -1
+            });
+        }
+
+        PlayerActionCards.AddVideos(cards, () =>
+        {
+                OnLoaded?.Invoke();
+        });
     }
 }

@@ -7,9 +7,9 @@ public class CombinationItem : MonoBehaviour
 {
     public Image titleImage;
     public int fighterID;
-    public FightCombination[] combination;
+    public FightStrategy[] combination;
     public static System.Action<CombinationItem> OnCombinationClicked;
-    public void Initialize(Sprite _sprite, int _fighterID, FightCombination[] _combinations)
+    public void Initialize(Sprite _sprite, int _fighterID, FightStrategy[] _combinations)
     {
         //titleImage.sprite = _sprite;
         combination = _combinations;

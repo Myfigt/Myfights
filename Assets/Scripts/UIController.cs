@@ -137,6 +137,7 @@ public class UIController : MonoBehaviour
             PlayerPrefs.DeleteKey("access_token");
         }
         UnityEngine.Screen.sleepTimeout = SleepTimeout.NeverSleep;
+
     }
     void OnEnable()
     {
@@ -312,6 +313,11 @@ public class UIController : MonoBehaviour
         if (_CurrentScreen == Screens.HomeScreen)
         {
             _NetworkHandle.gameObject.SetActive(true);
+        }
+        if (_CurrentScreen == Screens.FightModeSelectionScreen)
+        {
+            MyScreens[(int)_CurrentScreen].transform.GetChild(1).gameObject.SetActive(true);
+            MyScreens[(int)_CurrentScreen].transform.GetChild(2).gameObject.SetActive(false);
         }
 
        // yield return null;
@@ -628,8 +634,13 @@ public class UIController : MonoBehaviour
         UnityEngine.Debug.LogError("Video Uploaded successfully " + data);
         ActionCard card = Newtonsoft.Json.JsonConvert.DeserializeObject <ActionCard>(data);
         if (card!= null)
-            _myprofile._allActionCards.Insert(0,card);
-        ViewActionCard(card);
+        {
+            _myprofile._allActionCards.Insert(0, card);
+            List<ActionCard> temp = new List<ActionCard>();
+            temp.Add(card);
+            VideosContainer.Instance.LoadAllAllPlayerActionCards(_myprofile._allActionCards, () => ViewActionCard(card) );
+        }
+       
         UploadingVideoText.gameObject.SetActive(false);
     }
     public void OnVideoUplaodFailed(string data)
@@ -643,13 +654,13 @@ public class UIController : MonoBehaviour
 
     public void OnCreateFightStrategyButtonClick()
     {
-        _StrategyCreation.Initialize(_myprofile._allActionCards, _myprofile._myStrategy);
+        _StrategyCreation.Initialize(_myprofile._allActionCards, _myprofile._myCombo);
         SetupScreen(Screens.CreateFightStrategy);
         //WebServicesManager.Instance.FetchStrategies(_myprofile.id);
     }
     private void WebServicesManager_FetchStrategyFailed(string error)
     {
-        throw new NotImplementedException();
+        Debug.Log(error);
     }
     private void WebServicesManager_FetchStrategyComplete(string responce)
     {
@@ -657,41 +668,38 @@ public class UIController : MonoBehaviour
         {
             return;
         }
-        FightStrategy strategy = null;
+        FightCombo combo = null;
         try
         {
-        strategy = Newtonsoft.Json.JsonConvert.DeserializeObject<FightStrategy>(responce);
-        Hashtable responceData = (Hashtable)easy.JSON.JsonDecode(responce);
+            //List<FightCombo> tempcombo = Newtonsoft.Json.JsonConvert.DeserializeObject<List<FightCombo>>(responce);
+            Hashtable responceData = (Hashtable)easy.JSON.JsonDecode(responce);
+            combo = Newtonsoft.Json.JsonConvert.DeserializeObject<FightCombo>(responce);
+       
         foreach (DictionaryEntry item in responceData)
         {
-            if (item.Key.ToString() == "combinations")
+            if (item.Key.ToString() == "strategies")
             {
-                strategy.combinations = new FightCombination[9];
+                    combo.strategies = new List<FightStrategy>();
                 int i = 0;
                 foreach (var res in item.Value as ArrayList)
                 {
 
-                    string combos = easy.JSON.JsonEncode(res);
-                    strategy.combinations[i] = Newtonsoft.Json.JsonConvert.DeserializeObject<FightCombination>(combos);
-                    i++;
-                    if (i >= 9)
-                    {
-                        break;
-                    }
+                        string combos = easy.JSON.JsonEncode(res);
+                        combo.strategies.Add(Newtonsoft.Json.JsonConvert.DeserializeObject<FightStrategy>(combos));
                 }
 
             }
         }
         }
-        catch (Exception)
+        catch (Exception e)
         {
             UnityEngine.Debug.Log("unable to parse fight strategy");
         }
-        if (strategy == null)
+        if (combo == null)
         {
-            strategy = new FightStrategy() { title = _myprofile.name+"_Strategy" +_myprofile.id, combinations = new FightCombination[9] , playerID = _myprofile.id, player_name = _myprofile.name };
+            combo = new FightCombo() { title = _myprofile.name+"_Strategy" +_myprofile.id, strategies = new List<FightStrategy>() , playerID = _myprofile.id, player_name = _myprofile.name };
         }
-        _myprofile._myStrategy = strategy;
+        _myprofile._myCombo = combo;
         
     }
 
@@ -702,8 +710,15 @@ public class UIController : MonoBehaviour
     private void WebServicesManager_GetActionCardsComplete(string responce)
     {
         UnityEngine.Debug.Log(responce);
-        List<ActionCard> fighters = Newtonsoft.Json.JsonConvert.DeserializeObject<List<ActionCard>>(responce);
-        _myprofile._allActionCards = fighters;
+        List<ActionCard> cards = Newtonsoft.Json.JsonConvert.DeserializeObject<List<ActionCard>>(responce);
+        _myprofile._allActionCards = cards;
+        VideosContainer.Instance.LoadAllAllPlayerActionCards(_myprofile._allActionCards, Handle_PlayerVideosLoaded);
+    }
+
+    private void Handle_PlayerVideosLoaded()
+    {
+        Debug.Log("player videos loaded");
+        //sthrow new NotImplementedException();
     }
 
     public void OnlibraryButtonClick()
@@ -732,9 +747,6 @@ public class UIController : MonoBehaviour
     public void QuickMatch()
     {
         SetupScreen(UIController.Screens.FightModeSelectionScreen);
-        //::TODO this is to be done when fight mode is selected and opponent has already joined the room.
-        //SetupScreen(UIController.Screens.LetsFightScreen);
-        //_letsFightScreen.Initialize(_myprofile._myStrategy, _myprofile._myStrategy);
     }
 
     public void PlayWithFriendsButtonClick(TMP_Text status)
@@ -752,15 +764,20 @@ public class UIController : MonoBehaviour
         _NetworkHandle.JoinRandomRoom();
         //SetupScreen(UIController.Screens.LetsFightScreen);
     }
+    public void SetWaitingForPlayer()
+    {
+        MyScreens[(int)_CurrentScreen].transform.GetChild(1).gameObject.SetActive(false);
+        MyScreens[(int)_CurrentScreen].transform.GetChild(2).gameObject.SetActive(true);
+    }
     public void GoToMatchMakingScreen( string roomID)
     {
         _matchMakingScreen.Initialize(roomID);
         SetupScreen(UIController.Screens.MatchMakingScreen);
     }
-    public void GoToMatchScreen( FightStrategy _opponentStrategy)
+    public void GoToMatchScreen( FightCombo _opponentStrategy)
     {
         SetupScreen(UIController.Screens.LetsFightScreen);
-        _letsFightScreen.Initialize(_myprofile._myStrategy, _opponentStrategy);
+        _letsFightScreen.Initialize(_myprofile._myCombo, _opponentStrategy);
     }
     public void OnShowProfileButtonClick()
     {
@@ -776,4 +793,15 @@ public class UIController : MonoBehaviour
         _NetworkHandle.JoinRoom(roomID) ;
     }
 
+
+    public void OnPlayerLeft(string message)
+    {
+        _popUpMessage.gameObject.SetActive(true);
+        _popUpMessage.Initialize("Player left the room" + message);
+    }
+    public void ShowPopUp(string message = ""  )
+    {
+        _popUpMessage.gameObject.SetActive(true);
+        _popUpMessage.Initialize(message , WS_ActionType.notification);
+    }
 }

@@ -45,7 +45,11 @@ namespace Assets.Scripts
         public int fighter_video_id;
         public int player_id;
         public ComparisonResults comparison_results;
-
+        public ActionCard()
+        {
+            id = 0;
+            created_at = DateTime.Now;
+        }
     }
     [Serializable]
     public class ComparisonResults
@@ -80,7 +84,7 @@ namespace Assets.Scripts
         public string firebase_token { get; set; }
         public List<ActionCard> _allActionCards;
         public List<Friends> _allFriends;
-        public FightStrategy _myStrategy;
+        public FightCombo _myCombo;
         UserProfile()
         {
             _allActionCards = new List<ActionCard>();

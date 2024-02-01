@@ -138,7 +138,8 @@ public enum WS_ActionType
     make_user_online_offline,
     add_friend,
     join_room,
-    accept_friend_request
+    accept_friend_request,
+    notification,
 
 }
 

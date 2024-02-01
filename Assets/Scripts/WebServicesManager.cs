@@ -472,6 +472,7 @@ public class WebServicesManager : MonoBehaviour
         WWW www = new WWW(url);
 
         yield return www;
+       // string temp = "{\n    \"count\": 1,\n    \"next\": null,\n    \"previous\": null,\n    \"results\": [\n        {\n            \"id\": 63,\n            \"player_name\": \"mp11\",\n            \"playerID\": 92,\n            \"title\": \"mp11_Strategy92\",\n            \"created_at\": \"2023-11-07T18:42:55.564000Z\",\n            \"strategies\": [\n                {\n                    \"combinationIndex\": \"0\",\n                    \"actionCards\": [\n                        {\n                            \"id\": \"534\",\n                            \"player_video_url\": \"https://myfight.co.nz/player_videos/result/534/Lizzie-Black-Belt-Final-534__20231219103527.mp4\",\n                            \"status\": true\n                        },\n                        {\n                            \"id\": \"495\",\n                            \"player_video_url\": \"https://myfight.co.nz/player_videos/result/495/file_name__20231214001207.mp4\",\n                            \"status\": true\n                        },\n                        {\n                            \"id\": \"494\",\n                            \"player_video_url\": \"https://myfight.co.nz/player_videos/result/494/file_name__20231213233027.mp4\",\n                            \"status\": true\n                        }\n                    ]\n                },\n                {\n                    \"combinationIndex\": \"1\",\n                    \"actionCards\": [\n                        {\n                            \"id\": \"534\",\n                            \"player_video_url\": \"https://myfight.co.nz/player_videos/result/534/Lizzie-Black-Belt-Final-534__20231219103527.mp4\",\n                            \"status\": true\n                        },\n                        {\n                            \"id\": \"495\",\n                            \"player_video_url\": \"https://myfight.co.nz/player_videos/result/495/file_name__20231214001207.mp4\",\n                            \"status\": true\n                        },\n                        {\n                            \"id\": \"494\",\n                            \"player_video_url\": \"https://myfight.co.nz/player_videos/result/494/file_name__20231213233027.mp4\",\n                            \"status\": true\n                        }\n                    ]\n                },\n                {\n                    \"combinationIndex\": \"2\",\n                    \"actionCards\": [\n                        {\n                            \"id\": \"534\",\n                            \"player_video_url\": \"https://myfight.co.nz/player_videos/result/534/Lizzie-Black-Belt-Final-534__20231219103527.mp4\",\n                            \"status\": true\n                        },\n                        {\n                            \"id\": \"495\",\n                            \"player_video_url\": \"https://myfight.co.nz/player_videos/result/495/file_name__20231214001207.mp4\",\n                            \"status\": true\n                        },\n                        {\n                            \"id\": \"494\",\n                            \"player_video_url\": \"https://myfight.co.nz/player_videos/result/494/file_name__20231213233027.mp4\",\n                            \"status\": true\n                        }\n                    ]\n                }\n            ]\n        }\n    ]\n}";
         Hashtable responceData = (Hashtable)easy.JSON.JsonDecode(www.text);
         bool isScuccess = false;
         foreach (DictionaryEntry item in responceData)
@@ -480,6 +481,7 @@ public class WebServicesManager : MonoBehaviour
             {
                 if ((item.Value as ArrayList).Count == 0)
                 {
+                    isScuccess = true;
                     FetchStrategyComplete(easy.JSON.JsonEncode(string.Empty));
                 }
                 else
@@ -493,7 +495,7 @@ public class WebServicesManager : MonoBehaviour
                         FetchStrategyComplete(easy.JSON.JsonEncode(res));
                         
                        
-                        break;
+                        //break;
                     }
                 }
                 
@@ -513,12 +515,12 @@ public class WebServicesManager : MonoBehaviour
     public static event OnCreateStrategyComplete CreateStrategyComplete;
     public static event OnCreateStrategyFailed CreateStrategyFailed;
 
-    public void CreateStrategy(FightStrategy _strategy)
+    public void CreateStrategy(FightCombo _strategy)
     {
         StartCoroutine(_CreateFightStrategy( _strategy));
     }
 
-    IEnumerator _CreateFightStrategy( FightStrategy _strategy)
+    IEnumerator _CreateFightStrategy( FightCombo _strategy)
     {
 
         string url = baseURL + "create_fight_strategy";
@@ -528,7 +530,7 @@ public class WebServicesManager : MonoBehaviour
        
         WWW www = new WWW(url, data);
         yield return www;
-        FightStrategy responce = (FightStrategy)JsonUtility.FromJson<FightStrategy>(www.text);
+        FightCombo responce = (FightCombo)JsonUtility.FromJson<FightCombo>(www.text);
         if (responce == null)
         {
             CreateStrategyFailed("Failed to upload strategy");

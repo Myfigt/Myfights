@@ -87,10 +87,11 @@ public class VideoPlayerManager : UIScreen
         textBox_RWrist.text = _card.comparison_results.RWrist.ToString();
 
         cardDetailsPanel.SetActive(true);
+        
         Uri u = new Uri(_card.Path);
-        _player.url = u.AbsoluteUri;
+        _player.url = VideosContainer.Instance.PlayerActionCards.VideoData.Find(item => item.actionCard.id == _card.id).localPath; //u.AbsoluteUri;
         _player.Prepare();
-
+        _player.Play();
     }
 
     public override void Goback()

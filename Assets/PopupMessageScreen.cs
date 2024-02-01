@@ -51,6 +51,11 @@ public class PopupMessageScreen : UIScreen
                 case WS_ActionType.accept_friend_request:
                     MessageBox.text = "you are now friends with";
                     break;
+                case WS_ActionType.notification:
+                    MessageBox.text = _params[0] as string;
+                    YesButtonText.transform.parent.gameObject.SetActive(false);
+                    NoButtonText.text = " OK";
+                    break;
                 default:
                     break;
             }
@@ -85,6 +90,8 @@ public class PopupMessageScreen : UIScreen
                 UIController.Instance.OnFriendChallangeAccepted((messagedata as GameChallangeMessage).room_id);
                 break;
             case WS_ActionType.accept_friend_request:
+                break;
+            case WS_ActionType.notification:
                 break;
             default:
                 break;

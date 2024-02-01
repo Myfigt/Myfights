@@ -21,6 +21,8 @@ namespace Assets.Scripts
         protected bool TriesToConnectToMaster;
         protected bool TriesToConnectToRoom;
 
+        protected bool IsPlayingRandom = true;
+
         private void Awake()
         {
             PhotonNetwork.OfflineMode = false;
@@ -92,6 +94,7 @@ namespace Assets.Scripts
             if (PhotonNetwork.IsConnected)
             {
                 int random = UnityEngine.Random.Range(1000, 999999);
+                IsPlayingRandom = false;
                 PhotonNetwork.CreateRoom("My_Fight_Game_Room_" + ownerID + random, new RoomOptions { MaxPlayers = _MaxPlayers });
             }
             else
@@ -133,7 +136,11 @@ namespace Assets.Scripts
             }
             else if (PhotonNetwork.IsMasterClient)
             {
-               
+                if (IsPlayingRandom)
+                {
+                    UIController.Instance.SetWaitingForPlayer();
+                }
+                else
                 UIController.Instance.GoToMatchMakingScreen(PhotonNetwork.CurrentRoom.Name);
             }
 
@@ -154,6 +161,8 @@ namespace Assets.Scripts
         public override void OnPlayerLeftRoom(Player otherPlayer)
         {
             base.OnPlayerLeftRoom(otherPlayer);
+            UIController.Instance.OnPlayerLeft("bla bla");
+
         }
         public override void OnCreatedRoom()
         {
@@ -162,13 +171,14 @@ namespace Assets.Scripts
 
         internal void JoinRandomRoom()
         {
+            IsPlayingRandom = true;
             OnClickConnectToRoom();
         }
 
         public IEnumerator SetupMatch() {
             yield return new WaitForSeconds(3);
             int opponentPlayerId= -1;
-            FightStrategy _opponentStrategy = null;
+            FightCombo _opponentStrategy = null;
             foreach (var item in PhotonNetwork.CurrentRoom.Players)
             {
                 if (!(item.Value as Player).IsLocal)
@@ -192,19 +202,19 @@ namespace Assets.Scripts
                     if (success)
                     {
                         //List<ActionCard> fighters = Newtonsoft.Json.JsonConvert.DeserializeObject<List<ActionCard>>(response);
-                        _opponentStrategy = Newtonsoft.Json.JsonConvert.DeserializeObject<FightStrategy>(response);
+                        _opponentStrategy = Newtonsoft.Json.JsonConvert.DeserializeObject<FightCombo>(response);
                         Hashtable responceData = (Hashtable)easy.JSON.JsonDecode(response);
                         foreach (DictionaryEntry ditem in responceData)
                         {
                             if (ditem.Key.ToString() == "combinations")
                             {
-                                _opponentStrategy.combinations = new FightCombination[9];
+                                _opponentStrategy.strategies = new List<FightStrategy>();
                                 int i = 0;
                                 foreach (var res in ditem.Value as ArrayList)
                                 {
 
                                     string combos = easy.JSON.JsonEncode(res);
-                                    _opponentStrategy.combinations[i] = Newtonsoft.Json.JsonConvert.DeserializeObject<FightCombination>(combos);
+                                    _opponentStrategy.strategies.Add( Newtonsoft.Json.JsonConvert.DeserializeObject<FightStrategy>(combos));
                                     i++;
                                     if (i >= 9)
                                     {
@@ -229,7 +239,7 @@ namespace Assets.Scripts
                 {
                 Debug.LogError("Match ready");
                 UIController.Instance.SetupScreen(UIController.Screens.LetsFightScreen);
-                UIController.Instance._letsFightScreen.Initialize(UIController.Instance._myprofile._myStrategy, _opponentStrategy,this);
+                UIController.Instance._letsFightScreen.Initialize(UIController.Instance._myprofile._myCombo, _opponentStrategy,this);
                 }
             else
             {
