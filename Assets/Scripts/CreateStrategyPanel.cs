@@ -220,8 +220,6 @@ public class CreateStrategyPanel : UIScreen
     }
     void UpdateStrategiesTab()
     {
-
-
         for (int i = 0; i < combinations.Length; i++)
         {
             if (i < _myCombo.strategies.Count)
@@ -235,7 +233,6 @@ public class CreateStrategyPanel : UIScreen
                 toggleButtons[i].gameObject.SetActive(false);
             }
                 
-
         }
     }
     void UpdateStrategyData(bool isINitializing = false)
