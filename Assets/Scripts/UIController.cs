@@ -102,7 +102,7 @@ public class UIController : MonoBehaviour
     public bool _UseDefaultCridentials;
     public const string Defaultusername = "bilalkhan@mailinator.comm";
     public const string DefaultPwd = "Password@123";
-   
+
     // Start is called before the first frame update
     #region Initializers
     private static UIController instance = null;
