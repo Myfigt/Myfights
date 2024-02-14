@@ -84,12 +84,12 @@ public class LetsFightScreen : UIScreen
             int senderId = (int)data[1];
             if (senderId  == UIController.Instance._myprofile.id)
             {
-                selfVideoPlayer.url = VideosContainer.Instance.opponentVidoData[0].VideoData.Find(item => item.actionCard.fighter_video_id == videoId).localPath;
+                selfVideoPlayer.url = VideosContainer.Instance.opponentVidoData[0].VideoData.Find(item => item.actionCard.id == videoId).localPath;
                 selfVideoPlayer.Play();
             }
             else
             {
-                opponentVideoPlayer.url = VideosContainer.Instance.opponentVidoData[1].VideoData.Find(item => item.actionCard.fighter_video_id == videoId).localPath;
+                opponentVideoPlayer.url = VideosContainer.Instance.opponentVidoData[1].VideoData.Find(item => item.actionCard.id == videoId).localPath;
                 opponentVideoPlayer.Play();
             }
            
@@ -223,7 +223,7 @@ public class LetsFightScreen : UIScreen
                 go.transform.GetChild(0).GetComponent<TMP_Text>().text = t.actionCard.id.ToString();
                 if (go.TryGetComponent<VideoItem>(out var videoItem))
                 {
-                    videoItem.Intialize(t.actionCard.player_id, t.actionCard.fighter_video_id, t.actionCard.FileName, (int)t.actionCard.result);
+                    videoItem.Intialize(t.actionCard.player_id, t.actionCard.id, t.actionCard.FileName, (int)t.actionCard.result);
                 }
                 go.gameObject.SetActive(true);
             }
@@ -263,7 +263,7 @@ public class LetsFightScreen : UIScreen
                 go.transform.GetChild(0).GetComponent<TMP_Text>().text = item.actionCard.id.ToString();
                 if (go.TryGetComponent<VideoItem>(out var videoItem))
                 {
-                    videoItem.Intialize(item.actionCard.player_id, item.actionCard.fighter_video_id, item.actionCard.FileName,(int)item.actionCard.result);
+                    videoItem.Intialize(item.actionCard.player_id, item.actionCard.id, item.actionCard.FileName,(int)item.actionCard.result);
                 }
                 go.SetActive(true);
             }

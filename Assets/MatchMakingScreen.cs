@@ -8,16 +8,19 @@ using UnityEngine;
 public class MatchMakingScreen : UIScreen
 {
     [SerializeField]
-    GameObject FriendTemplate;
+    GameObject friendTemplate;
     [SerializeField]
     TMP_Text roomName;
-    List<Friends> FriendsList;
+    List<Friends> friendsList;
+    [SerializeField]
+    GameObject friendsPanel;
     // Start is
     // called before the first frame update
     private void OnEnable()
     {
         WebServicesManager.GetFriendListComplete += WebServicesManager_GetFriendListComplete;
         WebServicesManager.GetFriendListFailed += WebServicesManager_GetFriendListFailed;
+        
         //WebServicesManager.Instance.GetFriendList();
     }
     private void OnDisable()
@@ -32,11 +35,11 @@ public class MatchMakingScreen : UIScreen
 
     private void WebServicesManager_GetFriendListComplete(string responce)
     {
-        FriendsList = new List<Friends>();
-        FriendsList = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Friends>>(responce);
-        foreach (Friends request in FriendsList)
+        friendsList = new List<Friends>();
+        friendsList = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Friends>>(responce);
+        foreach (Friends request in friendsList)
         {
-            GameObject searchedUserObject = GameObject.Instantiate(FriendTemplate, FriendTemplate.transform.parent);
+            GameObject searchedUserObject = GameObject.Instantiate(friendTemplate, friendTemplate.transform.parent);
             searchedUserObject.transform.GetChild(1).gameObject.GetComponent<TMP_Text>().text = request.Friends_name.ToString();
             searchedUserObject.transform.GetChild(2).gameObject.GetComponent<TMP_Text>().text = request.Friend_id.ToString();
             searchedUserObject.SetActive(true);
@@ -47,43 +50,68 @@ public class MatchMakingScreen : UIScreen
     {
         if (_params.Count() != 0)
         {
-            roomName.text = _params[0] as string;
-            if (UIController.Instance._myprofile._allFriends != null)
+            
+            bool isPlayingRandom = bool.Parse( _params[1] as string);
+            if (isPlayingRandom)
             {
-                foreach (Friends request in UIController.Instance._myprofile._allFriends)
-                {
-                    GameObject searchedUserObject = GameObject.Instantiate(FriendTemplate, FriendTemplate.transform.parent);
-                    searchedUserObject.transform.GetChild(1).gameObject.GetComponent<TMP_Text>().text = request.Friends_name.ToString();
-                    searchedUserObject.transform.GetChild(2).gameObject.GetComponent<TMP_Text>().text = request.Friend_id.ToString();
-                    searchedUserObject.SetActive(true);
-                }
+                roomName.text = "Waiting for Player to join";
+                friendsPanel.SetActive(false);
             }
             else
             {
-                WebServicesManager.Instance.GetFriendList();
+                roomName.text = _params[0] as string;
+                ClearUIList();
+                if (UIController.Instance._myprofile._allFriends != null)
+                {
+                    foreach (Friends request in UIController.Instance._myprofile._allFriends)
+                    {
+                        GameObject searchedUserObject = GameObject.Instantiate(friendTemplate, friendTemplate.transform.parent);
+                        searchedUserObject.transform.GetChild(1).gameObject.GetComponent<TMP_Text>().text = request.Friends_name.ToString();
+                        searchedUserObject.transform.GetChild(2).gameObject.GetComponent<TMP_Text>().text = request.Friend_id.ToString();
+                        searchedUserObject.SetActive(true);
+                    }
+                    friendsPanel.SetActive(true);
+                }
+                else
+                {
+                    WebServicesManager.Instance.GetFriendList();
+                }
             }
+            
         }
        
 
     }
-    void Start()
+    public override void Goback()
     {
-       
+        UIController.Instance.DisconnectConnectedRoom();
+        base.Goback();
     }
-
-    public void ChallangeAFriend(int index)
+    public void ChallangeAFriend(Transform index)
     {
         if (UIController.Instance._myprofile._allFriends.Count != 0)
         {
             GameChallangeMessage payLoad = new GameChallangeMessage()
             {
-                data = Newtonsoft.Json.JsonConvert.SerializeObject(UIController.Instance._myprofile),
+                data = string.Empty,// Newtonsoft.Json.JsonConvert.SerializeObject(UIController.Instance._myprofile),
                 user_id = UIController.Instance._myprofile.id,
                 room_id = roomName.text,
-                friend_id = UIController.Instance._myprofile._allFriends[index].Friend_id
+                friend_id = UIController.Instance._myprofile._allFriends[index.GetSiblingIndex()-1].Friend_id
             };
             UIController.Instance.WSConnector.SendRequest(Newtonsoft.Json.JsonConvert.SerializeObject(payLoad), WS_ActionType.join_room, WebServicesManager.Instance.authorization);
         }
+    }
+    void ClearUIList()
+    {
+        for (int i = 0; i < friendTemplate.transform.parent.childCount; i++)
+        {
+            if (friendTemplate.transform.parent.GetChild(i).gameObject.activeSelf)
+            {
+                DestroyImmediate(friendTemplate.transform.parent.GetChild(i).gameObject);
+                i--;
+            }
+        }
+        
     }
 }
 

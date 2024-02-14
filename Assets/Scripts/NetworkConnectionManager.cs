@@ -136,12 +136,7 @@ namespace Assets.Scripts
             }
             else if (PhotonNetwork.IsMasterClient)
             {
-                if (IsPlayingRandom)
-                {
-                    UIController.Instance.SetWaitingForPlayer();
-                }
-                else
-                UIController.Instance.GoToMatchMakingScreen(PhotonNetwork.CurrentRoom.Name);
+                UIController.Instance.GoToMatchMakingScreen(PhotonNetwork.CurrentRoom.Name,IsPlayingRandom);
             }
 
             Debug.Log("Master: " + PhotonNetwork.IsMasterClient + " | Players In Room: " + PhotonNetwork.CurrentRoom.PlayerCount + " | RoomName: " + PhotonNetwork.CurrentRoom.Name + " Region: " + PhotonNetwork.CloudRegion);
@@ -246,6 +241,10 @@ namespace Assets.Scripts
                 Debug.LogError("Unable to get opponent strategy");
             }
 
+        }
+        public void DisConnectRoom()
+        {
+            PhotonNetwork.LeaveRoom();
         }
     }
 }

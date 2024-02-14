@@ -4,6 +4,7 @@ using UnityEngine;
 using Assets.Scripts;
 using UnityEngine.UI;
 using UnityEngine.Networking;
+using TMPro;
 
 public class FighterListManager : UIScreen
 {
@@ -11,6 +12,8 @@ public class FighterListManager : UIScreen
     GameObject FighterTemplateObject;
     [SerializeField]
     Transform _content;
+    [SerializeField]
+    private TMP_Text fighterscreenProfileText;
     List<Fighter> MyFighters = null;
 
     public Fighter SelectedFighter;
@@ -39,6 +42,7 @@ public class FighterListManager : UIScreen
         }
        
         MyFighters = _allFighters;
+        fighterscreenProfileText.text = UIController.Instance._myprofile.name;
     }
     // Update is called once per frame
     public void OnFighterSelectionChanged(Vector2 vector)

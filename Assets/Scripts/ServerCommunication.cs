@@ -59,6 +59,7 @@ public class ServerCommunication : MonoBehaviour
             // Check if server send new messages
             var cqueue = client.receiveQueue;
             string msg;
+            Debug.Log(cqueue.Count);
             while (cqueue.TryPeek(out msg))
             {
                 // Parse newly received messages
@@ -113,7 +114,6 @@ public class ServerCommunication : MonoBehaviour
         server =$"{host}{userID}/";
         client = new WsClient(server);
         await client.Connect();
-
     }
 
     /// <summary>
@@ -149,8 +149,6 @@ public class WSMessage
     public string action { get; set; }
     public string token { get; set; }
     public string payload { get; set; }
-
-
 }
 
 

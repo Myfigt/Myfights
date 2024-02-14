@@ -237,12 +237,12 @@ public class VideosContainer : MonoBehaviour
                 {
                     for (int i = 0; i < fightCombination.actionCards.Length; i++)
                     {
-                        if (fightCombination.actionCards[i]!= null)
+                        if (fightCombination.actionCards[i]!= null && fightCombination.actionCards[i].id != 0)
                         {
                             ActionCard newCard = new ActionCard();
-                            newCard.FileName = Path.GetFileName(fightCombination.actionCards[0].Path);//::TODO
-                            newCard.Path = fightCombination.actionCards[0].Path;//::TODO
-                            newCard.id = fightCombination.actionCards[0].id;
+                            newCard.FileName = Path.GetFileName(fightCombination.actionCards[i].Path);//::TODO
+                            newCard.Path = fightCombination.actionCards[i].Path;//::TODO
+                            newCard.id = fightCombination.actionCards[i].id;
                             cards.Add(newCard);
                         }
                     }

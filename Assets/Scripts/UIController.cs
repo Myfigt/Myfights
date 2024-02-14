@@ -317,6 +317,7 @@ public class UIController : MonoBehaviour
         if (_CurrentScreen == Screens.FightModeSelectionScreen)
         {
             MyScreens[(int)_CurrentScreen].transform.GetChild(1).gameObject.SetActive(true);
+            MyScreens[(int)_CurrentScreen].transform.GetChild(1).GetChild(4).gameObject.SetActive(false);
             MyScreens[(int)_CurrentScreen].transform.GetChild(2).gameObject.SetActive(false);
         }
 
@@ -672,24 +673,24 @@ public class UIController : MonoBehaviour
         try
         {
             //List<FightCombo> tempcombo = Newtonsoft.Json.JsonConvert.DeserializeObject<List<FightCombo>>(responce);
-            Hashtable responceData = (Hashtable)easy.JSON.JsonDecode(responce);
+            //Hashtable responceData = (Hashtable)easy.JSON.JsonDecode(responce);
             combo = Newtonsoft.Json.JsonConvert.DeserializeObject<FightCombo>(responce);
        
-        foreach (DictionaryEntry item in responceData)
-        {
-            if (item.Key.ToString() == "strategies")
-            {
-                    combo.strategies = new List<FightStrategy>();
-                int i = 0;
-                foreach (var res in item.Value as ArrayList)
-                {
+        //foreach (DictionaryEntry item in responceData)
+        //{
+        //    if (item.Key.ToString() == "strategies")
+        //    {
+        //            combo.strategies = new List<FightStrategy>();
+        //        int i = 0;
+        //        foreach (var res in item.Value as ArrayList)
+        //        {
 
-                        string combos = easy.JSON.JsonEncode(res);
-                        combo.strategies.Add(Newtonsoft.Json.JsonConvert.DeserializeObject<FightStrategy>(combos));
-                }
+        //                string combos = easy.JSON.JsonEncode(res);
+        //                combo.strategies.Add(Newtonsoft.Json.JsonConvert.DeserializeObject<FightStrategy>(combos));
+        //        }
 
-            }
-        }
+        //    }
+        //}
         }
         catch (Exception e)
         {
@@ -769,9 +770,9 @@ public class UIController : MonoBehaviour
         MyScreens[(int)_CurrentScreen].transform.GetChild(1).gameObject.SetActive(false);
         MyScreens[(int)_CurrentScreen].transform.GetChild(2).gameObject.SetActive(true);
     }
-    public void GoToMatchMakingScreen( string roomID)
+    public void GoToMatchMakingScreen( string roomID, bool isPlayingRandom = false)
     {
-        _matchMakingScreen.Initialize(roomID);
+        _matchMakingScreen.Initialize(roomID , isPlayingRandom.ToString());
         SetupScreen(UIController.Screens.MatchMakingScreen);
     }
     public void GoToMatchScreen( FightCombo _opponentStrategy)
@@ -803,5 +804,9 @@ public class UIController : MonoBehaviour
     {
         _popUpMessage.gameObject.SetActive(true);
         _popUpMessage.Initialize(message , WS_ActionType.notification);
+    }
+    public void DisconnectConnectedRoom()
+    {
+        _NetworkHandle.DisConnectRoom();
     }
 }
